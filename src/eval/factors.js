@@ -1,0 +1,162 @@
+'use strict';
+
+const FACTOR_SCHEMA = [
+  {
+    factor_id: 'reasoning',
+    label: 'Thinking & Reasoning',
+    tag: 'thinking',
+    color: '#6741d9',
+    icon: 'brain',
+    description: 'Mathematical, logical, and causal reasoning ability across structured problem-solving tasks.',
+    sub_metrics: [
+      { sub_metric_id: 'math_accuracy',      label: 'MATH Accuracy',      benchmark_name: 'MATH-500',      benchmark_url: 'https://arxiv.org/abs/2103.03874', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'logical_deduction',  label: 'Logical Deduction',  benchmark_name: 'BBH',           benchmark_url: 'https://arxiv.org/abs/2210.09261', invert: false, contamination_risk: 'medium' },
+      { sub_metric_id: 'causal_reasoning',   label: 'Causal Reasoning',   benchmark_name: 'GPQA',          benchmark_url: 'https://arxiv.org/abs/2311.12022', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'aime_solve_rate',    label: 'AIME Solve Rate',    benchmark_name: 'AIME 2024',     benchmark_url: 'https://artofproblemsolving.com', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'cot_faithfulness',   label: 'CoT Faithfulness',   benchmark_name: 'BBH (CoT)',     benchmark_url: 'https://arxiv.org/abs/2210.09261', invert: false, contamination_risk: 'medium' },
+    ],
+  },
+  {
+    factor_id: 'factuality',
+    label: 'Reality & Factuality',
+    tag: 'reality',
+    color: '#1971c2',
+    icon: 'check-circle',
+    description: 'Accuracy, calibration, and grounding in factual knowledge; resistance to hallucination.',
+    sub_metrics: [
+      { sub_metric_id: 'hallucination_rate',  label: 'Hallucination Rate (↓)', benchmark_name: 'TruthfulQA',  benchmark_url: 'https://arxiv.org/abs/2109.07958', invert: true,  contamination_risk: 'medium' },
+      { sub_metric_id: 'calibration_ece',     label: 'Calibration (ECE) (↓)',  benchmark_name: 'MMLU-Pro ECE',benchmark_url: 'https://arxiv.org/abs/2406.01574', invert: true,  contamination_risk: 'medium' },
+      { sub_metric_id: 'citation_accuracy',   label: 'Citation Accuracy',      benchmark_name: 'ALCE',        benchmark_url: 'https://arxiv.org/abs/2305.14627', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'knowledge_recency',   label: 'Knowledge Recency',      benchmark_name: 'MMLU-Pro',    benchmark_url: 'https://arxiv.org/abs/2406.01574', invert: false, contamination_risk: 'medium' },
+      { sub_metric_id: 'factual_consistency', label: 'Factual Consistency',    benchmark_name: 'FactScore',   benchmark_url: 'https://arxiv.org/abs/2305.14251', invert: false, contamination_risk: 'medium' },
+    ],
+  },
+  {
+    factor_id: 'safety',
+    label: 'Safety & Alignment',
+    tag: 'safety',
+    color: '#2f9e44',
+    icon: 'shield',
+    description: 'Resistance to adversarial prompts, toxic output, and alignment with human values.',
+    sub_metrics: [
+      { sub_metric_id: 'jailbreak_success_rate', label: 'Jailbreak Rate (↓)',    benchmark_name: 'HarmBench',           benchmark_url: 'https://arxiv.org/abs/2402.04249', invert: true,  contamination_risk: 'low' },
+      { sub_metric_id: 'toxicity_rate',          label: 'Toxicity Rate (↓)',     benchmark_name: 'RealToxicityPrompts', benchmark_url: 'https://arxiv.org/abs/2009.11462', invert: true,  contamination_risk: 'low' },
+      { sub_metric_id: 'refusal_f1',             label: 'Refusal F1',            benchmark_name: 'WildGuard',           benchmark_url: 'https://arxiv.org/abs/2406.18495', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'rlhf_reward',            label: 'RLHF Reward (ELO)',     benchmark_name: 'LMArena ELO',         benchmark_url: 'https://lmarena.ai',               invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'multi_turn_safety',      label: 'Multi-turn Safety',     benchmark_name: 'WildGuard (MT)',      benchmark_url: 'https://arxiv.org/abs/2406.18495', invert: false, contamination_risk: 'low' },
+    ],
+  },
+  {
+    factor_id: 'coding',
+    label: 'Coding & Engineering',
+    tag: 'ops',
+    color: '#f76707',
+    icon: 'code-2',
+    description: 'Code generation, debugging, and software engineering capability across languages.',
+    sub_metrics: [
+      { sub_metric_id: 'humaneval_pass1',   label: 'HumanEval Pass@1',   benchmark_name: 'HumanEval+',  benchmark_url: 'https://arxiv.org/abs/2107.03374', invert: false, contamination_risk: 'high' },
+      { sub_metric_id: 'swe_bench_resolve', label: 'SWE-bench Resolve%', benchmark_name: 'SWE-bench',   benchmark_url: 'https://arxiv.org/abs/2310.06770', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'mbpp_plus',         label: 'MBPP+',              benchmark_name: 'MBPP+',       benchmark_url: 'https://arxiv.org/abs/2108.07732', invert: false, contamination_risk: 'medium' },
+      { sub_metric_id: 'multipl_e',         label: 'MultiPL-E',          benchmark_name: 'MultiPL-E',   benchmark_url: 'https://arxiv.org/abs/2208.08227', invert: false, contamination_risk: 'medium' },
+      { sub_metric_id: 'repo_context',      label: 'Repo-level Context', benchmark_name: 'RepoBench',   benchmark_url: 'https://arxiv.org/abs/2306.03091', invert: false, contamination_risk: 'low' },
+    ],
+  },
+  {
+    factor_id: 'agentic',
+    label: 'Agentic & Tool Use',
+    tag: 'ops',
+    color: '#e64980',
+    icon: 'zap',
+    description: 'Ability to use tools, call functions, and complete multi-step agentic tasks autonomously.',
+    sub_metrics: [
+      { sub_metric_id: 'function_call_accuracy', label: 'Function Call Accuracy', benchmark_name: 'BFCL v3',     benchmark_url: 'https://arxiv.org/abs/2407.05956', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'parallel_tool_use',      label: 'Parallel Tool Use',      benchmark_name: 'BFCL v3',     benchmark_url: 'https://arxiv.org/abs/2407.05956', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'task_completion',        label: 'Task Completion',        benchmark_name: 'AgentBench',  benchmark_url: 'https://arxiv.org/abs/2308.03688', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'tool_refusal_precision', label: 'Tool Refusal Precision', benchmark_name: 'ToolSandbox', benchmark_url: 'https://arxiv.org/abs/2408.04682', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'multi_step_planning',    label: 'Multi-step Planning',    benchmark_name: 'GAIA',        benchmark_url: 'https://arxiv.org/abs/2311.12983', invert: false, contamination_risk: 'low' },
+    ],
+  },
+  {
+    factor_id: 'instruction',
+    label: 'Instruction Following',
+    tag: 'ops',
+    color: '#0c8599',
+    icon: 'list-checks',
+    description: 'Precision in following complex, multi-constraint instructions and maintaining format compliance.',
+    sub_metrics: [
+      { sub_metric_id: 'ifeval_score',             label: 'IFEval Score',              benchmark_name: 'IFEval',      benchmark_url: 'https://arxiv.org/abs/2311.07911', invert: false, contamination_risk: 'medium' },
+      { sub_metric_id: 'format_compliance',        label: 'Format Compliance',         benchmark_name: 'IFEval',      benchmark_url: 'https://arxiv.org/abs/2311.07911', invert: false, contamination_risk: 'medium' },
+      { sub_metric_id: 'long_context_instruction', label: 'Long-context Instruction',  benchmark_name: 'RULER',       benchmark_url: 'https://arxiv.org/abs/2404.06654', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'multi_turn_coherence',     label: 'Multi-turn Coherence',      benchmark_name: 'MT-Bench',    benchmark_url: 'https://arxiv.org/abs/2306.05685', invert: false, contamination_risk: 'medium' },
+      { sub_metric_id: 'constraint_following',     label: 'Constraint Following',      benchmark_name: 'FollowBench', benchmark_url: 'https://arxiv.org/abs/2310.20410', invert: false, contamination_risk: 'low' },
+    ],
+  },
+  {
+    factor_id: 'efficiency',
+    label: 'Efficiency & Operations',
+    tag: 'ops',
+    color: '#5c7cfa',
+    icon: 'gauge',
+    description: 'Latency, throughput, cost efficiency, and performance scaling with context length.',
+    sub_metrics: [
+      { sub_metric_id: 'ttft_ms',            label: 'TTFT (ms) (↓)',        benchmark_name: 'Artificial Analysis', benchmark_url: 'https://artificialanalysis.ai', invert: true,  contamination_risk: 'na' },
+      { sub_metric_id: 'tokens_per_sec',     label: 'Tokens/sec',           benchmark_name: 'Artificial Analysis', benchmark_url: 'https://artificialanalysis.ai', invert: false, contamination_risk: 'na' },
+      { sub_metric_id: 'cost_per_1m_tokens', label: 'Cost/1M tokens (↓)',   benchmark_name: 'Provider pricing',   benchmark_url: '',                              invert: true,  contamination_risk: 'na' },
+      { sub_metric_id: 'pareto_efficiency',  label: 'Pareto Efficiency',    benchmark_name: 'Artificial Analysis', benchmark_url: 'https://artificialanalysis.ai', invert: false, contamination_risk: 'na' },
+      { sub_metric_id: 'context_scaling',    label: 'Context Scaling',      benchmark_name: 'RULER (scaling)',    benchmark_url: 'https://arxiv.org/abs/2404.06654',invert: false, contamination_risk: 'low' },
+    ],
+  },
+  {
+    factor_id: 'bias',
+    label: 'Bias, Fairness & Multilingual',
+    tag: 'safety',
+    color: '#862e9c',
+    icon: 'scale',
+    description: 'Demographic bias, toxicity amplification, and performance equity across languages and cultures.',
+    sub_metrics: [
+      { sub_metric_id: 'bbq_bias_score',        label: 'BBQ Bias Score',          benchmark_name: 'BBQ',           benchmark_url: 'https://arxiv.org/abs/2110.08193', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'winobias',              label: 'WinoBias',                benchmark_name: 'WinoBias',      benchmark_url: 'https://arxiv.org/abs/1804.06876', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'multilingual_mmlu',     label: 'Multilingual MMLU',       benchmark_name: 'MMMLU',         benchmark_url: 'https://arxiv.org/abs/2306.07899', invert: false, contamination_risk: 'medium' },
+      { sub_metric_id: 'toxic_amplification',   label: 'Toxic Amplification (↓)', benchmark_name: 'HolisticBias',  benchmark_url: 'https://arxiv.org/abs/2205.09209', invert: true,  contamination_risk: 'low' },
+      { sub_metric_id: 'cross_cultural_parity', label: 'Cross-cultural Parity',   benchmark_name: 'CULTURALBENCH', benchmark_url: 'https://arxiv.org/abs/2404.15238', invert: false, contamination_risk: 'low' },
+    ],
+  },
+  {
+    factor_id: 'context',
+    label: 'Context & Memory',
+    tag: 'thinking',
+    color: '#087f5b',
+    icon: 'book-open',
+    description: 'Long-context retrieval, recall under pressure, and memory consistency across extended conversations.',
+    sub_metrics: [
+      { sub_metric_id: 'niah_128k',          label: 'NIAH (128K)',         benchmark_name: 'NIAH',         benchmark_url: 'https://github.com/gkamradt/LLMTest_NeedleInAHaystack', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'ruler_long_context', label: 'RULER Long-Context',  benchmark_name: 'RULER',        benchmark_url: 'https://arxiv.org/abs/2404.06654',                       invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'longbench_v2',       label: 'LongBench v2',        benchmark_name: 'LongBench v2', benchmark_url: 'https://arxiv.org/abs/2308.14508',                       invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'lost_in_middle',     label: 'Lost-in-Middle Score',benchmark_name: 'Lost-in-Middle',benchmark_url: 'https://arxiv.org/abs/2307.03172',                      invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'memory_consistency', label: 'Memory Consistency',  benchmark_name: 'MemGPT Evals', benchmark_url: 'https://arxiv.org/abs/2310.08560',                       invert: false, contamination_risk: 'low' },
+    ],
+  },
+  {
+    factor_id: 'multimodal',
+    label: 'Multimodal & Generative',
+    tag: 'reality',
+    color: '#c2255c',
+    icon: 'image',
+    description: 'Visual understanding, OCR, mathematical reasoning on images, audio comprehension, and creative generation quality.',
+    sub_metrics: [
+      { sub_metric_id: 'mmbench_score',       label: 'MMBench Score',         benchmark_name: 'MMBench',         benchmark_url: 'https://arxiv.org/abs/2307.06281', invert: false, contamination_risk: 'medium' },
+      { sub_metric_id: 'mathvista_visual',    label: 'MathVista Visual',      benchmark_name: 'MathVista',       benchmark_url: 'https://arxiv.org/abs/2310.02255', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'ocr_accuracy',        label: 'OCR Accuracy',          benchmark_name: 'OCRBench',        benchmark_url: 'https://arxiv.org/abs/2308.02580', invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'creative_writing_elo',label: 'Creative Writing ELO',  benchmark_name: 'LMArena Creative',benchmark_url: 'https://lmarena.ai',               invert: false, contamination_risk: 'low' },
+      { sub_metric_id: 'mmau_audio',          label: 'MMAU Audio',            benchmark_name: 'MMAU',            benchmark_url: 'https://arxiv.org/abs/2406.04321', invert: false, contamination_risk: 'low' },
+    ],
+  },
+];
+
+// Factor lookup map for O(1) access
+const FACTOR_MAP = Object.fromEntries(FACTOR_SCHEMA.map(f => [f.factor_id, f]));
+
+// All sub-metric IDs flat list
+const ALL_SUB_METRIC_IDS = FACTOR_SCHEMA.flatMap(f => f.sub_metrics.map(s => s.sub_metric_id));
+
+module.exports = { FACTOR_SCHEMA, FACTOR_MAP, ALL_SUB_METRIC_IDS };

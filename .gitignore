@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Build output
+out/
+dist/
+.webpack/
+*.vsix
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Database & user data (runtime files, not for source control)
+*.db
+*.db-shm
+*.db-wal
+*.modelindex-backup
+
+# Secrets / env
+.env
+.env.*
+*.pem
+*.p12
+*.pfx
+
+# Product artifacts — committed to gtm-k/prd repo, not here
+*-PRD*.md
+*-PRD*.pdf
+ModelIndex-PRD*
+*-strategy*.md
+*-strategy*.pdf
+*-spec*.md
+docs/superpowers/
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo

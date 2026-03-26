@@ -1,0 +1,25 @@
+{
+  "_meta": {
+    "version": "0.1.0",
+    "note": "Approximate chars-per-token ratios for cost normalization. Used to convert cost/1M tokens → cost/1K chars for cross-model comparisons. Based on typical English text."
+  },
+  "default": 4.0,
+  "families": {
+    "gpt-4o":            4.1,
+    "gpt-4o-mini":       4.1,
+    "o3":                4.1,
+    "o4-mini":           4.1,
+    "claude-3-7-sonnet": 3.9,
+    "claude-3-5-haiku":  3.9,
+    "gemini-2-0-flash":  4.2,
+    "gemini-2-0-pro":    4.2,
+    "gemini-2-5-pro":    4.2,
+    "llama":             3.8,
+    "qwen":              3.5,
+    "deepseek":          3.7,
+    "mistral":           4.0,
+    "phi":               3.9,
+    "gemma":             4.0,
+    "command":           3.8
+  }
+}

@@ -1,0 +1,93 @@
+'use strict';
+
+const PRESETS = [
+  {
+    id: 'general',
+    label: 'General',
+    description: 'Balanced across all dimensions for general-purpose use.',
+    factor_weights: {
+      reasoning:   25,
+      factuality:  20,
+      safety:      15,
+      coding:      15,
+      agentic:      5,
+      instruction: 10,
+      efficiency:   5,
+      bias:         2,
+      context:      2,
+      multimodal:   1,
+    },
+  },
+  {
+    id: 'code_agent',
+    label: 'Code Agent',
+    description: 'Optimised for software engineering, coding, and tool-use pipelines.',
+    factor_weights: {
+      reasoning:   20,
+      factuality:  10,
+      safety:       8,
+      coding:      35,
+      agentic:     10,
+      instruction: 15,
+      efficiency:   2,
+      bias:         0,
+      context:      0,
+      multimodal:   0,
+    },
+  },
+  {
+    id: 'research',
+    label: 'Research',
+    description: 'Prioritises factual accuracy, reasoning depth, and long-context handling for research tasks.',
+    factor_weights: {
+      reasoning:   30,
+      factuality:  25,
+      safety:       8,
+      coding:      10,
+      agentic:      5,
+      instruction:  7,
+      efficiency:   3,
+      bias:         2,
+      context:      8,
+      multimodal:   2,
+    },
+  },
+  {
+    id: 'medical_legal',
+    label: 'Medical / Legal',
+    description: 'High weight on safety, bias fairness, and factual precision for regulated environments.',
+    factor_weights: {
+      reasoning:   15,
+      factuality:  20,
+      safety:      40,
+      coding:       0,
+      agentic:      5,
+      instruction:  5,
+      efficiency:   2,
+      bias:        10,
+      context:      2,
+      multimodal:   1,
+    },
+  },
+  {
+    id: 'customer_support',
+    label: 'Customer Support',
+    description: 'Optimised for instruction following, safety, and agentic task completion in support workflows.',
+    factor_weights: {
+      reasoning:   15,
+      factuality:  20,
+      safety:      20,
+      coding:       5,
+      agentic:     15,
+      instruction: 20,
+      efficiency:   5,
+      bias:         0,
+      context:      0,
+      multimodal:   0,
+    },
+  },
+];
+
+const PRESET_MAP = Object.fromEntries(PRESETS.map(p => [p.id, p]));
+
+module.exports = { PRESETS, PRESET_MAP };

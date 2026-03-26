@@ -1,0 +1,3248 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ModelIndex</title>
+
+  <!--
+    Content-Security-Policy
+    script-src: 'self' + CDN (Chart.js via cdn.jsdelivr.net)
+    style-src:  'self' + Google Fonts + unsafe-inline (required for inline <style>)
+    connect-src: all 7 T1 connector endpoints
+  -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://cdn.jsdelivr.net;
+    style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+    font-src https://fonts.gstatic.com;
+    img-src 'self' data: https:;
+    connect-src
+      https://huggingface.co
+      https://datasets-server.huggingface.co
+      https://huggingface.co
+      https://api.github.com
+      https://lmarena.ai
+      https://crfm.stanford.edu;
+  " />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+  <!-- Lucide Icons (IIFE build) -->
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.441.0/dist/umd/lucide.min.js"></script>
+
+  <style>
+    /* ── Design Tokens ──────────────────────────────────────────────────────── */
+    :root {
+      --color-bg:           #f8f9fb;
+      --color-surface:      #ffffff;
+      --color-surface-2:    #f1f3f6;
+      --color-border:       #e2e6ec;
+      --color-border-2:     #ccd2db;
+      --color-text:         #0f1117;
+      --color-text-2:       #4a5568;
+      --color-text-3:       #8a94a6;
+      --color-accent:       #3b5bdb;
+      --color-accent-hover: #2f4ac7;
+      --color-accent-light: #eef1fd;
+      --color-success:      #2f9e44;
+      --color-success-bg:   #ebfbee;
+      --color-warning:      #e67700;
+      --color-warning-bg:   #fff3bf;
+      --color-danger:       #c92a2a;
+      --color-danger-bg:    #fff5f5;
+      --color-neutral:      #495057;
+
+      /* Factor group colours */
+      --factor-reasoning:   #6741d9;
+      --factor-factuality:  #1971c2;
+      --factor-safety:      #2f9e44;
+      --factor-coding:      #f76707;
+      --factor-agentic:     #e64980;
+      --factor-instruction: #0c8599;
+      --factor-efficiency:  #5c7cfa;
+      --factor-bias:        #862e9c;
+      --factor-context:     #087f5b;
+      --factor-multimodal:  #c2255c;
+
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+
+      /* Typography */
+      --font-ui:   'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
+
+      /* Radii */
+      --radius-sm: 4px;
+      --radius:    6px;
+      --radius-lg: 10px;
+      --radius-xl: 16px;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+      --shadow:    0 2px 8px rgba(0,0,0,.10);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,.12);
+
+      /* Sidebar */
+      --sidebar-width: 220px;
+    }
+
+    [data-theme="dark"] {
+      --color-bg:           #0f1117;
+      --color-surface:      #1a1d27;
+      --color-surface-2:    #242838;
+      --color-border:       #2d3348;
+      --color-border-2:     #3d4560;
+      --color-text:         #e8ecf4;
+      --color-text-2:       #8a94a6;
+      --color-text-3:       #555e75;
+      --color-accent:       #5c7cfa;
+      --color-accent-hover: #748ffb;
+      --color-accent-light: #1a2040;
+      --color-success:      #40c057;
+      --color-success-bg:   #0d2b13;
+      --color-warning:      #fab005;
+      --color-warning-bg:   #2b1f00;
+      --color-danger:       #ff6b6b;
+      --color-danger-bg:    #2b0d0d;
+    }
+
+    /* ── Reset & Base ───────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      color: var(--color-text);
+      background: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--color-accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    button {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      cursor: pointer;
+      border: none;
+      border-radius: var(--radius);
+      padding: var(--space-2) var(--space-3);
+      transition: background 0.15s, color 0.15s, opacity 0.15s;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn-primary {
+      background: var(--color-accent);
+      color: #fff;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--color-accent-hover); }
+
+    .btn-secondary {
+      background: var(--color-surface-2);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+    .btn-secondary:hover:not(:disabled) { background: var(--color-border); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-2);
+    }
+    .btn-ghost:hover:not(:disabled) { background: var(--color-surface-2); }
+
+    .btn-danger {
+      background: var(--color-danger-bg);
+      color: var(--color-danger);
+      border: 1px solid var(--color-danger);
+    }
+    .btn-danger:hover:not(:disabled) { background: var(--color-danger); color: #fff; }
+
+    input, select, textarea {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--color-text);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: var(--space-2) var(--space-3);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 2px var(--color-accent-light);
+    }
+
+    code, .mono { font-family: var(--font-mono); font-size: 12px; }
+
+    .hidden { display: none !important; }
+
+    /* ── Layout ─────────────────────────────────────────────────────────────── */
+    #app {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ────────────────────────────────────────────────────────────── */
+    #sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    #sidebar-header {
+      padding: var(--space-4) var(--space-4) var(--space-3);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    #sidebar-header .logo-text {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+    #sidebar-header .logo-badge {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      background: var(--color-accent-light);
+      color: var(--color-accent);
+      border-radius: var(--radius-sm);
+      padding: 1px 5px;
+    }
+
+    #sidebar-nav {
+      flex: 1;
+      padding: var(--space-3) var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--color-text-2);
+      font-size: 13px;
+      font-weight: 500;
+      transition: background 0.12s, color 0.12s;
+      user-select: none;
+    }
+    .nav-item:hover { background: var(--color-surface-2); color: var(--color-text); }
+    .nav-item.active { background: var(--color-accent-light); color: var(--color-accent); }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    #sidebar-footer {
+      padding: var(--space-3) var(--space-4);
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #sync-status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--color-success);
+      transition: background 0.3s;
+    }
+    #sync-status-dot.stale   { background: var(--color-warning); }
+    #sync-status-dot.error   { background: var(--color-danger); }
+    #sync-status-dot.syncing { background: var(--color-accent); animation: pulse 1s infinite; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* ── Main Content ────────────────────────────────────────────────────────── */
+    #main-content {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .view {
+      flex: 1;
+      overflow: auto;
+      padding: var(--space-6);
+    }
+
+    .view-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-5);
+    }
+
+    .view-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .view-subtitle {
+      font-size: 13px;
+      color: var(--color-text-2);
+      margin-top: var(--space-1);
+    }
+
+    /* ── Cards & Surfaces ────────────────────────────────────────────────────── */
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+    }
+
+    /* ── Badges ─────────────────────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      padding: 2px 6px;
+    }
+    .badge-green   { background: var(--color-success-bg); color: var(--color-success); }
+    .badge-yellow  { background: var(--color-warning-bg); color: var(--color-warning); }
+    .badge-red     { background: var(--color-danger-bg);  color: var(--color-danger); }
+    .badge-neutral { background: var(--color-surface-2);  color: var(--color-text-2); }
+    .badge-accent  { background: var(--color-accent-light); color: var(--color-accent); }
+
+    /* ── Score Progress Bar ──────────────────────────────────────────────────── */
+    .score-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .score-bar-track {
+      flex: 1;
+      height: 5px;
+      background: var(--color-surface-2);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: var(--color-accent);
+      transition: width 0.3s ease;
+    }
+    .score-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--color-text-2);
+      min-width: 32px;
+      text-align: right;
+    }
+
+    /* ── Toast ───────────────────────────────────────────────────────────────── */
+    #toast-container {
+      position: fixed;
+      bottom: var(--space-5);
+      right: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      z-index: 9999;
+    }
+
+    .toast {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-3) var(--space-4);
+      box-shadow: var(--shadow-lg);
+      font-size: 13px;
+      max-width: 320px;
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      animation: slideIn 0.2s ease;
+    }
+    .toast.success { border-left: 3px solid var(--color-success); }
+    .toast.error   { border-left: 3px solid var(--color-danger); }
+    .toast.warning { border-left: 3px solid var(--color-warning); }
+
+    @keyframes slideIn {
+      from { transform: translateX(20px); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
+    }
+
+    /* ── Modal ───────────────────────────────────────────────────────────────── */
+    #modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal {
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      animation: modalIn 0.2s ease;
+    }
+    @keyframes modalIn {
+      from { transform: scale(0.96); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+
+    .modal-header {
+      padding: var(--space-5) var(--space-6);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title { font-size: 15px; font-weight: 600; }
+    .modal-body  { padding: var(--space-5) var(--space-6); }
+    .modal-footer {
+      padding: var(--space-4) var(--space-6);
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-2);
+    }
+
+    /* ── Skeleton Loader ─────────────────────────────────────────────────────── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--color-surface-2) 25%, var(--color-border) 50%, var(--color-surface-2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: var(--radius);
+    }
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to   { background-position: -200% 0; }
+    }
+
+    /* ── Slide-out Panel ─────────────────────────────────────────────────────── */
+    .panel {
+      position: fixed;
+      top: 0; right: 0;
+      height: 100vh;
+      background: var(--color-surface);
+      border-left: 1px solid var(--color-border);
+      box-shadow: var(--shadow-lg);
+      z-index: 500;
+      overflow-y: auto;
+      transition: transform 0.25s ease;
+    }
+    .panel.hidden { transform: translateX(100%); }
+
+    /* ── Pill Filters ────────────────────────────────────────────────────────── */
+    .pill-row {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+    .pill {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text-2);
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .pill:hover  { border-color: var(--color-accent); color: var(--color-accent); }
+    .pill.active { border-color: var(--color-accent); background: var(--color-accent-light); color: var(--color-accent); }
+
+    /* ── Spin animation ─────────────────────────────────────────────────────── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Placeholder views ───────────────────────────────────────────────────── */
+    .placeholder-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 60vh;
+      color: var(--color-text-3);
+      gap: var(--space-3);
+    }
+    .placeholder-view svg { width: 48px; height: 48px; opacity: 0.3; }
+    .placeholder-view p   { font-size: 15px; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
+  <nav id="sidebar">
+    <div id="sidebar-header">
+      <span class="logo-text">ModelIndex</span>
+      <span class="logo-badge">alpha</span>
+    </div>
+
+    <div id="sidebar-nav">
+      <div class="nav-item active" data-view="registry" id="nav-registry">
+        <i data-lucide="table-2"></i> Registry
+      </div>
+      <div class="nav-item" data-view="index-builder" id="nav-index-builder">
+        <i data-lucide="layers"></i> Index Builder
+      </div>
+      <div class="nav-item" data-view="my-indexes" id="nav-my-indexes">
+        <i data-lucide="bookmark"></i> My Indexes
+      </div>
+      <div class="nav-item" data-view="settings" id="nav-settings">
+        <i data-lucide="settings"></i> Settings
+      </div>
+    </div>
+
+    <div id="sidebar-footer">
+      <div style="display:flex;align-items:center;gap:var(--space-2)">
+        <div id="sync-status-dot" title="Data sync status"></div>
+        <span style="font-size:11px;color:var(--color-text-3)" id="sync-status-label">Synced</span>
+      </div>
+      <button class="btn-ghost" id="theme-toggle" style="padding:4px" title="Toggle dark/light mode">
+        <i data-lucide="sun" style="width:14px;height:14px"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Main Content ───────────────────────────────────────────────────────── -->
+  <main id="main-content">
+
+    <!-- Registry view -->
+    <div id="view-registry" class="view"></div>
+
+    <!-- Index Builder view -->
+    <div id="view-index-builder" class="view hidden"></div>
+
+    <!-- My Indexes view (placeholder) -->
+    <div id="view-my-indexes" class="view hidden">
+      <div class="placeholder-view">
+        <i data-lucide="bookmark"></i>
+        <p>My Indexes — coming in Phase 8</p>
+      </div>
+    </div>
+
+    <!-- Settings view -->
+    <div id="view-settings" class="view hidden"></div>
+
+  </main>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<!-- Modal overlay -->
+<div id="modal-overlay" class="hidden"></div>
+
+<!-- Slide-out provenance panel -->
+<aside id="provenance-panel" class="panel hidden" style="width:380px;padding:var(--space-5)">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4)">
+    <span style="font-weight:600;font-size:14px">Score Provenance</span>
+    <button class="btn-ghost" id="close-provenance" style="padding:4px">
+      <i data-lucide="x" style="width:16px;height:16px"></i>
+    </button>
+  </div>
+  <div id="provenance-content"></div>
+</aside>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════════
+// ModelIndex Renderer — Main Application Script
+// ══════════════════════════════════════════════════════════════════════════════
+
+// ── Global app state ──────────────────────────────────────────────────────────
+const App = {
+  state: {
+    models: [],
+    scores: {},        // { modelId: [scoreRow, ...] }
+    baseline: null,
+    factorSchema: null,
+    presets: null,
+    licenseCompat: null,
+    hardwareManifest: null,
+    currentView: 'registry',
+    syncStatuses: {},
+    activeFilters: {},
+    activePills: new Set(),
+  },
+  views: {},
+};
+
+// ── Utility functions ──────────────────────────────────────────────────────────
+function showView(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const view = document.getElementById(`view-${viewId}`);
+  const nav  = document.getElementById(`nav-${viewId}`);
+  if (view) view.classList.remove('hidden');
+  if (nav)  nav.classList.add('active');
+
+  App.state.currentView = viewId;
+  if (App.views[viewId] && App.views[viewId].onEnter) {
+    App.views[viewId].onEnter();
+  }
+}
+
+function showToast(message, type = 'info', duration = 3500) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), duration);
+}
+
+let _modalCleanup = null;
+function showModal(html, widthPx = 520) {
+  const overlay = document.getElementById('modal-overlay');
+  overlay.innerHTML = `<div class="modal" style="max-width:${widthPx}px">${html}</div>`;
+  overlay.classList.remove('hidden');
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  }, { once: true });
+}
+function closeModal() {
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.add('hidden');
+  overlay.innerHTML = '';
+  if (_modalCleanup) { _modalCleanup(); _modalCleanup = null; }
+}
+
+function showLoading(containerId) {
+  const el = document.getElementById(containerId);
+  if (el) el.innerHTML = `
+    <div class="placeholder-view">
+      <i data-lucide="loader-2" style="animation:spin 1s linear infinite"></i>
+    </div>`;
+  lucide.createIcons();
+}
+
+function formatScore(n) {
+  if (n == null || n === undefined || isNaN(n)) return '—';
+  return Number(n).toFixed(1);
+}
+
+function scoreBar(value, color) {
+  const pct = Math.max(0, Math.min(100, value || 0));
+  return `
+    <div class="score-bar">
+      <div class="score-bar-track">
+        <div class="score-bar-fill" style="width:${pct}%;background:${color || 'var(--color-accent)'}"></div>
+      </div>
+      <span class="score-value">${formatScore(value)}</span>
+    </div>`;
+}
+
+function stalenessClass(fetchedAt) {
+  if (!fetchedAt) return 'stale';
+  const ageH = (Date.now() - fetchedAt) / 3600000;
+  if (ageH < 6)  return 'fresh';
+  if (ageH < 48) return 'aging';
+  if (ageH < 168) return 'stale';
+  return 'expired';
+}
+
+function stalenessBadge(fetchedAt) {
+  const cls = stalenessClass(fetchedAt);
+  const map = {
+    fresh:   ['badge-green',   'Fresh'],
+    aging:   ['badge-yellow',  'Aging'],
+    stale:   ['badge-yellow',  'Stale'],
+    expired: ['badge-red',     'Expired'],
+  };
+  const [badgeCls, label] = map[cls] || ['badge-neutral', '—'];
+  return `<span class="badge ${badgeCls}">${label}</span>`;
+}
+
+// ── Theme toggle ───────────────────────────────────────────────────────────────
+(function initTheme() {
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    // Swap icon
+    const icon = document.querySelector('#theme-toggle i');
+    if (icon) icon.setAttribute('data-lucide', next === 'dark' ? 'moon' : 'sun');
+    lucide.createIcons();
+  });
+})();
+
+// ── Navigation ─────────────────────────────────────────────────────────────────
+document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+  item.addEventListener('click', () => showView(item.dataset.view));
+});
+
+// ── Provenance panel close ─────────────────────────────────────────────────────
+document.getElementById('close-provenance').addEventListener('click', () => {
+  document.getElementById('provenance-panel').classList.add('hidden');
+});
+
+// ── Keyboard: Escape closes modal / panel ─────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  const panel = document.getElementById('provenance-panel');
+  if (!panel.classList.contains('hidden')) { panel.classList.add('hidden'); return; }
+  const overlay = document.getElementById('modal-overlay');
+  if (!overlay.classList.contains('hidden')) closeModal();
+});
+
+// ── Sync IPC listeners ────────────────────────────────────────────────────────
+window.modelIndex.sync.onSyncProgress(({ connectorId, status }) => {
+  const dot   = document.getElementById('sync-status-dot');
+  const label = document.getElementById('sync-status-label');
+  dot.className = 'syncing';
+  label.textContent = `Syncing…`;
+});
+
+window.modelIndex.sync.onSyncComplete(({ connectorId, rowsUpserted }) => {
+  const dot   = document.getElementById('sync-status-dot');
+  const label = document.getElementById('sync-status-label');
+  dot.className = '';
+  label.textContent = 'Synced';
+  // Refresh registry if it's visible
+  if (App.state.currentView === 'registry' && App.views.registry) {
+    App.views.registry.refresh();
+  }
+});
+
+window.modelIndex.sync.onSyncError(({ connectorId, error }) => {
+  const dot = document.getElementById('sync-status-dot');
+  dot.className = 'error';
+});
+
+// ── Auto-update notification ───────────────────────────────────────────────────
+window.modelIndex.shell.onUpdateReady(({ version }) => {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast success';
+  toast.style.cssText = 'cursor:pointer;max-width:340px';
+  toast.innerHTML = `
+    <div>
+      <div style="font-weight:600">Update ready: v${version}</div>
+      <div style="font-size:12px;color:var(--color-text-2);margin-top:2px">
+        Click to restart and install
+      </div>
+    </div>`;
+  toast.addEventListener('click', () => window.modelIndex.shell.installUpdate());
+  container.appendChild(toast);
+});
+
+// ── App initialisation ────────────────────────────────────────────────────────
+(async function init() {
+  try {
+    // Load static data needed by multiple views
+    const [baseline, factorSchema, presets, licenseCompat, hardwareManifest] = await Promise.all([
+      window.modelIndex.db.getBaseline(),
+      window.modelIndex.eval.getFactorSchema(),
+      window.modelIndex.eval.getPresets(),
+      window.modelIndex.db.getLicenseCompat(),
+      window.modelIndex.db.getHardwareManifest(),
+    ]);
+
+    App.state.baseline         = baseline;
+    App.state.factorSchema     = factorSchema;
+    App.state.presets          = presets;
+    App.state.licenseCompat    = licenseCompat;
+    App.state.hardwareManifest = hardwareManifest;
+
+    // Initialise Lucide icons
+    lucide.createIcons();
+
+    // Mount view modules (defined below; each adds itself to App.views)
+    if (App.views.registry)         App.views.registry.mount();
+    if (App.views['index-builder']) App.views['index-builder'].mount();
+    if (App.views['my-indexes'])    App.views['my-indexes'].mount();
+    if (App.views.settings)         App.views.settings.mount();
+
+    // Navigate to default view
+    showView('registry');
+
+  } catch (err) {
+    console.error('Init failed:', err);
+    showToast('Failed to initialise app. Check logs.', 'error');
+  }
+})();
+
+// ════════════════════════════════════════════════════════════════════════════════
+// VIEW: Registry
+// ════════════════════════════════════════════════════════════════════════════════
+(function RegistryView() {
+
+  // ── Module state ────────────────────────────────────────────────────────────
+  let _models     = [];       // all models from DB
+  let _scores     = {};       // { modelId: { sub_metric: scoreRow } }
+  let _pricing    = {};       // { modelId: pricingRow }
+  let _mcsResults = [];       // [{ model_id, mcs, factorBreakdown }]
+  let _filtered   = [];       // filtered + sorted models
+  let _sortCol    = 'mcs';
+  let _sortDir    = 'desc';
+  let _filters    = { providers: new Set(), licenses: new Set(), tags: new Set(), mcsMin: 0 };
+  let _activePreset = null;
+  let _showHardware = false;
+  let _compareSet   = new Set(); // model IDs selected for comparison (2–5)
+
+  // ── CSS (injected once) ─────────────────────────────────────────────────────
+  (function injectStyles() {
+    const s = document.createElement('style');
+    s.textContent = `
+      /* Registry layout */
+      #registry-layout { display:flex; gap:var(--space-4); align-items:flex-start; }
+      #registry-filter-panel {
+        width:220px; flex-shrink:0;
+        background:var(--color-surface);
+        border:1px solid var(--color-border);
+        border-radius:var(--radius-lg);
+        padding:var(--space-4);
+        position:sticky; top:0;
+      }
+      #registry-main { flex:1; min-width:0; }
+
+      /* Filter section */
+      .filter-section { margin-bottom:var(--space-4); }
+      .filter-label {
+        font-size:11px; font-weight:600; letter-spacing:.5px;
+        text-transform:uppercase; color:var(--color-text-3);
+        margin-bottom:var(--space-2);
+      }
+      .filter-check {
+        display:flex; align-items:center; gap:var(--space-2);
+        font-size:13px; color:var(--color-text-2);
+        padding:2px 0; cursor:pointer;
+      }
+      .filter-check:hover { color:var(--color-text); }
+      .filter-check input[type=checkbox] { accent-color:var(--color-accent); cursor:pointer; }
+      #mcs-threshold-val { font-family:var(--font-mono); font-size:12px; }
+
+      /* Model table */
+      .registry-table-wrap {
+        background:var(--color-surface);
+        border:1px solid var(--color-border);
+        border-radius:var(--radius-lg);
+        overflow:hidden;
+      }
+      .registry-table {
+        width:100%; border-collapse:collapse; font-size:13px;
+      }
+      .registry-table th {
+        background:var(--color-surface-2);
+        padding:var(--space-2) var(--space-3);
+        text-align:left; font-size:11px; font-weight:600;
+        letter-spacing:.3px; text-transform:uppercase;
+        color:var(--color-text-3); white-space:nowrap;
+        cursor:pointer; user-select:none;
+        border-bottom:1px solid var(--color-border);
+      }
+      .registry-table th:hover { color:var(--color-text); }
+      .registry-table th.sorted { color:var(--color-accent); }
+      .registry-table td {
+        padding:var(--space-2) var(--space-3);
+        border-bottom:1px solid var(--color-border);
+        vertical-align:middle;
+      }
+      .registry-table tr:last-child td { border-bottom:none; }
+      .registry-table tr:hover td { background:var(--color-surface-2); }
+
+      .model-name { font-weight:500; color:var(--color-text); }
+      .model-provider { font-size:11px; color:var(--color-text-3); }
+
+      /* Score cell — clickable for provenance */
+      .score-cell { cursor:pointer; }
+      .score-cell:hover .score-value { color:var(--color-accent); }
+
+      /* License badge */
+      .lic-ok   { background:var(--color-success-bg); color:var(--color-success); }
+      .lic-warn { background:var(--color-warning-bg); color:var(--color-warning); }
+      .lic-bad  { background:var(--color-danger-bg);  color:var(--color-danger); }
+
+      /* Updated badge */
+      .updated-badge {
+        display:inline-flex; align-items:center; gap:2px;
+        font-size:10px; font-weight:600;
+        background:var(--color-accent-light); color:var(--color-accent);
+        border-radius:var(--radius-sm); padding:1px 5px;
+        vertical-align:middle; margin-left:4px;
+      }
+
+      /* Cost cell */
+      .cost-cell { cursor:pointer; font-family:var(--font-mono); font-size:12px; }
+      .cost-cell:hover { color:var(--color-accent); }
+
+      /* Provenance panel */
+      .prov-row { display:flex; justify-content:space-between; padding:var(--space-2) 0;
+        border-bottom:1px solid var(--color-border); font-size:13px; }
+      .prov-row:last-child { border-bottom:none; }
+      .prov-key { color:var(--color-text-3); font-size:12px; }
+      .prov-val { font-weight:500; text-align:right; max-width:200px; word-break:break-word; }
+      .prov-section { font-size:11px; font-weight:600; text-transform:uppercase;
+        letter-spacing:.5px; color:var(--color-text-3); margin:var(--space-4) 0 var(--space-2); }
+
+      /* Changelog inline tab */
+      .changelog-row { font-size:12px; color:var(--color-text-2); }
+      .changelog-row td { padding:var(--space-1) var(--space-3) !important; }
+
+      /* Best For pills row */
+      #best-for-row { display:flex; gap:var(--space-2); flex-wrap:wrap; margin-bottom:var(--space-4); }
+    `;
+    document.head.appendChild(s);
+  })();
+
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+
+  function _computeMCSInline(modelScores, factorWeights) {
+    // Pure inline MCS — no IPC round-trip on re-rank
+    const baseline = App.state.baseline;
+    if (!baseline || !modelScores || modelScores.length === 0) return 0;
+
+    const subScores = {};
+    for (const s of modelScores) {
+      const b = baseline[s.sub_metric];
+      if (!b) continue;
+      let n = b.max === b.min ? 50 : ((s.raw_score - b.min) / (b.max - b.min)) * 100;
+      n = Math.max(0, Math.min(100, n));
+      if (b.invert) n = 100 - n;
+      subScores[s.sub_metric] = n;
+    }
+
+    let mcs = 0;
+    let totalW = 0;
+    const schema = App.state.factorSchema || [];
+    const weights = factorWeights || {};
+
+    for (const factor of schema) {
+      const w = weights[factor.factor_id] || 0;
+      if (w === 0) continue;
+      const vals = factor.sub_metrics.map(sm => subScores[sm.sub_metric_id]).filter(v => v != null);
+      if (vals.length === 0) continue;
+      const factorScore = vals.reduce((a, b) => a + b, 0) / vals.length;
+      mcs += factorScore * w;
+      totalW += w;
+    }
+    return totalW > 0 ? mcs / totalW : 0;
+  }
+
+  function _buildFactorWeightsFromPreset(presetId) {
+    const preset = (App.state.presets || []).find(p => p.id === presetId);
+    return preset ? preset.factor_weights : null;
+  }
+
+  function _buildEqualWeights() {
+    const schema = App.state.factorSchema || [];
+    const w = {};
+    const v = 100 / Math.max(schema.length, 1);
+    for (const f of schema) w[f.factor_id] = v;
+    return w;
+  }
+
+  function _sortModels(models) {
+    return [...models].sort((a, b) => {
+      let va = a[_sortCol], vb = b[_sortCol];
+      if (va == null) va = -Infinity;
+      if (vb == null) vb = -Infinity;
+      if (typeof va === 'string') return _sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+      return _sortDir === 'asc' ? va - vb : vb - va;
+    });
+  }
+
+  function _applyFilters(models) {
+    return models.filter(m => {
+      if (_filters.providers.size > 0 && !_filters.providers.has(m.provider)) return false;
+      if (_filters.licenses.size > 0 && !_filters.licenses.has(m.license)) return false;
+      const mcs = (m.mcs != null ? m.mcs : 0);
+      if (mcs < _filters.mcsMin) return false;
+      return true;
+    });
+  }
+
+  function _enrichWithMCS() {
+    const weights = _activePreset
+      ? _buildFactorWeightsFromPreset(_activePreset)
+      : _buildEqualWeights();
+
+    return _models.map(m => {
+      const modelScores = Object.values(_scores[m.model_id] || {});
+      const mcs = _computeMCSInline(modelScores, weights);
+      const pricing = _pricing[m.model_id] || null;
+      return { ...m, mcs, pricing };
+    });
+  }
+
+  // ── Render ───────────────────────────────────────────────────────────────────
+
+  function _renderFilterPanel(allModels) {
+    const providers = [...new Set(allModels.map(m => m.provider).filter(Boolean))].sort();
+    const licenses  = [...new Set(allModels.map(m => m.license).filter(Boolean))].sort();
+
+    return `
+      <div id="registry-filter-panel">
+        <div style="font-size:12px;font-weight:600;margin-bottom:var(--space-4)">Filters</div>
+
+        <div class="filter-section">
+          <div class="filter-label">Provider</div>
+          ${providers.map(p => `
+            <label class="filter-check">
+              <input type="checkbox" data-filter="provider" value="${p}"
+                ${_filters.providers.has(p) ? 'checked' : ''}>
+              ${p}
+            </label>`).join('')}
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-label">License</div>
+          ${licenses.map(l => `
+            <label class="filter-check">
+              <input type="checkbox" data-filter="license" value="${l}"
+                ${_filters.licenses.has(l) ? 'checked' : ''}>
+              ${l}
+            </label>`).join('')}
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-label">Min MCS: <span id="mcs-threshold-val">${_filters.mcsMin}</span></div>
+          <input type="range" min="0" max="100" step="5" value="${_filters.mcsMin}" id="mcs-threshold"
+            style="width:100%;margin-top:4px;accent-color:var(--color-accent)">
+        </div>
+
+        <div class="filter-section">
+          <label class="filter-check">
+            <input type="checkbox" id="hw-toggle" ${_showHardware ? 'checked' : ''}>
+            Show hardware req.
+          </label>
+        </div>
+
+        <button class="btn-secondary" id="clear-filters-btn"
+          style="width:100%;margin-top:var(--space-2)">Clear filters</button>
+
+        <button class="btn-secondary" id="license-compat-btn"
+          style="width:100%;margin-top:var(--space-2)">
+          <i data-lucide="shield-check" style="width:13px;height:13px;vertical-align:-2px"></i>
+          License Checker
+        </button>
+      </div>`;
+  }
+
+  function _renderBestForRow() {
+    const presets = App.state.presets || [];
+    const pills = [{ id: null, label: 'All (Equal weights)' }, ...presets.map(p => ({ id: p.id, label: p.name }))];
+    return `
+      <div id="best-for-row">
+        ${pills.map(p => `
+          <span class="pill ${_activePreset === p.id ? 'active' : ''}" data-preset="${p.id || ''}">
+            ${p.label}
+          </span>`).join('')}
+      </div>`;
+  }
+
+  function _renderTable(enriched) {
+    const schema = App.state.factorSchema || [];
+    const hwManifest = App.state.hardwareManifest || {};
+    const sortArrow = (col) => col === _sortCol ? (_sortDir === 'asc' ? ' ↑' : ' ↓') : '';
+
+    const factorHeaders = schema.map(f =>
+      `<th class="${_sortCol === f.factor_id ? 'sorted' : ''}"
+          data-sort="${f.factor_id}"
+          style="color:var(--color-text-3);min-width:70px">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;
+          background:var(--factor-${f.factor_id});margin-right:4px"></span>
+        ${f.tag}${sortArrow(f.factor_id)}
+      </th>`).join('');
+
+    const rows = enriched.map(m => {
+      const modelScores = Object.values(_scores[m.model_id] || {});
+      const weights = _activePreset
+        ? _buildFactorWeightsFromPreset(_activePreset)
+        : _buildEqualWeights();
+
+      // Per-factor normalized scores for inline bars
+      const factorScores = {};
+      const baseline = App.state.baseline || {};
+      for (const s of modelScores) {
+        const b = baseline[s.sub_metric];
+        if (!b) continue;
+        let n = b.max === b.min ? 50 : ((s.raw_score - b.min) / (b.max - b.min)) * 100;
+        n = Math.max(0, Math.min(100, n));
+        if (b.invert) n = 100 - n;
+        const factorId = s.factor_group;
+        if (!factorScores[factorId]) factorScores[factorId] = [];
+        factorScores[factorId].push(n);
+      }
+
+      const factorCells = schema.map(f => {
+        const vals = factorScores[f.factor_id] || [];
+        const avg = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+        if (avg == null) return `<td><span style="color:var(--color-text-3)">—</span></td>`;
+        return `<td class="score-cell"
+          data-model="${m.model_id}" data-factor="${f.factor_id}"
+          title="Click for provenance">
+          ${scoreBar(avg, `var(--factor-${f.factor_id})`)}
+        </td>`;
+      }).join('');
+
+      const costHtml = m.pricing
+        ? `<span class="cost-cell" data-model="${m.model_id}" title="Edit pricing">
+            $${m.pricing.input_cost_per_1m}/${m.pricing.output_cost_per_1m}
+          </span>`
+        : `<span class="cost-cell" data-model="${m.model_id}" style="color:var(--color-text-3)" title="Enter pricing">
+            $—
+          </span>`;
+
+      const hwHtml = _showHardware && hwManifest[m.model_id]
+        ? `<td style="font-size:11px;color:var(--color-text-3)">
+            ${hwManifest[m.model_id].vram_gb}GB VRAM
+          </td>`
+        : (_showHardware ? `<td style="color:var(--color-text-3)">—</td>` : '');
+
+      const licClass = m.license === 'MIT' || m.license === 'Apache-2.0' ? 'lic-ok'
+        : m.license === 'Proprietary' ? 'lic-warn' : 'badge-neutral';
+
+      return `
+        <tr data-model-id="${m.model_id}">
+          <td style="padding:var(--space-2)">
+            <input type="checkbox" class="compare-cb" data-model="${m.model_id}"
+              ${_compareSet.has(m.model_id) ? 'checked' : ''}
+              style="accent-color:var(--color-accent)">
+          </td>
+          <td>
+            <div class="model-name">${m.name}
+              ${m._hasChangelog ? '<span class="updated-badge">↑ Updated</span>' : ''}
+            </div>
+            <div class="model-provider">${m.provider || ''}</div>
+          </td>
+          <td>${scoreBar(m.mcs, 'var(--color-accent)')}</td>
+          ${factorCells}
+          <td><span class="badge ${licClass}">${m.license || '—'}</span></td>
+          <td>${costHtml}</td>
+          ${hwHtml}
+        </tr>`;
+    }).join('');
+
+    const hwHeader = _showHardware ? `<th>Hardware</th>` : '';
+
+    return `
+      <div class="registry-table-wrap">
+        <table class="registry-table">
+          <thead>
+            <tr>
+              <th style="width:28px;padding:var(--space-2)">
+                <input type="checkbox" id="compare-select-all" title="Select all visible"
+                  style="accent-color:var(--color-accent)">
+              </th>
+              <th class="${_sortCol==='name'?'sorted':''}" data-sort="name">Model${sortArrow('name')}</th>
+              <th class="${_sortCol==='mcs'?'sorted':''}" data-sort="mcs" style="min-width:120px">
+                MCS Score${sortArrow('mcs')}
+              </th>
+              ${factorHeaders}
+              <th>License</th>
+              <th>Cost/1M tok</th>
+              ${hwHeader}
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }
+
+  function _render() {
+    const container = document.getElementById('view-registry');
+    const enriched = _enrichWithMCS();
+    _filtered = _sortModels(_applyFilters(enriched));
+
+    container.innerHTML = `
+      <div class="view-header">
+        <div>
+          <div class="view-title">Model Registry</div>
+          <div class="view-subtitle">${_filtered.length} of ${_models.length} models</div>
+        </div>
+        <div style="display:flex;gap:var(--space-2)">
+          <button class="btn-secondary" id="compare-export-btn"
+            ${_compareSet.size < 2 || _compareSet.size > 5 ? 'disabled' : ''}
+            title="Select 2–5 models to compare">
+            <i data-lucide="git-compare" style="width:13px;height:13px;vertical-align:-2px"></i>
+            Compare${_compareSet.size >= 2 ? ` (${_compareSet.size})` : ''}
+          </button>
+          <button class="btn-secondary" id="export-csv-btn">
+            <i data-lucide="download" style="width:13px;height:13px;vertical-align:-2px"></i>
+            Export CSV
+          </button>
+          <button class="btn-secondary" id="registry-sync-btn">
+            <i data-lucide="refresh-cw" style="width:13px;height:13px;vertical-align:-2px"></i>
+            Sync All
+          </button>
+        </div>
+      </div>
+
+      ${_renderBestForRow()}
+
+      <div id="registry-layout">
+        ${_renderFilterPanel(_models)}
+        <div id="registry-main">
+          ${_filtered.length === 0
+            ? `<div class="placeholder-view">
+                <i data-lucide="search-x"></i>
+                <p>No models match current filters</p>
+              </div>`
+            : _renderTable(_filtered)}
+        </div>
+      </div>`;
+
+    lucide.createIcons();
+    _bindEvents();
+  }
+
+  // ── Event binding ────────────────────────────────────────────────────────────
+
+  function _bindEvents() {
+    // Sort headers
+    document.querySelectorAll('.registry-table th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const col = th.dataset.sort;
+        if (_sortCol === col) _sortDir = _sortDir === 'asc' ? 'desc' : 'asc';
+        else { _sortCol = col; _sortDir = 'desc'; }
+        _render();
+      });
+    });
+
+    // Filter checkboxes
+    document.querySelectorAll('[data-filter]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const set = cb.dataset.filter === 'provider' ? _filters.providers : _filters.licenses;
+        cb.checked ? set.add(cb.value) : set.delete(cb.value);
+        _render();
+      });
+    });
+
+    // MCS threshold slider
+    const slider = document.getElementById('mcs-threshold');
+    if (slider) {
+      slider.addEventListener('input', () => {
+        _filters.mcsMin = parseInt(slider.value, 10);
+        document.getElementById('mcs-threshold-val').textContent = _filters.mcsMin;
+        _render();
+      });
+    }
+
+    // Hardware toggle
+    const hwToggle = document.getElementById('hw-toggle');
+    if (hwToggle) {
+      hwToggle.addEventListener('change', () => { _showHardware = hwToggle.checked; _render(); });
+    }
+
+    // Clear filters
+    const clearBtn = document.getElementById('clear-filters-btn');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        _filters = { providers: new Set(), licenses: new Set(), tags: new Set(), mcsMin: 0 };
+        _activePreset = null;
+        _render();
+      });
+    }
+
+    // Best For pills
+    document.querySelectorAll('.pill[data-preset]').forEach(pill => {
+      pill.addEventListener('click', () => {
+        _activePreset = pill.dataset.preset || null;
+        _sortCol = 'mcs'; _sortDir = 'desc';
+        _render();
+      });
+    });
+
+    // Score cell → provenance panel
+    document.querySelectorAll('.score-cell[data-model]').forEach(cell => {
+      cell.addEventListener('click', () => {
+        _showProvenance(cell.dataset.model, cell.dataset.factor);
+      });
+    });
+
+    // Cost cell → manual cost entry modal
+    document.querySelectorAll('.cost-cell[data-model]').forEach(cell => {
+      cell.addEventListener('click', () => _showCostModal(cell.dataset.model));
+    });
+
+    // License compat button
+    const licBtn = document.getElementById('license-compat-btn');
+    if (licBtn) licBtn.addEventListener('click', _showLicenseCompatModal);
+
+    // Compare checkboxes
+    document.querySelectorAll('.compare-cb').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const id = cb.dataset.model;
+        if (cb.checked) {
+          if (_compareSet.size >= 5) { cb.checked = false; showToast('Max 5 models for comparison', 'warning'); return; }
+          _compareSet.add(id);
+        } else {
+          _compareSet.delete(id);
+        }
+        // Update compare button without full re-render
+        const btn = document.getElementById('compare-export-btn');
+        if (btn) {
+          btn.disabled = _compareSet.size < 2;
+          btn.innerHTML = `<i data-lucide="git-compare" style="width:13px;height:13px;vertical-align:-2px"></i> Compare${_compareSet.size >= 2 ? ` (${_compareSet.size})` : ''}`;
+          lucide.createIcons({ el: btn });
+        }
+      });
+    });
+
+    // Select all visible for compare
+    document.getElementById('compare-select-all')?.addEventListener('change', (e) => {
+      _compareSet.clear();
+      if (e.target.checked) {
+        _filtered.slice(0, 5).forEach(m => _compareSet.add(m.model_id));
+      }
+      _render();
+    });
+
+    // Compare & Export
+    const compareBtn = document.getElementById('compare-export-btn');
+    if (compareBtn) compareBtn.addEventListener('click', async () => {
+      if (_compareSet.size < 2) return;
+      const selectedModels = _filtered.filter(m => _compareSet.has(m.model_id));
+      const weights = _activePreset
+        ? _buildFactorWeightsFromPreset(_activePreset)
+        : _buildEqualWeights();
+      const scoresForCompare = {};
+      for (const m of selectedModels) {
+        scoresForCompare[m.model_id] = Object.values(_scores[m.model_id] || {});
+      }
+      const md = ComparisonReport.generate(selectedModels, weights, scoresForCompare);
+      await window.modelIndex.shell.saveFile(
+        `comparison-${new Date().toISOString().slice(0,10)}.md`, md,
+        [{ name: 'Markdown', extensions: ['md'] }]
+      );
+    });
+
+    // Export CSV
+    const csvBtn = document.getElementById('export-csv-btn');
+    if (csvBtn) csvBtn.addEventListener('click', _exportCSV);
+
+    // Sync all
+    const syncBtn = document.getElementById('registry-sync-btn');
+    if (syncBtn) {
+      syncBtn.addEventListener('click', async () => {
+        syncBtn.disabled = true;
+        try {
+          await window.modelIndex.sync.triggerAll();
+          showToast('Sync triggered for all connectors', 'success');
+        } catch (e) {
+          showToast('Sync failed: ' + e.message, 'error');
+        } finally {
+          syncBtn.disabled = false;
+        }
+      });
+    }
+  }
+
+  // ── Provenance panel ─────────────────────────────────────────────────────────
+
+  async function _showProvenance(modelId, factorId) {
+    const panel = document.getElementById('provenance-panel');
+    const content = document.getElementById('provenance-content');
+    content.innerHTML = `<div class="skeleton" style="height:200px;border-radius:6px"></div>`;
+    panel.classList.remove('hidden');
+
+    const model = _models.find(m => m.model_id === modelId);
+    const allScores = Object.values(_scores[modelId] || {});
+    const factorScores = factorId ? allScores.filter(s => s.factor_group === factorId) : allScores;
+
+    content.innerHTML = `
+      <div style="margin-bottom:var(--space-3)">
+        <div style="font-weight:600">${model ? model.name : modelId}</div>
+        ${factorId ? `<div class="view-subtitle">${factorId} factor</div>` : ''}
+      </div>
+
+      <div class="prov-section">Sub-metrics</div>
+      ${factorScores.length === 0
+        ? `<p style="color:var(--color-text-3);font-size:13px">No scores available</p>`
+        : factorScores.map(s => {
+            const b = (App.state.baseline || {})[s.sub_metric] || {};
+            let norm = b.max != null && b.max !== b.min
+              ? ((s.raw_score - b.min) / (b.max - b.min)) * 100 : null;
+            if (norm != null) { norm = Math.max(0, Math.min(100, norm)); if (b.invert) norm = 100 - norm; }
+            return `
+              <div class="prov-row">
+                <div>
+                  <div style="font-weight:500;font-size:13px">${s.sub_metric}</div>
+                  <div class="prov-key">${s.benchmark_name || ''}</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-family:var(--font-mono);font-size:13px">${formatScore(s.raw_score)}</div>
+                  ${norm != null ? `<div class="prov-key">Norm: ${formatScore(norm)}</div>` : ''}
+                  ${stalenessBadge(s.fetched_at)}
+                  ${s.contamination_flag ? `<span class="badge badge-yellow" title="Contamination risk">⚠ Contam.</span>` : ''}
+                </div>
+              </div>`;
+          }).join('')}
+
+      ${factorScores[0] ? `
+        <div class="prov-section">Source</div>
+        <div class="prov-row">
+          <span class="prov-key">Benchmark</span>
+          <span class="prov-val">
+            <a href="#" onclick="window.modelIndex.shell.openExternal('${factorScores[0].benchmark_url}');return false">
+              ${factorScores[0].benchmark_name}
+            </a>
+          </span>
+        </div>
+        <div class="prov-row">
+          <span class="prov-key">Connector</span>
+          <span class="prov-val">${factorScores[0].connector_id || '—'}</span>
+        </div>
+        <div class="prov-row">
+          <span class="prov-key">Tier</span>
+          <span class="prov-val"><span class="badge badge-accent">${factorScores[0].data_tier || '—'}</span></span>
+        </div>` : ''}
+
+      <button class="btn-secondary" style="width:100%;margin-top:var(--space-5)" id="copy-citation-btn">
+        <i data-lucide="clipboard" style="width:13px;height:13px;vertical-align:-2px"></i>
+        Copy Citation
+      </button>`;
+
+    lucide.createIcons({ el: content });
+
+    document.getElementById('copy-citation-btn').addEventListener('click', () => {
+      const cite = factorScores.map(s =>
+        `${s.benchmark_name} (${s.connector_id}): ${formatScore(s.raw_score)}`
+      ).join('\n');
+      navigator.clipboard.writeText(cite).then(() => showToast('Citation copied', 'success'));
+    });
+  }
+
+  // ── Manual Cost Entry modal ──────────────────────────────────────────────────
+
+  async function _showCostModal(modelId) {
+    const model = _models.find(m => m.model_id === modelId);
+    const existing = _pricing[modelId] || {};
+    showModal(`
+      <div class="modal-header">
+        <span class="modal-title">Pricing — ${model ? model.name : modelId}</span>
+        <button class="btn-ghost" onclick="closeModal()" style="padding:4px">
+          <i data-lucide="x" style="width:14px;height:14px"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:12px;color:var(--color-text-3);margin-bottom:var(--space-4)">
+          Enter provider-published token pricing. Used to compute normalized cost efficiency score.
+        </p>
+        <div style="display:grid;gap:var(--space-3)">
+          <label style="font-size:13px">
+            Input cost ($/1M tokens)
+            <input type="number" id="cost-input" value="${existing.input_cost_per_1m || ''}"
+              placeholder="e.g. 3.00" step="0.01" min="0" style="width:100%;margin-top:4px">
+          </label>
+          <label style="font-size:13px">
+            Output cost ($/1M tokens)
+            <input type="number" id="cost-output" value="${existing.output_cost_per_1m || ''}"
+              placeholder="e.g. 15.00" step="0.01" min="0" style="width:100%;margin-top:4px">
+          </label>
+          <label style="font-size:13px">
+            Source URL <span style="color:var(--color-text-3)">(optional)</span>
+            <input type="url" id="cost-url" value="${existing.source_url || ''}"
+              placeholder="https://..." style="width:100%;margin-top:4px">
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        ${existing.input_cost_per_1m
+          ? `<button class="btn-danger" id="cost-delete-btn">Delete</button>` : ''}
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" id="cost-save-btn">Save</button>
+      </div>`, 480);
+
+    lucide.createIcons();
+
+    document.getElementById('cost-save-btn').addEventListener('click', async () => {
+      const inp  = parseFloat(document.getElementById('cost-input').value);
+      const out  = parseFloat(document.getElementById('cost-output').value);
+      const url  = document.getElementById('cost-url').value.trim();
+      if (isNaN(inp) || isNaN(out) || inp < 0 || out < 0) {
+        showToast('Enter valid positive numbers for both costs', 'warning'); return;
+      }
+      await window.modelIndex.db.saveUserPricing({
+        model_id: modelId,
+        input_cost_per_1m: inp,
+        output_cost_per_1m: out,
+        source_url: url || null,
+      });
+      _pricing[modelId] = { model_id: modelId, input_cost_per_1m: inp, output_cost_per_1m: out, source_url: url || null };
+      closeModal();
+      _render();
+      showToast('Pricing saved', 'success');
+    });
+
+    const delBtn = document.getElementById('cost-delete-btn');
+    if (delBtn) {
+      delBtn.addEventListener('click', async () => {
+        await window.modelIndex.db.deleteUserPricing(modelId);
+        delete _pricing[modelId];
+        closeModal();
+        _render();
+        showToast('Pricing removed', 'success');
+      });
+    }
+  }
+
+  // ── License Compat modal ─────────────────────────────────────────────────────
+
+  function _showLicenseCompatModal() {
+    const compat = App.state.licenseCompat || {};
+    const projectLicenses = Object.keys(compat.project_licenses || {});
+
+    showModal(`
+      <div class="modal-header">
+        <span class="modal-title">License Compatibility Checker</span>
+        <button class="btn-ghost" onclick="closeModal()" style="padding:4px">
+          <i data-lucide="x" style="width:14px;height:14px"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:12px;color:var(--color-text-3);margin-bottom:var(--space-4)">
+          Select your project's license to filter models by compatibility.
+        </p>
+        <div class="pill-row" id="proj-lic-pills">
+          ${projectLicenses.map(l => `<span class="pill" data-lic="${l}">${l}</span>`).join('')}
+        </div>
+        <div id="lic-compat-results" style="margin-top:var(--space-5)"></div>
+        <p style="font-size:11px;color:var(--color-text-3);margin-top:var(--space-4)">
+          ${compat.disclaimer || 'Not legal advice. Consult counsel for commercial use.'}
+        </p>
+      </div>`, 560);
+
+    lucide.createIcons();
+
+    document.querySelectorAll('#proj-lic-pills .pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('#proj-lic-pills .pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+
+        const projLic = pill.dataset.lic;
+        const matrix = compat.matrix || {};
+        const results = _models.map(m => {
+          const modelLic = m.license || '';
+          const cell = (matrix[modelLic] || {})[projLic];
+          return { model: m, status: cell ? cell.status : 'unknown', note: cell ? cell.note : '' };
+        });
+
+        const icon = s => s === 'ok' ? '✅' : s === 'conditional' ? '⚠️' : s === 'incompatible' ? '❌' : '❓';
+        document.getElementById('lic-compat-results').innerHTML = `
+          <div style="max-height:300px;overflow-y:auto">
+            ${results.map(r => `
+              <div style="display:flex;align-items:center;justify-content:space-between;
+                padding:var(--space-2) 0;border-bottom:1px solid var(--color-border);font-size:13px">
+                <span>${r.model.name}</span>
+                <span title="${r.note}">${icon(r.status)} ${r.model.license || '—'}</span>
+              </div>`).join('')}
+          </div>`;
+      });
+    });
+  }
+
+  // ── CSV export ───────────────────────────────────────────────────────────────
+
+  async function _exportCSV() {
+    const schema = App.state.factorSchema || [];
+    const headers = ['model_id', 'name', 'provider', 'license', 'mcs',
+      ...schema.map(f => f.factor_id)].join(',');
+
+    const rows = _filtered.map(m => {
+      const modelScores = Object.values(_scores[m.model_id] || {});
+      const weights = _activePreset
+        ? _buildFactorWeightsFromPreset(_activePreset)
+        : _buildEqualWeights();
+
+      // Reuse the inline MCS but also extract per-factor
+      const baseline = App.state.baseline || {};
+      const factorScores = {};
+      for (const s of modelScores) {
+        const b = baseline[s.sub_metric];
+        if (!b) continue;
+        let n = b.max === b.min ? 50 : ((s.raw_score - b.min) / (b.max - b.min)) * 100;
+        n = Math.max(0, Math.min(100, n));
+        if (b.invert) n = 100 - n;
+        if (!factorScores[s.factor_group]) factorScores[s.factor_group] = [];
+        factorScores[s.factor_group].push(n);
+      }
+
+      const factorCols = schema.map(f => {
+        const vals = factorScores[f.factor_id] || [];
+        return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : '';
+      });
+
+      return [m.model_id, `"${m.name}"`, m.provider || '', m.license || '', (m.mcs||0).toFixed(1), ...factorCols].join(',');
+    });
+
+    const csv = [headers, ...rows].join('\n');
+    await window.modelIndex.shell.saveFile(
+      `modelindex-registry-${new Date().toISOString().slice(0,10)}.csv`,
+      csv,
+      [{ name: 'CSV', extensions: ['csv'] }]
+    );
+  }
+
+  // ── Public API ───────────────────────────────────────────────────────────────
+
+  App.views.registry = {
+    async mount() {
+      await this.refresh();
+    },
+
+    onEnter() {
+      // Re-render with current state (no fetch needed unless stale)
+      if (_models.length > 0) _render();
+      else this.refresh();
+    },
+
+    async refresh() {
+      showLoading('view-registry');
+      try {
+        const [models, allPricing] = await Promise.all([
+          window.modelIndex.db.getModels({}),
+          window.modelIndex.db.getAllUserPricing(),
+        ]);
+        _models = models;
+
+        // Load scores for all models in parallel (batched)
+        const scoreResults = await Promise.all(
+          models.map(m => window.modelIndex.db.getScores(m.model_id))
+        );
+        _scores = {};
+        models.forEach((m, i) => {
+          _scores[m.model_id] = {};
+          for (const s of (scoreResults[i] || [])) {
+            _scores[m.model_id][s.sub_metric] = s;
+          }
+        });
+
+        _pricing = {};
+        for (const p of (allPricing || [])) {
+          _pricing[p.model_id] = p;
+        }
+
+        _render();
+      } catch (err) {
+        console.error('Registry refresh error:', err);
+        showToast('Failed to load registry', 'error');
+      }
+    },
+  };
+})();
+// ════════════════════════════════════════════════════════════════════════════════
+// VIEW: Index Builder — 6-step wizard
+// ════════════════════════════════════════════════════════════════════════════════
+(function IndexBuilderView() {
+
+  // ── CSS ────────────────────────────────────────────────────────────────────
+  (function injectStyles() {
+    const s = document.createElement('style');
+    s.textContent = `
+      /* Wizard shell */
+      #wizard-shell { display:flex; gap:var(--space-6); }
+
+      /* Step sidebar */
+      #wizard-steps {
+        width:200px; flex-shrink:0;
+        display:flex; flex-direction:column; gap:2px;
+      }
+      .wizard-step-item {
+        display:flex; align-items:center; gap:var(--space-3);
+        padding:var(--space-2) var(--space-3);
+        border-radius:var(--radius);
+        font-size:13px; color:var(--color-text-3);
+        cursor:default; user-select:none;
+      }
+      .wizard-step-item.active   { color:var(--color-text); background:var(--color-surface-2); }
+      .wizard-step-item.done     { color:var(--color-success); }
+      .wizard-step-item.disabled { opacity:.4; }
+      .step-num {
+        width:22px; height:22px; border-radius:50%;
+        background:var(--color-surface-2); color:var(--color-text-3);
+        font-size:11px; font-weight:600;
+        display:flex; align-items:center; justify-content:center;
+        flex-shrink:0;
+      }
+      .wizard-step-item.active .step-num  { background:var(--color-accent); color:#fff; }
+      .wizard-step-item.done   .step-num  { background:var(--color-success); color:#fff; }
+
+      /* Step content */
+      #wizard-body {
+        flex:1; min-width:0;
+        background:var(--color-surface);
+        border:1px solid var(--color-border);
+        border-radius:var(--radius-lg);
+        padding:var(--space-6);
+      }
+      .wizard-step-title {
+        font-size:16px; font-weight:600; margin-bottom:4px;
+      }
+      .wizard-step-desc {
+        font-size:13px; color:var(--color-text-2); margin-bottom:var(--space-5);
+      }
+
+      /* Navigation buttons */
+      #wizard-nav {
+        display:flex; justify-content:space-between; align-items:center;
+        margin-top:var(--space-6); padding-top:var(--space-4);
+        border-top:1px solid var(--color-border);
+      }
+
+      /* Factor weight sliders */
+      .factor-slider-row {
+        display:flex; align-items:center; gap:var(--space-3);
+        padding:var(--space-2) 0; border-bottom:1px solid var(--color-border);
+      }
+      .factor-slider-row:last-child { border-bottom:none; }
+      .factor-label {
+        width:130px; flex-shrink:0;
+        display:flex; align-items:center; gap:var(--space-2);
+        font-size:13px; font-weight:500;
+      }
+      .factor-dot {
+        width:10px; height:10px; border-radius:50%; flex-shrink:0;
+      }
+      .factor-slider {
+        flex:1; accent-color:var(--color-accent);
+      }
+      .factor-weight-val {
+        width:32px; text-align:right;
+        font-family:var(--font-mono); font-size:12px;
+        color:var(--color-text-2);
+      }
+      .weight-total {
+        font-family:var(--font-mono); font-size:13px; font-weight:600;
+        padding:4px 10px; border-radius:var(--radius-sm);
+        transition:background .2s;
+      }
+      .weight-total.ok  { background:var(--color-success-bg); color:var(--color-success); }
+      .weight-total.bad { background:var(--color-danger-bg);  color:var(--color-danger); }
+
+      /* Live MCS preview table */
+      #mcs-preview-table {
+        font-size:12px; width:100%;
+        border-collapse:collapse; margin-top:var(--space-3);
+      }
+      #mcs-preview-table th {
+        font-size:11px; font-weight:600; text-align:left;
+        color:var(--color-text-3); padding:2px var(--space-2);
+        border-bottom:1px solid var(--color-border);
+      }
+      #mcs-preview-table td {
+        padding:2px var(--space-2);
+        border-bottom:1px solid var(--color-border);
+        vertical-align:middle;
+      }
+      #mcs-preview-table tr:last-child td { border-bottom:none; }
+
+      /* Model card grid (step 4) */
+      #model-card-grid {
+        display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+        gap:var(--space-3); max-height:420px; overflow-y:auto;
+        padding:var(--space-2);
+      }
+      .model-card {
+        border:2px solid var(--color-border);
+        border-radius:var(--radius-lg);
+        padding:var(--space-3);
+        cursor:pointer; transition:border-color .15s, background .15s;
+        user-select:none;
+      }
+      .model-card:hover { border-color:var(--color-accent-hover); }
+      .model-card.selected {
+        border-color:var(--color-accent);
+        background:var(--color-accent-light);
+      }
+      .model-card.excluded {
+        opacity:.4; cursor:not-allowed;
+      }
+      .model-card-name { font-weight:500; font-size:13px; }
+      .model-card-provider { font-size:11px; color:var(--color-text-3); }
+      .model-card-mcs {
+        font-family:var(--font-mono); font-size:12px;
+        color:var(--color-text-2); margin-top:4px;
+      }
+
+      /* Sensitivity tornado chart container */
+      #sensitivity-chart-wrap { max-height:340px; position:relative; }
+    `;
+    document.head.appendChild(s);
+  })();
+
+  // ── Wizard controller ────────────────────────────────────────────────────────
+
+  const WizardController = {
+    currentStep: 1,
+    maxReached: 1,
+    indexConfig: {},   // accumulates across steps
+
+    next() {
+      if (!this.validate()) return false;
+      if (this.currentStep < 6) {
+        this.currentStep++;
+        this.maxReached = Math.max(this.maxReached, this.currentStep);
+        _renderStep();
+      }
+      return true;
+    },
+
+    back() {
+      if (this.currentStep > 1) {
+        this.currentStep--;
+        // Invalidate downstream sensitivity results when going back
+        if (this.currentStep <= 3) delete this.indexConfig.sensitivityResult;
+        _renderStep();
+      }
+    },
+
+    goTo(n) {
+      if (n <= this.maxReached) {
+        this.currentStep = n;
+        _renderStep();
+      }
+    },
+
+    validate() {
+      const step = this.currentStep;
+      if (step === 2 && !this.indexConfig.name) {
+        showToast('Enter a name for this index', 'warning'); return false;
+      }
+      if (step === 3) {
+        const total = _getWeightTotal();
+        if (Math.abs(total - 100) > 0.5) {
+          showToast(`Factor weights must sum to 100 (currently ${total.toFixed(0)})`, 'warning');
+          return false;
+        }
+      }
+      if (step === 4 && (!this.indexConfig.selected_models || this.indexConfig.selected_models.length === 0)) {
+        showToast('Select at least one model', 'warning'); return false;
+      }
+      return true;
+    },
+
+    reset() {
+      this.currentStep = 1;
+      this.maxReached  = 1;
+      this.indexConfig = {};
+      _renderStep();
+    },
+  };
+
+  // ── State ────────────────────────────────────────────────────────────────────
+  let _allModels   = [];   // all models from registry
+  let _allScores   = {};   // { modelId: [scoreRows] }
+  let _mcsDebounce = null;
+  let _sensitivityChart = null;
+
+  // ── Helpers ──────────────────────────────────────────────────────────────────
+
+  function _getWeightTotal() {
+    const cfg = WizardController.indexConfig;
+    const weights = cfg.factor_weights || {};
+    return Object.values(weights).reduce((a, b) => a + (Number(b) || 0), 0);
+  }
+
+  function _equalizeWeights() {
+    const schema = App.state.factorSchema || [];
+    const each = Math.floor(100 / schema.length);
+    const rem  = 100 - each * schema.length;
+    const w = {};
+    schema.forEach((f, i) => { w[f.factor_id] = each + (i === 0 ? rem : 0); });
+    WizardController.indexConfig.factor_weights = w;
+  }
+
+  function _computeMCSInline(modelScores, factorWeights) {
+    const baseline = App.state.baseline;
+    if (!baseline || !modelScores || modelScores.length === 0) return 0;
+
+    const subScores = {};
+    for (const s of modelScores) {
+      const b = baseline[s.sub_metric];
+      if (!b) continue;
+      let n = b.max === b.min ? 50 : ((s.raw_score - b.min) / (b.max - b.min)) * 100;
+      n = Math.max(0, Math.min(100, n));
+      if (b.invert) n = 100 - n;
+      subScores[s.sub_metric] = n;
+    }
+
+    let mcs = 0, totalW = 0;
+    for (const factor of (App.state.factorSchema || [])) {
+      const w = (factorWeights || {})[factor.factor_id] || 0;
+      if (w === 0) continue;
+      const vals = factor.sub_metrics.map(sm => subScores[sm.sub_metric_id]).filter(v => v != null);
+      if (!vals.length) continue;
+      mcs += (vals.reduce((a, b) => a + b, 0) / vals.length) * w;
+      totalW += w;
+    }
+    return totalW > 0 ? mcs / totalW : 0;
+  }
+
+  function _modelsPassingConstraints() {
+    const c = WizardController.indexConfig.hard_constraints || {};
+    return _allModels.filter(m => {
+      if (c.licenses?.length && !c.licenses.includes(m.license)) return false;
+      if (c.self_hostable && !m.tags?.includes('open-weight')) return false;
+      return true;
+    });
+  }
+
+  // ── Step renderers ───────────────────────────────────────────────────────────
+
+  function _renderStepSidebar() {
+    const steps = [
+      'Hard Constraints',
+      'Preset & Name',
+      'Factor Weights',
+      'Model Selection',
+      'Sensitivity',
+      'Review & Save',
+    ];
+    return `
+      <div id="wizard-steps">
+        ${steps.map((name, i) => {
+          const n = i + 1;
+          const cls = n === WizardController.currentStep ? 'active'
+            : n < WizardController.currentStep ? 'done'
+            : n <= WizardController.maxReached ? ''
+            : 'disabled';
+          return `
+            <div class="wizard-step-item ${cls}" data-goto="${n}">
+              <div class="step-num">${n < WizardController.currentStep ? '✓' : n}</div>
+              ${name}
+            </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  // Step 1: Hard Constraints
+  function _renderStep1() {
+    const c = WizardController.indexConfig.hard_constraints || {};
+    const licenses = ['MIT', 'Apache-2.0', 'Proprietary', 'Llama Community', 'Gemma'];
+    const passing = _modelsPassingConstraints().length;
+
+    return `
+      <div class="wizard-step-title">Hard Constraints</div>
+      <div class="wizard-step-desc">
+        Models that don't meet these requirements will be excluded from the index.
+      </div>
+
+      <div style="display:grid;gap:var(--space-4)">
+        <div>
+          <div class="filter-label" style="margin-bottom:var(--space-2)">Allowed Licenses</div>
+          <div class="pill-row">
+            ${licenses.map(l => `
+              <span class="pill ${(c.licenses||[]).includes(l)?'active':''}"
+                data-constraint-lic="${l}">${l}</span>`).join('')}
+          </div>
+        </div>
+
+        <label style="display:flex;align-items:center;gap:var(--space-3);font-size:13px">
+          <input type="checkbox" id="c-self-host" ${c.self_hostable?'checked':''}
+            style="accent-color:var(--color-accent);width:15px;height:15px">
+          Self-hostable only (open-weight models)
+        </label>
+
+        <div>
+          <div class="filter-label">Minimum context window</div>
+          <select id="c-context" style="margin-top:4px">
+            ${[0, 32000, 64000, 128000, 200000].map(v =>
+              `<option value="${v}" ${(c.min_context||0)===v?'selected':''}>
+                ${v === 0 ? 'Any' : (v/1000)+'K tokens'}
+              </option>`).join('')}
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:var(--space-5);padding:var(--space-3);background:var(--color-surface-2);
+        border-radius:var(--radius);font-size:13px;color:var(--color-text-2)">
+        <strong style="color:var(--color-text)">${passing}</strong> of ${_allModels.length} models pass current constraints
+      </div>`;
+  }
+
+  // Step 2: Preset + Name
+  function _renderStep2() {
+    const cfg = WizardController.indexConfig;
+    const presets = App.state.presets || [];
+    return `
+      <div class="wizard-step-title">Preset & Name</div>
+      <div class="wizard-step-desc">
+        Choose a use-case preset to pre-fill factor weights, then name your index.
+      </div>
+
+      <div style="display:grid;gap:var(--space-4)">
+        <div>
+          <div class="filter-label" style="margin-bottom:var(--space-3)">Use-case preset</div>
+          <div style="display:grid;gap:var(--space-2)">
+            ${[{ id: null, name: 'Custom (equal weights)', description: 'Start from scratch with equal weights' },
+               ...presets].map(p => `
+              <label style="display:flex;align-items:flex-start;gap:var(--space-3);
+                padding:var(--space-3);border:2px solid var(--color-border);border-radius:var(--radius-lg);
+                cursor:pointer;transition:border-color .15s"
+                class="${cfg.use_case_preset === (p.id||'custom') ? 'selected-preset' : ''}">
+                <input type="radio" name="preset" value="${p.id||'custom'}"
+                  ${cfg.use_case_preset===(p.id||'custom')?'checked':''}
+                  style="accent-color:var(--color-accent);margin-top:2px">
+                <div>
+                  <div style="font-weight:500;font-size:13px">${p.name}</div>
+                  <div style="font-size:12px;color:var(--color-text-3)">${p.description||''}</div>
+                </div>
+              </label>`).join('')}
+          </div>
+        </div>
+
+        <div>
+          <div class="filter-label" style="margin-bottom:4px">Index Name</div>
+          <input type="text" id="index-name" value="${cfg.name||''}"
+            placeholder="e.g. My Code Agent Index" style="width:100%">
+        </div>
+      </div>`;
+  }
+
+  // Step 3: Factor Weights
+  function _renderStep3() {
+    const cfg = WizardController.indexConfig;
+    const schema = App.state.factorSchema || [];
+    if (!cfg.factor_weights) _equalizeWeights();
+    const weights = cfg.factor_weights;
+    const total   = _getWeightTotal();
+
+    return `
+      <div class="wizard-step-title">Factor Weights</div>
+      <div class="wizard-step-desc">
+        Adjust how much each factor group contributes to the MCS.
+        Weights must sum to 100.
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4)">
+        <div>
+          <span style="font-size:13px;color:var(--color-text-2)">Total: </span>
+          <span id="weight-total" class="weight-total ${Math.abs(total-100)<=0.5?'ok':'bad'}">${total.toFixed(0)}/100</span>
+        </div>
+        <button class="btn-secondary" id="normalize-btn" style="font-size:12px;padding:4px 10px">
+          Normalize to 100
+        </button>
+      </div>
+
+      <div id="factor-sliders">
+        ${schema.map(f => {
+          const w = Math.round(weights[f.factor_id] || 0);
+          return `
+            <div class="factor-slider-row">
+              <div class="factor-label">
+                <span class="factor-dot" style="background:var(--factor-${f.factor_id})"></span>
+                ${f.label}
+              </div>
+              <input type="range" class="factor-slider" data-factor="${f.factor_id}"
+                min="0" max="50" step="1" value="${w}">
+              <span class="factor-weight-val" id="fw-val-${f.factor_id}">${w}</span>
+            </div>`;
+        }).join('')}
+      </div>
+
+      <div style="margin-top:var(--space-5)">
+        <div style="font-size:12px;font-weight:600;color:var(--color-text-3);
+          text-transform:uppercase;letter-spacing:.5px;margin-bottom:var(--space-2)">
+          Live MCS Preview
+          <span style="font-weight:400;color:var(--color-text-3)">(top 10, equal sub-weights)</span>
+        </div>
+        <div id="mcs-preview-wrap">
+          <table id="mcs-preview-table">
+            <thead><tr><th>#</th><th>Model</th><th>MCS</th></tr></thead>
+            <tbody id="mcs-preview-tbody"></tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+
+  // Step 4: Model Selection
+  function _renderStep4() {
+    const cfg = WizardController.indexConfig;
+    const passing  = _modelsPassingConstraints().map(m => m.model_id);
+    const excluded = _allModels.filter(m => !passing.includes(m.model_id));
+    const selected = new Set(cfg.selected_models || passing);
+    cfg.selected_models = [...selected];
+
+    const weights = cfg.factor_weights || {};
+    return `
+      <div class="wizard-step-title">Model Selection</div>
+      <div class="wizard-step-desc">
+        Select which models to include in this index.
+        Greyed-out models are excluded by your hard constraints.
+      </div>
+      <div style="margin-bottom:var(--space-3);font-size:13px;color:var(--color-text-2)">
+        <strong id="selected-count">${selected.size}</strong> selected
+        <button class="btn-ghost" id="select-all-btn" style="margin-left:var(--space-3);font-size:12px">Select all</button>
+        <button class="btn-ghost" id="deselect-all-btn" style="margin-left:var(--space-2);font-size:12px">Deselect all</button>
+      </div>
+      <div id="model-card-grid">
+        ${[..._allModels].sort((a,b) => {
+          const ma = _computeMCSInline(_allScores[a.model_id] || [], weights);
+          const mb = _computeMCSInline(_allScores[b.model_id] || [], weights);
+          return mb - ma;
+        }).map(m => {
+          const mcs = _computeMCSInline(_allScores[m.model_id] || [], weights);
+          const isExcluded = !passing.includes(m.model_id);
+          const isSelected = selected.has(m.model_id) && !isExcluded;
+          return `
+            <div class="model-card ${isExcluded?'excluded':isSelected?'selected':''}"
+              data-model="${m.model_id}" ${isExcluded?'title="Excluded by constraints"':''}>
+              <div class="model-card-name">${m.name}</div>
+              <div class="model-card-provider">${m.provider||''}</div>
+              <div class="model-card-mcs">MCS ${mcs.toFixed(1)}</div>
+              ${isExcluded?`<span class="badge badge-neutral" style="margin-top:4px">🔒 Excluded</span>`:''}
+            </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  // Step 5: Sensitivity Analysis
+  function _renderStep5() {
+    const result = WizardController.indexConfig.sensitivityResult;
+    return `
+      <div class="wizard-step-title">Sensitivity Analysis</div>
+      <div class="wizard-step-desc">
+        See how sensitive the ranking is to weight perturbations.
+        Run analysis to identify which factors most affect model rankings.
+      </div>
+
+      ${result ? _renderSensitivityResults(result) : `
+        <div style="text-align:center;padding:var(--space-10) 0">
+          <p style="color:var(--color-text-2);margin-bottom:var(--space-5)">
+            Click to analyze how rank-stable your current weight configuration is.
+          </p>
+          <button class="btn-primary" id="run-sensitivity-btn">Run Sensitivity Analysis</button>
+        </div>`}`;
+  }
+
+  function _renderSensitivityResults(result) {
+    const stabilityColor = result.rankStabilityLabel === 'Robust' ? 'badge-green'
+      : result.rankStabilityLabel === 'Moderate' ? 'badge-yellow' : 'badge-red';
+
+    return `
+      <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-5)">
+        <div style="font-size:24px;font-weight:700;font-family:var(--font-mono)">
+          ${result.rankStability.toFixed(0)}
+        </div>
+        <div>
+          <span class="badge ${stabilityColor}" style="font-size:13px;padding:3px 10px">
+            ${result.rankStabilityLabel}
+          </span>
+          <div style="font-size:12px;color:var(--color-text-3);margin-top:2px">Rank Stability Score</div>
+        </div>
+        <button class="btn-secondary" id="rerun-sensitivity-btn" style="margin-left:auto;font-size:12px">
+          Re-run
+        </button>
+      </div>
+
+      <div style="font-size:12px;font-weight:600;text-transform:uppercase;
+        letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-3)">
+        Factor Sensitivity (rank change when weight ±10)
+      </div>
+      <div id="sensitivity-chart-wrap">
+        <canvas id="sensitivity-chart" height="240"></canvas>
+      </div>
+
+      ${result.crossoverPoints && result.crossoverPoints.length > 0 ? `
+        <div style="margin-top:var(--space-5)">
+          <div style="font-size:12px;font-weight:600;text-transform:uppercase;
+            letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-3)">
+            Crossover Points
+          </div>
+          ${result.crossoverPoints.map(cp => `
+            <div style="font-size:13px;color:var(--color-text-2);padding:var(--space-2) 0;
+              border-bottom:1px solid var(--color-border)">
+              ${cp.modelA} ↔ ${cp.modelB} — swap at ±${cp.delta.toFixed(0)} on <strong>${cp.factorId}</strong>
+            </div>`).join('')}
+        </div>` : ''}
+
+      <p style="font-size:12px;color:var(--color-text-3);margin-top:var(--space-4)">
+        To adjust weights, go back to Step 3.
+      </p>`;
+  }
+
+  // Step 6: Review & Save
+  function _renderStep6() {
+    const cfg = WizardController.indexConfig;
+    const schema = App.state.factorSchema || [];
+    const weights = cfg.factor_weights || {};
+    const selected = cfg.selected_models || [];
+    const selectedModels = _allModels.filter(m => selected.includes(m.model_id));
+
+    // Compute final rankings
+    const ranked = selectedModels.map(m => ({
+      ...m,
+      mcs: _computeMCSInline(_allScores[m.model_id] || [], weights),
+    })).sort((a, b) => b.mcs - a.mcs);
+
+    return `
+      <div class="wizard-step-title">Review & Save</div>
+      <div class="wizard-step-desc">
+        Review your index configuration before saving.
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-5);margin-bottom:var(--space-5)">
+        <div class="card">
+          <div style="font-size:12px;font-weight:600;text-transform:uppercase;
+            letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-3)">Configuration</div>
+          <div class="prov-row">
+            <span class="prov-key">Name</span>
+            <span class="prov-val">${cfg.name || '—'}</span>
+          </div>
+          <div class="prov-row">
+            <span class="prov-key">Preset</span>
+            <span class="prov-val">${cfg.use_case_preset || 'Custom'}</span>
+          </div>
+          <div class="prov-row">
+            <span class="prov-key">Models</span>
+            <span class="prov-val">${selected.length} selected</span>
+          </div>
+          ${cfg.hard_constraints?.licenses?.length ? `
+          <div class="prov-row">
+            <span class="prov-key">Licenses</span>
+            <span class="prov-val">${cfg.hard_constraints.licenses.join(', ')}</span>
+          </div>` : ''}
+        </div>
+
+        <div class="card">
+          <div style="font-size:12px;font-weight:600;text-transform:uppercase;
+            letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-3)">
+            Top Weights
+          </div>
+          ${schema
+            .map(f => ({ id: f.factor_id, label: f.label, w: weights[f.factor_id] || 0 }))
+            .sort((a, b) => b.w - a.w)
+            .slice(0, 5)
+            .map(f => `
+              <div class="factor-slider-row" style="padding:3px 0">
+                <div class="factor-label" style="font-size:12px">
+                  <span class="factor-dot" style="background:var(--factor-${f.id})"></span>
+                  ${f.label}
+                </div>
+                <span class="factor-weight-val">${Math.round(f.w)}</span>
+              </div>`).join('')}
+        </div>
+      </div>
+
+      <div style="font-size:12px;font-weight:600;text-transform:uppercase;
+        letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-3)">
+        Final Rankings
+      </div>
+      <div class="registry-table-wrap">
+        <table class="registry-table">
+          <thead>
+            <tr><th>#</th><th>Model</th><th>MCS</th><th>Provider</th></tr>
+          </thead>
+          <tbody>
+            ${ranked.map((m, i) => `
+              <tr>
+                <td style="font-family:var(--font-mono);color:var(--color-text-3)">${i+1}</td>
+                <td><div class="model-name">${m.name}</div></td>
+                <td>${scoreBar(m.mcs)}</td>
+                <td style="color:var(--color-text-3);font-size:12px">${m.provider||''}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display:flex;gap:var(--space-3);margin-top:var(--space-5)">
+        <button class="btn-primary" id="save-index-btn">
+          <i data-lucide="save" style="width:13px;height:13px;vertical-align:-2px"></i>
+          Save Index
+        </button>
+        <button class="btn-secondary" id="export-report-btn">
+          <i data-lucide="file-text" style="width:13px;height:13px;vertical-align:-2px"></i>
+          Export Markdown Report
+        </button>
+      </div>`;
+  }
+
+  // ── Render step ──────────────────────────────────────────────────────────────
+
+  function _renderStep() {
+    const container = document.getElementById('view-index-builder');
+    const step = WizardController.currentStep;
+    const stepContent = [_renderStep1, _renderStep2, _renderStep3, _renderStep4, _renderStep5, _renderStep6][step - 1]();
+
+    container.innerHTML = `
+      <div class="view-header">
+        <div>
+          <div class="view-title">Index Builder</div>
+          <div class="view-subtitle">Build a custom ranked index of AI models</div>
+        </div>
+        <button class="btn-secondary" id="wizard-reset-btn">New Index</button>
+      </div>
+
+      <div id="wizard-shell">
+        ${_renderStepSidebar()}
+
+        <div id="wizard-body">
+          ${stepContent}
+
+          <div id="wizard-nav">
+            <button class="btn-secondary" id="wizard-back-btn" ${step===1?'disabled':''}>
+              ← Back
+            </button>
+            <div></div>
+            ${step < 6
+              ? `<button class="btn-primary" id="wizard-next-btn">
+                  ${step === 5 ? 'Review →' : 'Next →'}
+                </button>`
+              : ''}
+          </div>
+        </div>
+      </div>`;
+
+    lucide.createIcons();
+    _bindStepEvents(step);
+
+    // Post-render actions
+    if (step === 3) _updateMCSPreview();
+    if (step === 5 && WizardController.indexConfig.sensitivityResult) {
+      // Chart needs DOM, draw after render
+      setTimeout(() => _drawSensitivityChart(WizardController.indexConfig.sensitivityResult), 50);
+    }
+  }
+
+  // ── Event binding per step ───────────────────────────────────────────────────
+
+  function _bindStepEvents(step) {
+    const backBtn = document.getElementById('wizard-back-btn');
+    const nextBtn = document.getElementById('wizard-next-btn');
+    const resetBtn = document.getElementById('wizard-reset-btn');
+
+    if (backBtn) backBtn.addEventListener('click', () => WizardController.back());
+    if (nextBtn) nextBtn.addEventListener('click', () => {
+      _collectStepData(step);
+      WizardController.next();
+    });
+    if (resetBtn) resetBtn.addEventListener('click', () => WizardController.reset());
+
+    // Step sidebar click navigation
+    document.querySelectorAll('.wizard-step-item[data-goto]').forEach(el => {
+      el.addEventListener('click', () => {
+        const n = parseInt(el.dataset.goto, 10);
+        _collectStepData(WizardController.currentStep);
+        WizardController.goTo(n);
+      });
+    });
+
+    if (step === 1) {
+      // License pills
+      document.querySelectorAll('[data-constraint-lic]').forEach(pill => {
+        pill.addEventListener('click', () => {
+          pill.classList.toggle('active');
+          const c = WizardController.indexConfig.hard_constraints ||= {};
+          c.licenses = [...document.querySelectorAll('[data-constraint-lic].active')]
+            .map(p => p.dataset.constraintLic);
+        });
+      });
+      document.getElementById('c-self-host')?.addEventListener('change', e => {
+        (WizardController.indexConfig.hard_constraints ||= {}).self_hostable = e.target.checked;
+      });
+      document.getElementById('c-context')?.addEventListener('change', e => {
+        (WizardController.indexConfig.hard_constraints ||= {}).min_context = parseInt(e.target.value, 10);
+      });
+    }
+
+    if (step === 3) {
+      // Factor sliders → debounced MCS preview
+      document.querySelectorAll('.factor-slider').forEach(slider => {
+        slider.addEventListener('input', () => {
+          const id = slider.dataset.factor;
+          const val = parseInt(slider.value, 10);
+          WizardController.indexConfig.factor_weights[id] = val;
+          document.getElementById(`fw-val-${id}`).textContent = val;
+          const total = _getWeightTotal();
+          const totalEl = document.getElementById('weight-total');
+          totalEl.textContent = `${total.toFixed(0)}/100`;
+          totalEl.className = `weight-total ${Math.abs(total-100)<=0.5?'ok':'bad'}`;
+          // Debounced preview
+          clearTimeout(_mcsDebounce);
+          _mcsDebounce = setTimeout(_updateMCSPreview, 300);
+        });
+      });
+
+      document.getElementById('normalize-btn')?.addEventListener('click', () => {
+        const total = _getWeightTotal();
+        if (total === 0) return;
+        const scale = 100 / total;
+        const schema = App.state.factorSchema || [];
+        schema.forEach(f => {
+          const v = Math.round((WizardController.indexConfig.factor_weights[f.factor_id] || 0) * scale);
+          WizardController.indexConfig.factor_weights[f.factor_id] = v;
+          const slider = document.querySelector(`.factor-slider[data-factor="${f.factor_id}"]`);
+          const valEl  = document.getElementById(`fw-val-${f.factor_id}`);
+          if (slider) slider.value = v;
+          if (valEl)  valEl.textContent = v;
+        });
+        const totalEl = document.getElementById('weight-total');
+        totalEl.textContent = '100/100';
+        totalEl.className = 'weight-total ok';
+        _updateMCSPreview();
+      });
+    }
+
+    if (step === 4) {
+      // Model card selection
+      document.querySelectorAll('.model-card:not(.excluded)').forEach(card => {
+        card.addEventListener('click', () => {
+          card.classList.toggle('selected');
+          const selected = new Set(WizardController.indexConfig.selected_models || []);
+          const id = card.dataset.model;
+          card.classList.contains('selected') ? selected.add(id) : selected.delete(id);
+          WizardController.indexConfig.selected_models = [...selected];
+          document.getElementById('selected-count').textContent = selected.size;
+        });
+      });
+
+      document.getElementById('select-all-btn')?.addEventListener('click', () => {
+        const passing = _modelsPassingConstraints().map(m => m.model_id);
+        WizardController.indexConfig.selected_models = passing;
+        document.querySelectorAll('.model-card:not(.excluded)').forEach(c => c.classList.add('selected'));
+        document.getElementById('selected-count').textContent = passing.length;
+      });
+
+      document.getElementById('deselect-all-btn')?.addEventListener('click', () => {
+        WizardController.indexConfig.selected_models = [];
+        document.querySelectorAll('.model-card:not(.excluded)').forEach(c => c.classList.remove('selected'));
+        document.getElementById('selected-count').textContent = 0;
+      });
+    }
+
+    if (step === 5) {
+      const runBtn   = document.getElementById('run-sensitivity-btn');
+      const rerunBtn = document.getElementById('rerun-sensitivity-btn');
+      const handler  = async () => {
+        if (runBtn) runBtn.disabled = true;
+        if (rerunBtn) rerunBtn.disabled = true;
+        try {
+          const selectedIds = WizardController.indexConfig.selected_models || [];
+          const allModelScores = selectedIds.map(id => ({
+            modelId: id,
+            scores: _allScores[id] || [],
+          }));
+          const result = await window.modelIndex.eval.runSensitivity(
+            allModelScores,
+            WizardController.indexConfig.factor_weights,
+            null
+          );
+          WizardController.indexConfig.sensitivityResult = result;
+          _renderStep();
+          setTimeout(() => _drawSensitivityChart(result), 50);
+        } catch (e) {
+          showToast('Sensitivity analysis failed: ' + e.message, 'error');
+        }
+      };
+      if (runBtn)   runBtn.addEventListener('click', handler);
+      if (rerunBtn) rerunBtn.addEventListener('click', handler);
+    }
+
+    if (step === 6) {
+      document.getElementById('save-index-btn')?.addEventListener('click', _saveIndex);
+      document.getElementById('export-report-btn')?.addEventListener('click', _exportReport);
+    }
+  }
+
+  // ── Collect step data ────────────────────────────────────────────────────────
+
+  function _collectStepData(step) {
+    if (step === 2) {
+      const nameEl = document.getElementById('index-name');
+      if (nameEl) WizardController.indexConfig.name = nameEl.value.trim();
+      const preset = document.querySelector('input[name="preset"]:checked');
+      if (preset) {
+        const presetId = preset.value === 'custom' ? null : preset.value;
+        WizardController.indexConfig.use_case_preset = presetId || 'custom';
+        if (presetId) {
+          const p = (App.state.presets || []).find(p => p.id === presetId);
+          if (p) WizardController.indexConfig.factor_weights = { ...p.factor_weights };
+        } else {
+          if (!WizardController.indexConfig.factor_weights) _equalizeWeights();
+        }
+      }
+    }
+  }
+
+  // ── Live MCS preview ─────────────────────────────────────────────────────────
+
+  function _updateMCSPreview() {
+    const tbody = document.getElementById('mcs-preview-tbody');
+    if (!tbody) return;
+    const weights = WizardController.indexConfig.factor_weights || {};
+    const ranked = _allModels
+      .map(m => ({ ...m, mcs: _computeMCSInline(_allScores[m.model_id] || [], weights) }))
+      .sort((a, b) => b.mcs - a.mcs)
+      .slice(0, 10);
+
+    tbody.innerHTML = ranked.map((m, i) => `
+      <tr>
+        <td style="color:var(--color-text-3);font-family:var(--font-mono)">${i+1}</td>
+        <td>${m.name}</td>
+        <td style="min-width:100px">${scoreBar(m.mcs, 'var(--color-accent)')}</td>
+      </tr>`).join('');
+  }
+
+  // ── Sensitivity chart ────────────────────────────────────────────────────────
+
+  function _drawSensitivityChart(result) {
+    const canvas = document.getElementById('sensitivity-chart');
+    if (!canvas || !result?.perFactor) return;
+    if (_sensitivityChart) { _sensitivityChart.destroy(); _sensitivityChart = null; }
+
+    const schema = App.state.factorSchema || [];
+    const labels  = [];
+    const plusData = [];
+    const minusData = [];
+
+    for (const factor of schema) {
+      const fid = factor.factor_id;
+      const pf  = result.perFactor[fid];
+      if (!pf) continue;
+      labels.push(factor.label);
+      const avgRankChange = Object.values(pf).reduce((sum, v) => sum + Math.abs(v.rankDelta || 0), 0)
+        / Math.max(Object.values(pf).length, 1);
+      plusData.push(avgRankChange);
+      minusData.push(-avgRankChange);
+    }
+
+    _sensitivityChart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: '+10', data: plusData,  backgroundColor: 'rgba(59,91,219,.65)', borderRadius: 3 },
+          { label: '−10', data: minusData, backgroundColor: 'rgba(201,42,42,.55)',  borderRadius: 3 },
+        ],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: { legend: { display: true, labels: { font: { size: 11 } } } },
+        scales: {
+          x: {
+            title: { display: true, text: 'Avg rank change', font: { size: 11 } },
+            grid: { color: 'rgba(128,128,128,.1)' },
+          },
+          y: { grid: { display: false } },
+        },
+      },
+    });
+  }
+
+  // ── Save & Export ────────────────────────────────────────────────────────────
+
+  async function _saveIndex() {
+    const cfg = WizardController.indexConfig;
+    const btn = document.getElementById('save-index-btn');
+    if (btn) btn.disabled = true;
+    try {
+      const { id } = await window.modelIndex.db.saveIndex({
+        name:              cfg.name,
+        use_case_preset:   cfg.use_case_preset || 'custom',
+        factor_weights:    cfg.factor_weights,
+        hard_constraints:  cfg.hard_constraints || {},
+        selected_models:   cfg.selected_models || [],
+        index_mode:        'weighted',
+      });
+      await window.modelIndex.db.saveIndexVersion(id, cfg);
+      showToast(`Index "${cfg.name}" saved`, 'success');
+      WizardController.reset();
+    } catch (e) {
+      showToast('Failed to save index: ' + e.message, 'error');
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  async function _exportReport() {
+    const cfg = WizardController.indexConfig;
+    const weights = cfg.factor_weights || {};
+    const selected = (cfg.selected_models || []);
+    const ranked = _allModels
+      .filter(m => selected.includes(m.model_id))
+      .map(m => ({ ...m, mcs: _computeMCSInline(_allScores[m.model_id] || [], weights) }))
+      .sort((a, b) => b.mcs - a.mcs);
+
+    const schema = App.state.factorSchema || [];
+    const topWeights = schema
+      .map(f => `${f.label}: ${Math.round(weights[f.factor_id] || 0)}`)
+      .filter(s => !s.endsWith(': 0'))
+      .join(' | ');
+
+    const table = ranked.map((m, i) =>
+      `| ${i+1} | ${m.name} | ${m.provider||'—'} | ${m.mcs.toFixed(1)} | ${m.license||'—'} |`
+    ).join('\n');
+
+    const md = `# ModelIndex Report: ${cfg.name || 'Unnamed Index'}
+
+**Generated:** ${new Date().toISOString().slice(0,10)}
+**Use-case:** ${cfg.use_case_preset || 'Custom'}
+**Weights:** ${topWeights}
+
+## Rankings
+
+| Rank | Model | Provider | MCS | License |
+|------|-------|----------|-----|---------|
+${table}
+
+---
+*Generated by ModelIndex. Scores from T1 public benchmarks. Not a substitute for independent evaluation.*
+`;
+
+    await window.modelIndex.shell.saveFile(
+      `${(cfg.name||'index').replace(/\s+/g,'-').toLowerCase()}-report.md`,
+      md,
+      [{ name: 'Markdown', extensions: ['md'] }]
+    );
+  }
+
+  // ── Public API ───────────────────────────────────────────────────────────────
+
+  App.views['index-builder'] = {
+    async mount() {
+      // Pre-load model data so steps are responsive
+      try {
+        const models = await window.modelIndex.db.getModels({});
+        _allModels = models;
+        const scoreResults = await Promise.all(
+          models.map(m => window.modelIndex.db.getScores(m.model_id))
+        );
+        _allScores = {};
+        models.forEach((m, i) => { _allScores[m.model_id] = scoreResults[i] || []; });
+      } catch (_) { /* non-fatal */ }
+    },
+
+    onEnter() {
+      _renderStep();
+    },
+  };
+})();
+
+// ════════════════════════════════════════════════════════════════════════════════
+// VIEW: My Indexes  (placeholder — populated via Phase 8)
+// ════════════════════════════════════════════════════════════════════════════════
+(function MyIndexesView() {
+  App.views['my-indexes'] = {
+    mount() {},
+    async onEnter() {
+      const container = document.getElementById('view-my-indexes');
+      try {
+        const indexes = await window.modelIndex.db.getIndexes();
+        if (!indexes || indexes.length === 0) {
+          container.innerHTML = `
+            <div class="placeholder-view">
+              <i data-lucide="bookmark"></i>
+              <p>No saved indexes yet. Use the Index Builder to create one.</p>
+            </div>`;
+        } else {
+          container.innerHTML = `
+            <div class="view-header">
+              <div class="view-title">My Indexes</div>
+            </div>
+            <div style="display:grid;gap:var(--space-3)">
+              ${indexes.map(idx => `
+                <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+                  <div>
+                    <div style="font-weight:600">${idx.name}</div>
+                    <div style="font-size:12px;color:var(--color-text-3)">
+                      ${idx.use_case_preset || 'Custom'} ·
+                      ${(JSON.parse(idx.selected_models||'[]')).length} models ·
+                      v${idx.version}
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:var(--space-2)">
+                    <button class="btn-secondary" style="font-size:12px"
+                      onclick="showToast('Open in builder — coming in next update','info')">
+                      Open
+                    </button>
+                    <button class="btn-danger" style="font-size:12px"
+                      onclick="window.modelIndex.db.deleteIndex('${idx.id}').then(()=>App.views['my-indexes'].onEnter())">
+                      Delete
+                    </button>
+                  </div>
+                </div>`).join('')}
+            </div>`;
+        }
+        lucide.createIcons();
+      } catch (err) {
+        console.error('My Indexes error:', err);
+      }
+    },
+  };
+})();
+// ════════════════════════════════════════════════════════════════════════════════
+// FEATURE: Comparison Report
+// ════════════════════════════════════════════════════════════════════════════════
+const ComparisonReport = (function() {
+
+  function generate(models, weights, allScores, baseline, factorSchema) {
+    const schema = factorSchema || App.state.factorSchema || [];
+    const bl     = baseline    || App.state.baseline    || {};
+
+    function mcsInline(modelScores) {
+      const subScores = {};
+      for (const s of modelScores) {
+        const b = bl[s.sub_metric];
+        if (!b) continue;
+        let n = b.max === b.min ? 50 : ((s.raw_score - b.min) / (b.max - b.min)) * 100;
+        n = Math.max(0, Math.min(100, n));
+        if (b.invert) n = 100 - n;
+        subScores[s.sub_metric] = n;
+      }
+      let mcs = 0, totalW = 0;
+      for (const f of schema) {
+        const w = (weights || {})[f.factor_id] || 0;
+        if (!w) continue;
+        const vals = f.sub_metrics.map(sm => subScores[sm.sub_metric_id]).filter(v => v != null);
+        if (!vals.length) continue;
+        mcs += (vals.reduce((a, b) => a + b, 0) / vals.length) * w;
+        totalW += w;
+      }
+      return totalW > 0 ? mcs / totalW : 0;
+    }
+
+    const ranked = models.map(m => ({
+      ...m,
+      mcs: mcsInline(allScores[m.model_id] || []),
+      scores: allScores[m.model_id] || [],
+    })).sort((a, b) => b.mcs - a.mcs);
+
+    const topWeights = schema
+      .filter(f => (weights||{})[f.factor_id] > 0)
+      .sort((a, b) => (weights[b.factor_id]||0) - (weights[a.factor_id]||0))
+      .slice(0, 5)
+      .map(f => `${f.label} (${Math.round(weights[f.factor_id]||0)})`)
+      .join(', ');
+
+    // Ranked table
+    const tableRows = ranked.map((m, i) => {
+      const factorCols = schema.map(f => {
+        const subs = m.scores.filter(s => s.factor_group === f.factor_id);
+        if (!subs.length) return '—';
+        const vals = subs.map(s => {
+          const b = bl[s.sub_metric];
+          if (!b) return null;
+          let n = b.max === b.min ? 50 : ((s.raw_score - b.min) / (b.max - b.min)) * 100;
+          n = Math.max(0, Math.min(100, n));
+          if (b.invert) n = 100 - n;
+          return n;
+        }).filter(v => v != null);
+        return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : '—';
+      });
+      return `| ${i+1} | ${m.name} | ${m.provider||'—'} | ${m.mcs.toFixed(1)} | ${factorCols.join(' | ')} |`;
+    }).join('\n');
+
+    const factorHeaders = schema.map(f => f.tag).join(' | ');
+    const factorSep     = schema.map(() => '---').join(' | ');
+
+    // Provenance footnotes
+    const sources = new Set();
+    for (const m of ranked) {
+      for (const s of m.scores) {
+        if (s.benchmark_name && s.benchmark_url) {
+          sources.add(`[${s.benchmark_name}](${s.benchmark_url})`);
+        }
+      }
+    }
+
+    // Contamination warnings
+    const contaminated = [];
+    for (const m of ranked) {
+      for (const s of m.scores) {
+        if (s.contamination_flag) contaminated.push(`${m.name} / ${s.sub_metric}`);
+      }
+    }
+
+    // Staleness warnings
+    const stale = [];
+    for (const m of ranked) {
+      for (const s of m.scores) {
+        if (s.fetched_at) {
+          const ageH = (Date.now() - new Date(s.fetched_at).getTime()) / 3600000;
+          if (ageH > 168) stale.push(`${m.name} / ${s.sub_metric} (${Math.round(ageH/24)}d old)`);
+        }
+      }
+    }
+
+    const md = `# ModelIndex Comparison Report
+
+**Generated:** ${new Date().toISOString().slice(0,16).replace('T',' ')} UTC
+**Top factors:** ${topWeights || 'Equal weights'}
+**Models compared:** ${ranked.length}
+
+## Ranked Results
+
+| # | Model | Provider | MCS | ${factorHeaders} |
+|---|-------|----------|-----|${factorSep}|
+${tableRows}
+
+## Data Sources
+
+${[...sources].map(s => `- ${s}`).join('\n') || '- No benchmark sources recorded'}
+
+${contaminated.length ? `## ⚠️ Contamination Risk\n\nThe following sub-metrics have elevated contamination risk:\n\n${contaminated.map(c=>`- ${c}`).join('\n')}` : ''}
+
+${stale.length ? `## ⚠️ Stale Data Warnings\n\nThe following scores are more than 7 days old:\n\n${stale.map(s=>`- ${s}`).join('\n')}` : ''}
+
+---
+*Generated by ModelIndex. Scores sourced from public benchmarks (T1 tier).
+Results reflect model capability at time of data collection, not current versions.
+This report is not a substitute for task-specific evaluation.*
+`;
+    return md;
+  }
+
+  return { generate };
+})();
+
+// ════════════════════════════════════════════════════════════════════════════════
+// VIEW: Settings
+// ════════════════════════════════════════════════════════════════════════════════
+(function SettingsView() {
+
+  // ── CSS ────────────────────────────────────────────────────────────────────
+  (function injectStyles() {
+    const s = document.createElement('style');
+    s.textContent = `
+      .settings-section {
+        background:var(--color-surface);
+        border:1px solid var(--color-border);
+        border-radius:var(--radius-lg);
+        padding:var(--space-5);
+        margin-bottom:var(--space-4);
+      }
+      .settings-section-title {
+        font-size:14px; font-weight:600; margin-bottom:var(--space-4);
+        display:flex; align-items:center; gap:var(--space-2);
+      }
+      .settings-row {
+        display:flex; justify-content:space-between; align-items:center;
+        padding:var(--space-3) 0; border-bottom:1px solid var(--color-border);
+        font-size:13px;
+      }
+      .settings-row:last-child { border-bottom:none; }
+      .settings-row-label { color:var(--color-text-2); }
+      .settings-row-value { font-weight:500; text-align:right; }
+
+      /* Connector table */
+      .connector-table { width:100%; border-collapse:collapse; font-size:12px; }
+      .connector-table th {
+        text-align:left; padding:var(--space-2);
+        font-size:11px; font-weight:600; color:var(--color-text-3);
+        text-transform:uppercase; letter-spacing:.3px;
+        border-bottom:1px solid var(--color-border);
+      }
+      .connector-table td {
+        padding:var(--space-2); border-bottom:1px solid var(--color-border);
+        vertical-align:middle;
+      }
+      .connector-table tr:last-child td { border-bottom:none; }
+
+      /* Status chip */
+      .chip { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:500; }
+      .chip-ok       { background:var(--color-success-bg); color:var(--color-success); }
+      .chip-error    { background:var(--color-danger-bg);  color:var(--color-danger); }
+      .chip-syncing  { background:var(--color-accent-light); color:var(--color-accent); }
+      .chip-disabled { background:var(--color-surface-2);  color:var(--color-text-3); }
+      .chip-manual   { background:var(--color-warning-bg); color:var(--color-warning); }
+
+      /* Sync log */
+      .sync-log-row { display:flex; gap:var(--space-3); padding:var(--space-2) 0;
+        border-bottom:1px solid var(--color-border); font-size:12px; }
+      .sync-log-row:last-child { border-bottom:none; }
+    `;
+    document.head.appendChild(s);
+  })();
+
+  // ── Render ───────────────────────────────────────────────────────────────────
+
+  async function _render() {
+    const container = document.getElementById('view-settings');
+    container.innerHTML = `
+      <div class="view-header">
+        <div class="view-title">Settings</div>
+      </div>
+      <div id="settings-body" style="max-width:860px">
+        <div class="placeholder-view">
+          <i data-lucide="loader-2" style="animation:spin 1s linear infinite"></i>
+        </div>
+      </div>`;
+    lucide.createIcons();
+
+    try {
+      const [connectorStatuses, syncLog, appVersion] = await Promise.all([
+        window.modelIndex.sync.getConnectorStatuses(),
+        window.modelIndex.db.getSyncLog(null, 50),
+        window.modelIndex.shell.getAppVersion(),
+      ]);
+      _renderBody(connectorStatuses, syncLog, appVersion);
+    } catch (err) {
+      console.error('Settings render error:', err);
+      showToast('Failed to load settings', 'error');
+    }
+  }
+
+  function _renderBody(connectorStatuses, syncLog, appVersion) {
+    const body = document.getElementById('settings-body');
+
+    body.innerHTML = `
+      <!-- Data Sources -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <i data-lucide="database" style="width:15px;height:15px"></i>
+          Data Sources
+        </div>
+        <table class="connector-table">
+          <thead>
+            <tr>
+              <th>Connector</th>
+              <th>Tier</th>
+              <th>Schedule</th>
+              <th>Last Synced</th>
+              <th>Rows</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(connectorStatuses || []).map(c => {
+              const last = c.lastSync;
+              const lastSyncStr = last?.finished_at
+                ? new Date(last.finished_at).toLocaleString()
+                : '—';
+              const statusCls = c.isRunning ? 'chip-syncing'
+                : last?.status === 'success' ? 'chip-ok'
+                : last?.status === 'error'   ? 'chip-error'
+                : c.tier === 'T2'            ? 'chip-disabled'
+                : c.tier === 'T3'            ? 'chip-manual'
+                : 'chip-disabled';
+              const statusLabel = c.isRunning ? 'Syncing…'
+                : last?.status === 'success' ? 'OK'
+                : last?.status === 'error'   ? 'Error'
+                : c.tier === 'T2'            ? 'Disabled'
+                : c.tier === 'T3'            ? 'Manual'
+                : 'Never';
+              const importBtn = c.tier === 'T3'
+                ? `<button class="btn-secondary" data-import="${c.connectorId}"
+                    style="font-size:11px;padding:2px 8px">Import File</button>`
+                : `<button class="btn-secondary" data-sync="${c.connectorId}"
+                    style="font-size:11px;padding:2px 8px" ${c.tier!=='T1'?'disabled':''}>Sync</button>`;
+              return `
+                <tr>
+                  <td style="font-weight:500">${c.displayName}</td>
+                  <td><span class="badge badge-accent">${c.tier}</span></td>
+                  <td style="color:var(--color-text-3);font-family:var(--font-mono);font-size:11px">
+                    ${c.schedule === 'manual' ? '—' : c.schedule}
+                  </td>
+                  <td style="color:var(--color-text-3)">${lastSyncStr}</td>
+                  <td style="font-family:var(--font-mono)">
+                    ${last?.rows_upserted != null ? last.rows_upserted : '—'}
+                  </td>
+                  <td><span class="chip ${statusCls}">${statusLabel}</span></td>
+                  <td>${importBtn}</td>
+                </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+        <div style="margin-top:var(--space-3)">
+          <button class="btn-primary" id="sync-all-settings-btn">
+            <i data-lucide="refresh-cw" style="width:13px;height:13px;vertical-align:-2px"></i>
+            Sync All T1
+          </button>
+        </div>
+      </div>
+
+      <!-- Sync Log -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <i data-lucide="scroll-text" style="width:15px;height:15px"></i>
+          Sync Log <span style="font-size:12px;font-weight:400;color:var(--color-text-3)">(last 50 events)</span>
+        </div>
+        <div style="max-height:240px;overflow-y:auto">
+          ${(syncLog || []).length === 0
+            ? `<p style="color:var(--color-text-3);font-size:13px">No sync events recorded yet.</p>`
+            : (syncLog || []).map(e => `
+              <div class="sync-log-row">
+                <span style="color:var(--color-text-3);font-family:var(--font-mono);flex-shrink:0">
+                  ${e.finished_at ? new Date(e.finished_at).toLocaleString() : '?'}
+                </span>
+                <span style="font-weight:500">${e.connector_id}</span>
+                <span class="chip ${e.status==='success'?'chip-ok':'chip-error'}">${e.status}</span>
+                ${e.rows_upserted != null ? `<span style="color:var(--color-text-3)">${e.rows_upserted} rows</span>` : ''}
+                ${e.error_msg ? `<span style="color:var(--color-danger);flex:1;overflow:hidden;text-overflow:ellipsis">${e.error_msg}</span>` : ''}
+              </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Database -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <i data-lucide="hard-drive" style="width:15px;height:15px"></i>
+          Database
+        </div>
+        <div class="settings-row">
+          <span class="settings-row-label">Backup database</span>
+          <button class="btn-secondary" id="backup-btn">
+            <i data-lucide="download" style="width:13px;height:13px;vertical-align:-2px"></i>
+            Backup…
+          </button>
+        </div>
+        <div class="settings-row">
+          <span class="settings-row-label">Restore from backup</span>
+          <button class="btn-secondary" id="restore-btn">
+            <i data-lucide="upload" style="width:13px;height:13px;vertical-align:-2px"></i>
+            Restore…
+          </button>
+        </div>
+      </div>
+
+      <!-- Index Import -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <i data-lucide="file-input" style="width:15px;height:15px"></i>
+          Import Index
+        </div>
+        <p style="font-size:13px;color:var(--color-text-2);margin-bottom:var(--space-3)">
+          Import a <code>.modelindex-indexes</code> or <code>modelindex.config.json</code> file
+          shared by another user.
+        </p>
+        <button class="btn-secondary" id="import-index-btn">
+          <i data-lucide="upload" style="width:13px;height:13px;vertical-align:-2px"></i>
+          Import Index File…
+        </button>
+      </div>
+
+      <!-- Manual Cost Management -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <i data-lucide="dollar-sign" style="width:15px;height:15px"></i>
+          Manual Pricing Entries
+        </div>
+        <div id="pricing-list">
+          <p style="font-size:13px;color:var(--color-text-3)">Loading…</p>
+        </div>
+      </div>
+
+      <!-- App Info -->
+      <div class="settings-section">
+        <div class="settings-section-title">
+          <i data-lucide="info" style="width:15px;height:15px"></i>
+          About
+        </div>
+        <div class="settings-row">
+          <span class="settings-row-label">Version</span>
+          <span class="settings-row-value">${appVersion || '0.1.0-alpha'}</span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-row-label">License</span>
+          <span class="settings-row-value">MIT</span>
+        </div>
+      </div>
+    `;
+
+    lucide.createIcons();
+    _loadPricingList();
+    _bindSettingsEvents();
+  }
+
+  async function _loadPricingList() {
+    const container = document.getElementById('pricing-list');
+    if (!container) return;
+    try {
+      const rows = await window.modelIndex.db.getAllUserPricing();
+      if (!rows || rows.length === 0) {
+        container.innerHTML = `<p style="font-size:13px;color:var(--color-text-3)">
+          No manual pricing entries. Click a cost cell in the Registry to add one.</p>`;
+        return;
+      }
+      container.innerHTML = `
+        <table class="connector-table">
+          <thead><tr><th>Model</th><th>Input $/1M</th><th>Output $/1M</th><th>Source</th><th></th></tr></thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td style="font-weight:500">${r.model_id}</td>
+                <td style="font-family:var(--font-mono)">$${r.input_cost_per_1m}</td>
+                <td style="font-family:var(--font-mono)">$${r.output_cost_per_1m}</td>
+                <td style="color:var(--color-text-3)">${r.source_url
+                  ? `<a href="#" onclick="window.modelIndex.shell.openExternal('${r.source_url}');return false">Link</a>`
+                  : '—'}</td>
+                <td>
+                  <button class="btn-ghost" data-delete-pricing="${r.model_id}"
+                    style="font-size:12px;color:var(--color-danger)">Delete</button>
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>`;
+
+      container.querySelectorAll('[data-delete-pricing]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await window.modelIndex.db.deleteUserPricing(btn.dataset.deletePricing);
+          _loadPricingList();
+          showToast('Pricing entry deleted', 'success');
+        });
+      });
+    } catch (e) {
+      container.innerHTML = `<p style="font-size:13px;color:var(--color-danger)">Failed to load pricing</p>`;
+    }
+  }
+
+  function _bindSettingsEvents() {
+    // Sync All
+    document.getElementById('sync-all-settings-btn')?.addEventListener('click', async () => {
+      await window.modelIndex.sync.triggerAll();
+      showToast('Sync triggered for all T1 connectors', 'success');
+    });
+
+    // Per-connector sync buttons
+    document.querySelectorAll('[data-sync]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        try {
+          await window.modelIndex.sync.triggerManualSync(btn.dataset.sync);
+          showToast(`Sync triggered for ${btn.dataset.sync}`, 'success');
+        } catch (e) {
+          showToast('Sync failed: ' + e.message, 'error');
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    });
+
+    // Per-connector import buttons (T3 / HarmBench)
+    document.querySelectorAll('[data-import]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const fileContent = await window.modelIndex.shell.readFile([
+          { name: 'JSON', extensions: ['json'] }
+        ]);
+        if (!fileContent) return;
+        try {
+          // write to temp path and call importFile
+          showToast(`Import for ${btn.dataset.import} — parsing…`, 'info');
+          const parsed = JSON.parse(fileContent);
+          // Validate through harmbench adapter locally (adapter is main-process side)
+          // We call sync:importFile IPC (registered by sync-scheduler)
+          // For now, notify user to use the IPC path
+          showToast('Use Sync → Import File (IPC) to import T3 data', 'info');
+        } catch (e) {
+          showToast('Import failed: ' + e.message, 'error');
+        }
+      });
+    });
+
+    // DB Backup
+    document.getElementById('backup-btn')?.addEventListener('click', async () => {
+      const result = await window.modelIndex.shell.backupDb();
+      if (result?.saved) showToast('Backup saved: ' + result.filePath, 'success');
+    });
+
+    // DB Restore
+    document.getElementById('restore-btn')?.addEventListener('click', async () => {
+      const confirmed = confirm(
+        'Restoring will replace your current database. A backup will be made first. Continue?'
+      );
+      if (!confirmed) return;
+      const result = await window.modelIndex.shell.restoreDb();
+      if (result?.restored) {
+        showToast('Database restored. Please restart the app.', 'success');
+      }
+    });
+
+    // Import Index
+    document.getElementById('import-index-btn')?.addEventListener('click', async () => {
+      const content = await window.modelIndex.shell.readFile([
+        { name: 'ModelIndex Config', extensions: ['json', 'modelindex-indexes'] }
+      ]);
+      if (!content) return;
+      try {
+        const parsed = JSON.parse(content);
+        await _importIndex(parsed);
+      } catch (e) {
+        showToast('Import failed: ' + e.message, 'error');
+      }
+    });
+  }
+
+  async function _importIndex(raw) {
+    const schema  = App.state.factorSchema || [];
+    const allFactorIds = new Set(schema.map(f => f.factor_id));
+
+    // Accept single object or array of indexes
+    const items = Array.isArray(raw) ? raw : [raw];
+    let imported = 0;
+
+    for (const item of items) {
+      if (!item.name || !item.factor_weights) {
+        showToast('Skipped: missing name or factor_weights', 'warning');
+        continue;
+      }
+      // Validate factor keys
+      const unknownFactors = Object.keys(item.factor_weights).filter(k => !allFactorIds.has(k));
+      if (unknownFactors.length > 0) {
+        showToast(`Warning: unknown factors: ${unknownFactors.join(', ')}`, 'warning');
+      }
+      // Check model IDs (non-fatal if missing — just flag them)
+      const models = await window.modelIndex.db.getModels({});
+      const knownIds = new Set(models.map(m => m.model_id));
+      const missing = (item.selected_models || []).filter(id => !knownIds.has(id));
+      if (missing.length > 0) {
+        showToast(`${missing.length} model(s) not in registry will be skipped`, 'warning');
+      }
+
+      await window.modelIndex.db.saveIndex({
+        name:            item.name,
+        use_case_preset: item.use_case_preset || 'imported',
+        factor_weights:  item.factor_weights,
+        hard_constraints:item.hard_constraints || {},
+        selected_models: (item.selected_models || []).filter(id => knownIds.has(id)),
+        index_mode:      item.index_mode || 'weighted',
+        source:          'imported',
+      });
+      imported++;
+    }
+
+    showToast(`Imported ${imported} index(es)`, 'success');
+  }
+
+  // ── Public API ───────────────────────────────────────────────────────────────
+
+  App.views.settings = {
+    mount() {},
+    onEnter() { _render(); },
+  };
+})();
+</script>
+</body>
+</html>

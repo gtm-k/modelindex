@@ -1,0 +1,19 @@
+{
+  "_meta": { "version": "0.1.0", "updated": "2026-03-26" },
+  "models": {
+    "llama-3-3-70b":   { "vram_min_gb": 40, "vram_recommended_gb": 80,  "cpu_inference": false, "min_gpu_tier": "professional", "disk_gb": 140, "quantization_tiers": ["Q4_K_M","Q5_K_M","Q8_0","FP16"], "notes": "Fits in 2×A100 80GB with FP16. Q4_K_M runs on 48GB." },
+    "llama-3-1-405b":  { "vram_min_gb": 200,"vram_recommended_gb": 320, "cpu_inference": false, "min_gpu_tier": "multi-gpu",   "disk_gb": 810, "quantization_tiers": ["Q4_K_M","Q5_K_M"],             "notes": "Requires 8×A100 or equivalent for FP16." },
+    "qwen3-235b-a22b": { "vram_min_gb": 120,"vram_recommended_gb": 180, "cpu_inference": false, "min_gpu_tier": "multi-gpu",   "disk_gb": 450, "quantization_tiers": ["Q4_K_M","Q5_K_M"],             "notes": "MoE architecture — active params ~22B per token." },
+    "qwen3-32b":       { "vram_min_gb": 20, "vram_recommended_gb": 40,  "cpu_inference": false, "min_gpu_tier": "consumer",    "disk_gb": 65,  "quantization_tiers": ["Q4_K_M","Q5_K_M","Q8_0","FP16"],"notes": "Runs on RTX 4090 (24GB) with Q4." },
+    "deepseek-r1":     { "vram_min_gb": 160,"vram_recommended_gb": 320, "cpu_inference": false, "min_gpu_tier": "multi-gpu",   "disk_gb": 670, "quantization_tiers": ["Q4_K_M","Q5_K_M"],             "notes": "Full model requires 8×A100." },
+    "deepseek-v3":     { "vram_min_gb": 160,"vram_recommended_gb": 320, "cpu_inference": false, "min_gpu_tier": "multi-gpu",   "disk_gb": 650, "quantization_tiers": ["Q4_K_M","Q5_K_M"],             "notes": "MoE; active params ~37B per token." },
+    "mixtral-8x22b":   { "vram_min_gb": 90, "vram_recommended_gb": 120, "cpu_inference": false, "min_gpu_tier": "multi-gpu",   "disk_gb": 280, "quantization_tiers": ["Q4_K_M","Q5_K_M","Q8_0"],      "notes": "MoE 8×22B. 4×A100 80GB for FP16." },
+    "phi-4":           { "vram_min_gb": 8,  "vram_recommended_gb": 16,  "cpu_inference": true,  "min_gpu_tier": "consumer",    "disk_gb": 28,  "quantization_tiers": ["Q4_K_M","Q5_K_M","Q8_0","FP16"],"notes": "14B params. Runs on most modern GPUs." },
+    "gemma-3-27b":     { "vram_min_gb": 16, "vram_recommended_gb": 32,  "cpu_inference": false, "min_gpu_tier": "consumer",    "disk_gb": 55,  "quantization_tiers": ["Q4_K_M","Q5_K_M","Q8_0","FP16"],"notes": "27B params. RTX 3090/4090 recommended." }
+  },
+  "gpu_tiers": {
+    "consumer":    { "label": "Consumer GPU",     "examples": "RTX 3080/4080/4090, RX 7900 XTX" },
+    "professional":{ "label": "Professional GPU", "examples": "A40, RTX 6000 Ada, L40S" },
+    "multi-gpu":   { "label": "Multi-GPU / Server","examples": "8×A100, H100 cluster, MI300X" }
+  }
+}
