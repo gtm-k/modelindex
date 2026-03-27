@@ -218,8 +218,11 @@ async function fetchHELM() {
       const rawVal = typeof cell === 'number' ? cell : cell?.value ?? null;
       if (rawVal == null || typeof rawVal !== 'number') continue;
 
+      // HELM scores are 0-1 proportions; baseline expects 0-100 percentages
+      const scaledVal = rawVal <= 1.0 ? rawVal * 100 : rawVal;
+
       scores.push(scoreRow(
-        'helm', modelId, mapping.factor, mapping.metric, rawVal,
+        'helm', modelId, mapping.factor, mapping.metric, scaledVal,
         'HELM (Lite)',
         'https://crfm.stanford.edu/helm/lite/latest/'
       ));
@@ -324,8 +327,11 @@ async function fetchRULER() {
       const rawVal = typeof cell === 'number' ? cell : cell?.value ?? null;
       if (rawVal == null || typeof rawVal !== 'number') continue;
 
+      // RULER (HELM) scores are 0-1 proportions; baseline expects 0-100
+      const scaledVal = rawVal <= 1.0 ? rawVal * 100 : rawVal;
+
       scores.push(scoreRow(
-        'ruler', modelId, mapping.factor, mapping.metric, rawVal,
+        'ruler', modelId, mapping.factor, mapping.metric, scaledVal,
         'RULER (HELM Long-Context)',
         'https://crfm.stanford.edu/helm/long-context/latest/'
       ));
@@ -368,8 +374,11 @@ async function fetchBBQ() {
     const rawVal = typeof cell === 'number' ? cell : cell?.value ?? null;
     if (rawVal == null || typeof rawVal !== 'number') continue;
 
+    // BBQ (HELM) scores are 0-1 proportions; baseline expects 0-100
+    const scaledVal = rawVal <= 1.0 ? rawVal * 100 : rawVal;
+
     scores.push(scoreRow(
-      'bbq', modelId, mapping.factor, mapping.metric, rawVal,
+      'bbq', modelId, mapping.factor, mapping.metric, scaledVal,
       'BBQ (HELM Safety)',
       'https://crfm.stanford.edu/helm/safety/latest/'
     ));

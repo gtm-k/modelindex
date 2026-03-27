@@ -1,26 +1,26 @@
 {
   "huggingface": {
-    "fetched_at": "2026-03-27T23:13:42.373Z",
+    "fetched_at": "2026-03-27T23:35:39.388Z",
     "count": 3000
   },
   "helm": {
-    "fetched_at": "2026-03-27T23:13:42.613Z",
+    "fetched_at": "2026-03-27T23:35:39.604Z",
     "count": 818
   },
   "lmarena": {
-    "fetched_at": "2026-03-27T23:13:42.869Z",
+    "fetched_at": "2026-03-27T23:35:39.910Z",
     "count": 50
   },
   "evalplus": {
-    "fetched_at": "2026-03-27T23:13:43.080Z",
+    "fetched_at": "2026-03-27T23:35:40.131Z",
     "count": 428
   },
   "ruler": {
-    "fetched_at": "2026-03-27T23:13:43.130Z",
+    "fetched_at": "2026-03-27T23:35:40.216Z",
     "count": 33
   },
   "bbq": {
-    "fetched_at": "2026-03-27T23:13:43.184Z",
+    "fetched_at": "2026-03-27T23:35:40.259Z",
     "count": 87
   }
 }

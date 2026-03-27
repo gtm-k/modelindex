@@ -1,5 +1,5 @@
 // ModelIndex Service Worker — offline caching
-const CACHE_NAME = 'modelindex-v3';
+const CACHE_NAME = 'modelindex-v4';
 const STATIC_ASSETS = [
   './',
   './index.html',
