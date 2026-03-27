@@ -640,9 +640,26 @@ async function _getConnectorStatuses() {
 }
 
 // ── Static data sync: fetch JSON files and upsert into IndexedDB ──────────────
-async function _syncFromStaticJSON() {
+const SYNC_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+async function _syncFromStaticJSON(opts = {}) {
+  const force = opts.force || false; // force bypasses cooldown (used on first load)
   const dot = document.getElementById('sync-status-dot');
   const label = document.getElementById('sync-status-label');
+
+  // Rate limit: once per day for user-triggered syncs
+  if (!force) {
+    const lastSync = localStorage.getItem('modelindex_last_sync');
+    if (lastSync) {
+      const elapsed = Date.now() - parseInt(lastSync, 10);
+      if (elapsed < SYNC_COOLDOWN_MS) {
+        const hoursLeft = Math.ceil((SYNC_COOLDOWN_MS - elapsed) / (60 * 60 * 1000));
+        showToast(`Data syncs once daily. Next sync available in ~${hoursLeft}h.`, 'info');
+        return false;
+      }
+    }
+  }
+
   if (dot) dot.className = 'syncing';
   if (label) label.textContent = 'Syncing\u2026';
   try {
@@ -659,12 +676,15 @@ async function _syncFromStaticJSON() {
         await DB.logSync(connectorId, 'error', 0, 0, e.message);
       }
     }
+    localStorage.setItem('modelindex_last_sync', Date.now().toString());
     if (dot) dot.className = '';
     if (label) label.textContent = 'Synced';
     if (App.state.currentView === 'registry' && App.views.registry) App.views.registry.refresh();
+    return true;
   } catch (e) {
     if (dot) dot.className = 'error';
     if (label) label.textContent = 'Error';
+    return false;
   }
 }
 
@@ -830,8 +850,8 @@ document.addEventListener('keydown', (e) => {
     // Seed models on first visit
     await DB.seedModels(registryData.models || registryData);
 
-    // Initial data sync from static JSON
-    _syncFromStaticJSON();
+    // Initial data sync from static JSON (force bypasses daily cooldown)
+    _syncFromStaticJSON({ force: true });
 
     // Initialise Lucide icons
     lucide.createIcons();
@@ -1382,7 +1402,7 @@ document.addEventListener('keydown', (e) => {
       _render();
     });
 
-    // Compare & Export
+    // Compare → open side-by-side comparison modal
     const compareBtn = document.getElementById('compare-export-btn');
     if (compareBtn) compareBtn.addEventListener('click', async () => {
       if (_compareSet.size < 2) return;
@@ -1394,11 +1414,7 @@ document.addEventListener('keydown', (e) => {
       for (const m of selectedModels) {
         scoresForCompare[m.model_id] = Object.values(_scores[m.model_id] || {});
       }
-      const md = ComparisonReport.generate(selectedModels, weights, scoresForCompare);
-      _downloadFile(
-        `comparison-${new Date().toISOString().slice(0,10)}.md`, md,
-        'text/markdown'
-      );
+      _showComparisonModal(selectedModels, weights, scoresForCompare);
     });
 
     // Export CSV
@@ -1411,8 +1427,8 @@ document.addEventListener('keydown', (e) => {
       syncBtn.addEventListener('click', async () => {
         syncBtn.disabled = true;
         try {
-          await _syncFromStaticJSON();
-          showToast('Sync triggered for all connectors', 'success');
+          const synced = await _syncFromStaticJSON();
+          if (synced) showToast('Sync complete', 'success');
         } catch (e) {
           showToast('Sync failed: ' + e.message, 'error');
         } finally {
@@ -1623,6 +1639,91 @@ document.addEventListener('keydown', (e) => {
               </div>`).join('')}
           </div>`;
       });
+    });
+  }
+
+  // ── Comparison modal (side-by-side in-app) ──────────────────────────────────
+
+  function _showComparisonModal(models, weights, allScores) {
+    const baseline = App.state.baseline || {};
+    const schema = App.state.factorSchema || [];
+
+    // Compute MCS and per-factor scores for each model
+    const ranked = models.map(m => {
+      const scores = allScores[m.model_id] || [];
+      const factorScores = {};
+      for (const s of scores) {
+        const b = baseline[s.sub_metric];
+        if (!b) continue;
+        let n = b.max === b.min ? 50 : ((s.raw_score - b.min) / (b.max - b.min)) * 100;
+        n = Math.max(0, Math.min(100, n));
+        if (b.invert) n = 100 - n;
+        if (!factorScores[s.factor_group]) factorScores[s.factor_group] = [];
+        factorScores[s.factor_group].push(n);
+      }
+      const mcs = _computeMCSInline(scores, weights);
+      return { ...m, mcs, factorScores };
+    }).sort((a, b) => b.mcs - a.mcs);
+
+    const factorHeaders = schema
+      .filter(f => (weights[f.factor_id] || 0) > 0)
+      .sort((a, b) => (weights[b.factor_id]||0) - (weights[a.factor_id]||0));
+
+    const modal = document.getElementById('modal');
+    const overlay = document.getElementById('modal-overlay');
+    modal.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4)">
+        <h3 style="margin:0;font-size:16px">Model Comparison</h3>
+        <div style="display:flex;gap:var(--space-2)">
+          <button class="btn-secondary" id="compare-download-md" style="font-size:12px">
+            <i data-lucide="file-text" style="width:12px;height:12px;vertical-align:-1px"></i> Download Report
+          </button>
+          <button class="btn-ghost" id="compare-modal-close" style="font-size:18px">&times;</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="connector-table" style="font-size:13px">
+          <thead>
+            <tr>
+              <th style="position:sticky;left:0;background:var(--color-bg-2);z-index:1">#</th>
+              <th style="position:sticky;left:30px;background:var(--color-bg-2);z-index:1">Model</th>
+              <th>MCS</th>
+              ${factorHeaders.map(f => `<th title="${f.label} (w:${weights[f.factor_id]||0})">${f.label}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${ranked.map((m, i) => `
+              <tr${i===0 ? ' style="font-weight:600"' : ''}>
+                <td style="color:var(--color-text-3);font-family:var(--font-mono);position:sticky;left:0;background:var(--color-bg-1)">${i+1}</td>
+                <td style="position:sticky;left:30px;background:var(--color-bg-1);white-space:nowrap">
+                  ${m.name} <span style="color:var(--color-text-3);font-size:11px">${m.provider||''}</span>
+                </td>
+                <td>${scoreBar(m.mcs, i===0?'var(--color-success)':'var(--color-accent)')}</td>
+                ${factorHeaders.map(f => {
+                  const vals = m.factorScores[f.factor_id] || [];
+                  const avg = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : 0;
+                  return `<td>${scoreBar(avg, 'var(--color-accent)')}</td>`;
+                }).join('')}
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+
+    modal.classList.remove('hidden');
+    overlay.classList.remove('hidden');
+    lucide.createIcons();
+
+    document.getElementById('compare-modal-close').addEventListener('click', () => {
+      modal.classList.add('hidden');
+      overlay.classList.add('hidden');
+    });
+    overlay.addEventListener('click', () => {
+      modal.classList.add('hidden');
+      overlay.classList.add('hidden');
+    });
+    document.getElementById('compare-download-md')?.addEventListener('click', () => {
+      const md = ComparisonReport.generate(models, weights, allScores);
+      _downloadFile(`comparison-${new Date().toISOString().slice(0,10)}.md`, md, 'text/markdown');
     });
   }
 
@@ -2125,11 +2226,15 @@ document.addEventListener('keydown', (e) => {
         }).join('')}
       </div>
 
-      <div style="margin-top:var(--space-5)">
-        <div style="font-size:12px;font-weight:600;color:var(--color-text-3);
-          text-transform:uppercase;letter-spacing:.5px;margin-bottom:var(--space-2)">
+      <div style="margin-top:var(--space-5);padding:var(--space-3);
+        background:var(--color-bg-2);border-radius:var(--radius);border:1px solid var(--color-border)">
+        <div style="font-size:13px;font-weight:600;color:var(--color-accent);
+          margin-bottom:var(--space-2);display:flex;align-items:center;gap:var(--space-2)">
+          <span style="display:inline-block;width:8px;height:8px;background:var(--color-success);
+            border-radius:50%;animation:pulse 1.5s ease-in-out infinite"></span>
           Live MCS Preview
-          <span style="font-weight:400;color:var(--color-text-3)">(top 10, equal sub-weights)</span>
+          <span style="font-weight:400;font-size:12px;color:var(--color-text-3)">
+            &mdash; updates as you adjust weights above</span>
         </div>
         <div id="mcs-preview-wrap">
           <table id="mcs-preview-table">
@@ -3128,10 +3233,37 @@ This report is not a substitute for task-specific evaluation.*
           <i data-lucide="file-input" style="width:15px;height:15px"></i>
           Import Index
         </div>
-        <p style="font-size:13px;color:var(--color-text-2);margin-bottom:var(--space-3)">
-          Import a <code>.modelindex-indexes</code> or <code>modelindex.config.json</code> file
+        <p style="font-size:13px;color:var(--color-text-2);margin-bottom:var(--space-2)">
+          Import a <code>.modelindex-indexes</code> or <code>.json</code> file
           shared by another user.
         </p>
+        <details style="font-size:12px;color:var(--color-text-3);margin-bottom:var(--space-3);cursor:pointer">
+          <summary style="font-weight:500;color:var(--color-text-2)">View expected format</summary>
+          <pre style="margin-top:var(--space-2);padding:var(--space-3);background:var(--color-bg-3);
+            border-radius:var(--radius);overflow-x:auto;font-family:var(--font-mono);font-size:11px;
+            line-height:1.5;border:1px solid var(--color-border)">{
+  "name": "My Custom Index",
+  "use_case_preset": "general",
+  "factor_weights": {
+    "reasoning": 20, "coding": 15,
+    "factuality": 15, "safety": 10,
+    "instruction": 10, "efficiency": 10,
+    "context": 5, "multimodal": 5,
+    "bias": 5, "agentic": 5
+  },
+  "hard_constraints": {
+    "licenses": ["apache-2.0", "mit"],
+    "self_hostable": true,
+    "min_context": 32000
+  },
+  "selected_models": ["gpt-4o", "claude-3-7-sonnet"],
+  "index_mode": "weighted"
+}</pre>
+          <p style="margin-top:var(--space-1)">
+            <strong>Required:</strong> <code>name</code>, <code>factor_weights</code> (must sum to 100).
+            All other fields are optional. Supports single object or array of indexes.
+          </p>
+        </details>
         <button class="btn-secondary" id="import-index-btn">
           <i data-lucide="upload" style="width:13px;height:13px;vertical-align:-2px"></i>
           Import Index File\u2026
@@ -3216,8 +3348,8 @@ This report is not a substitute for task-specific evaluation.*
   function _bindSettingsEvents() {
     // Sync All
     document.getElementById('sync-all-settings-btn')?.addEventListener('click', async () => {
-      await _syncFromStaticJSON();
-      showToast('Sync triggered for all T1 connectors', 'success');
+      const synced = await _syncFromStaticJSON();
+      if (synced) showToast('Sync complete for all T1 connectors', 'success');
     });
 
     // Per-connector sync buttons
@@ -3225,8 +3357,8 @@ This report is not a substitute for task-specific evaluation.*
       btn.addEventListener('click', async () => {
         btn.disabled = true;
         try {
-          await _syncFromStaticJSON();
-          showToast(`Sync triggered for ${btn.dataset.sync}`, 'success');
+          const synced = await _syncFromStaticJSON();
+          if (synced) showToast(`Sync complete for ${btn.dataset.sync}`, 'success');
         } catch (e) {
           showToast('Sync failed: ' + e.message, 'error');
         } finally {
