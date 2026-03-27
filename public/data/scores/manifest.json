@@ -1,31 +1,38 @@
 {
   "huggingface": {
-    "fetched_at": null,
-    "count": 0,
-    "error": "HTTP 500 Internal Server Error"
+    "fetched_at": "2026-03-27T22:58:13.850Z",
+    "count": 200
   },
   "helm": {
-    "fetched_at": null,
-    "count": 0,
-    "error": "HTTP 404 Not Found"
+    "fetched_at": "2026-03-27T22:58:13.866Z",
+    "count": 200
   },
   "lmarena": {
-    "fetched_at": null,
-    "count": 0,
-    "error": "HTTP 403 Forbidden"
+    "fetched_at": "2026-03-27T22:58:13.881Z",
+    "count": 200
   },
   "evalplus": {
-    "fetched_at": "2026-03-27T22:56:18.369Z",
-    "count": 0
+    "fetched_at": "2026-03-27T22:58:13.896Z",
+    "count": 100
   },
   "ruler": {
-    "fetched_at": null,
-    "count": 0,
-    "error": "HTTP 401 Unauthorized"
+    "fetched_at": "2026-03-27T22:58:13.907Z",
+    "count": 100
   },
   "bbq": {
-    "fetched_at": null,
-    "count": 0,
-    "error": "HTTP 404 Not Found"
+    "fetched_at": "2026-03-27T22:58:13.918Z",
+    "count": 200
+  },
+  "robotics": {
+    "fetched_at": "2026-03-27T22:58:13.931Z",
+    "count": 100
+  },
+  "weather": {
+    "fetched_at": "2026-03-27T22:58:13.938Z",
+    "count": 95
+  },
+  "materials": {
+    "fetched_at": "2026-03-27T22:58:13.954Z",
+    "count": 85
   }
 }

@@ -343,8 +343,13 @@ async function main() {
     console.log(`Fetching ${id}...`);
     try {
       const result = await fn();
-      writeTo(id, result);
-      manifest[id] = { fetched_at: result.fetched_at, count: result.scores.length };
+      if (result.scores.length > 0) {
+        writeTo(id, result);
+        manifest[id] = { fetched_at: result.fetched_at, count: result.scores.length };
+      } else {
+        console.log(`  -- ${id}: 0 scores returned, keeping existing file`);
+        manifest[id] = { fetched_at: result.fetched_at, count: 0, skipped: true };
+      }
     } catch (err) {
       console.error(`  !! ${id} failed: ${err.message}`);
       manifest[id] = { fetched_at: null, count: 0, error: err.message };
