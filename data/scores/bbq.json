@@ -1,1050 +1,1050 @@
 {
   "connector_id": "bbq",
-  "fetched_at": "2026-03-27T23:13:43.184Z",
+  "fetched_at": "2026-03-27T23:48:49.628Z",
   "scores": [
     {
       "model_id": "marin-8b-instruct",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.755,
+      "raw_score": 75.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "olmo-2-32b-instruct-march-2025",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.714,
+      "raw_score": 71.39999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "olmo-2-13b-instruct-november-2024",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.704,
+      "raw_score": 70.39999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "olmo-2-7b-instruct-november-2024",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.525,
+      "raw_score": 52.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "olmoe-1b-7b-instruct-january-2025",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.419,
+      "raw_score": 41.9,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "ibm-granite-4-0-micro",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.779,
+      "raw_score": 77.9,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "ibm-granite-4-0-small",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.925,
+      "raw_score": 92.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "ibm-granite-4-0-small-with-guardian",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.9,
+      "raw_score": 90,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "ibm-granite-4-0-micro-with-guardian",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.752,
+      "raw_score": 75.2,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "dbrx-instruct",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.792,
+      "raw_score": 79.2,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "deepseek-llm-chat-67b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.862,
+      "raw_score": 86.2,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "deepseek-r1",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.966,
+      "raw_score": 96.6,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "deepseek-r1-hide-reasoning",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.966,
+      "raw_score": 96.6,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "deepseek-v3",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.967,
+      "raw_score": 96.7,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "glm-4-5-air-fp8",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.978,
+      "raw_score": 97.8,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-oss-120b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.985,
+      "raw_score": 98.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-oss-20b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.967,
+      "raw_score": 96.7,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "kimi-k2-instruct",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.949,
+      "raw_score": 94.89999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "llama-3-instruct-70b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.91,
+      "raw_score": 91,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "llama-3-instruct-8b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.765,
+      "raw_score": 76.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "llama-3-1-instruct-turbo-405b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.945,
+      "raw_score": 94.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "llama-3-1-instruct-turbo-70b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.954,
+      "raw_score": 95.39999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "llama-3-1-instruct-turbo-8b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.785,
+      "raw_score": 78.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "llama-4-maverick-17bx128e-instruct-fp8",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.93,
+      "raw_score": 93,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "llama-4-scout-17bx16e-instruct",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.875,
+      "raw_score": 87.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "mistral-instruct-v0-1-7b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.565,
+      "raw_score": 56.49999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "mistral-instruct-v0-3-7b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.668,
+      "raw_score": 66.8,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "mixtral-instruct-8x22b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.916,
+      "raw_score": 91.60000000000001,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "mixtral-instruct-8x7b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.857,
+      "raw_score": 85.7,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "qwen1-5-chat-72b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.846,
+      "raw_score": 84.6,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "qwen2-instruct-72b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.951,
+      "raw_score": 95.1,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "qwen2-5-instruct-turbo-72b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.954,
+      "raw_score": 95.39999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "qwen2-5-instruct-turbo-7b",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.906,
+      "raw_score": 90.60000000000001,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "qwen3-235b-a22b-fp8-throughput",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.966,
+      "raw_score": 96.6,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "qwen3-235b-a22b-instruct-2507-fp8",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.962,
+      "raw_score": 96.2,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "qwen3-next-80b-a3b-thinking",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.9166666666666666,
+      "raw_score": 91.66666666666666,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "deepseek-r1-0528",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.9649298597194389,
+      "raw_score": 96.4929859719439,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "ibm-granite-3-3-8b-instruct",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.84,
+      "raw_score": 84,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "claude-3-haiku-20240307",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.625,
+      "raw_score": 62.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "claude-3-sonnet-20240229",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.9,
+      "raw_score": 90,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "claude-3-opus-20240229",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.94,
+      "raw_score": 94,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "claude-3-5-sonnet-20240620",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.949,
+      "raw_score": 94.89999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "claude-3-7-sonnet-20250219",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.921,
+      "raw_score": 92.10000000000001,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "claude-4-sonnet-20250514",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.979,
+      "raw_score": 97.89999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "claude-4-sonnet-20250514-extended-thinking",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.966,
+      "raw_score": 96.6,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "claude-4-opus-20250514",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.993,
+      "raw_score": 99.3,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "claude-4-opus-20250514-extended-thinking",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.971,
+      "raw_score": 97.1,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "claude-4-5-sonnet-20250929",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.989,
+      "raw_score": 98.9,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "claude-4-5-haiku-20251001",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.928,
+      "raw_score": 92.80000000000001,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "command-r",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.724,
+      "raw_score": 72.39999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "command-r-plus",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.899,
+      "raw_score": 89.9,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gemini-1-5-pro-001",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.945,
+      "raw_score": 94.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gemini-1-5-flash-001",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.947,
+      "raw_score": 94.69999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gemini-2-0-flash",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.954,
+      "raw_score": 95.39999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gemini-2-0-flash-lite-02-05-preview",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.92,
+      "raw_score": 92,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gemini-2-0-pro-02-05-preview",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.956,
+      "raw_score": 95.6,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gemini-2-5-flash-lite",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.949,
+      "raw_score": 94.89999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gemini-2-5-flash-04-17-preview",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.9769539078156313,
+      "raw_score": 97.69539078156313,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gemini-2-5-pro-03-25-preview",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.964,
+      "raw_score": 96.39999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gemini-3-pro-preview",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.984,
+      "raw_score": 98.4,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "mistral-small-3-2501",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.933,
+      "raw_score": 93.30000000000001,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-3-5-turbo-0613",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.699,
+      "raw_score": 69.89999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-3-5-turbo-1106",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.649,
+      "raw_score": 64.9,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-3-5-turbo-0125",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.606,
+      "raw_score": 60.6,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-4-turbo-2024-04-09",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.941,
+      "raw_score": 94.1,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-4o-2024-05-13",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.951,
+      "raw_score": 95.1,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-4o-mini-2024-07-18",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.882,
+      "raw_score": 88.2,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-4-1-2025-04-14",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.926,
+      "raw_score": 92.60000000000001,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-4-1-mini-2025-04-14",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.921,
+      "raw_score": 92.10000000000001,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-4-1-nano-2025-04-14",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.875,
+      "raw_score": 87.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-5-2025-08-07",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.968,
+      "raw_score": 96.8,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-5-mini-2025-08-07",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.963,
+      "raw_score": 96.3,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-5-nano-2025-08-07",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.976,
+      "raw_score": 97.6,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-5-1-2025-11-13",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.887,
+      "raw_score": 88.7,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "gpt-4-5-2025-02-27-preview",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.92,
+      "raw_score": 92,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "o1-2024-12-17",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.973,
+      "raw_score": 97.3,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "o1-mini-2024-09-12",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.969,
+      "raw_score": 96.89999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "o3-mini-2025-01-31",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.941,
+      "raw_score": 94.1,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "o3-2025-04-16",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.979,
+      "raw_score": 97.89999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "o4-mini-2025-04-16",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.94,
+      "raw_score": 94,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "palmyra-x-004",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.955,
+      "raw_score": 95.5,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "palmyra-x5",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.948,
+      "raw_score": 94.8,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "palmyra-med",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.801,
+      "raw_score": 80.10000000000001,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "palmyra-fin",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.942,
+      "raw_score": 94.19999999999999,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "grok-3-beta",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.936,
+      "raw_score": 93.60000000000001,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "grok-3-mini-beta",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.967,
+      "raw_score": 96.7,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     },
     {
       "model_id": "grok-4-0709",
       "factor_group": "bias",
       "sub_metric": "bbq_bias_score",
-      "raw_score": 0.9369369369369369,
+      "raw_score": 93.69369369369369,
       "benchmark_name": "BBQ (HELM Safety)",
       "benchmark_url": "https://crfm.stanford.edu/helm/safety/latest/",
       "connector_id": "bbq",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.184Z"
+      "fetched_at": "2026-03-27T23:48:49.628Z"
     }
   ]
 }

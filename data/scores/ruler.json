@@ -1,402 +1,402 @@
 {
   "connector_id": "ruler",
-  "fetched_at": "2026-03-27T23:13:43.130Z",
+  "fetched_at": "2026-03-27T23:48:49.596Z",
   "scores": [
     {
       "model_id": "llama-4-maverick-17bx128e-instruct-fp8",
       "factor_group": "context",
       "sub_metric": "niah_128k",
-      "raw_score": 0.78,
+      "raw_score": 78,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "llama-4-maverick-17bx128e-instruct-fp8",
       "factor_group": "context",
       "sub_metric": "ruler_long_context",
-      "raw_score": 0.55,
+      "raw_score": 55.00000000000001,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "llama-4-maverick-17bx128e-instruct-fp8",
       "factor_group": "context",
       "sub_metric": "memory_consistency",
-      "raw_score": 0.2149040224665479,
+      "raw_score": 21.490402246654792,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "llama-4-scout-17bx16e-instruct",
       "factor_group": "context",
       "sub_metric": "niah_128k",
-      "raw_score": 0.68,
+      "raw_score": 68,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "llama-4-scout-17bx16e-instruct",
       "factor_group": "context",
       "sub_metric": "ruler_long_context",
-      "raw_score": 0.47,
+      "raw_score": 47,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "llama-4-scout-17bx16e-instruct",
       "factor_group": "context",
       "sub_metric": "memory_consistency",
-      "raw_score": 0.1712000148230281,
+      "raw_score": 17.12000148230281,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "amazon-nova-premier",
       "factor_group": "context",
       "sub_metric": "niah_128k",
-      "raw_score": 0.71,
+      "raw_score": 71,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "amazon-nova-premier",
       "factor_group": "context",
       "sub_metric": "ruler_long_context",
-      "raw_score": 0.57,
+      "raw_score": 56.99999999999999,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "amazon-nova-premier",
       "factor_group": "context",
       "sub_metric": "memory_consistency",
-      "raw_score": 0.16137056499173474,
+      "raw_score": 16.137056499173475,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "amazon-nova-pro",
       "factor_group": "context",
       "sub_metric": "niah_128k",
-      "raw_score": 0.59,
+      "raw_score": 59,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "amazon-nova-pro",
       "factor_group": "context",
       "sub_metric": "ruler_long_context",
-      "raw_score": 0.37,
+      "raw_score": 37,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "amazon-nova-pro",
       "factor_group": "context",
       "sub_metric": "memory_consistency",
-      "raw_score": 0.09888302207295338,
+      "raw_score": 9.888302207295338,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "amazon-nova-lite",
       "factor_group": "context",
       "sub_metric": "niah_128k",
-      "raw_score": 0.59,
+      "raw_score": 59,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "amazon-nova-lite",
       "factor_group": "context",
       "sub_metric": "ruler_long_context",
-      "raw_score": 0.35,
+      "raw_score": 35,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "amazon-nova-lite",
       "factor_group": "context",
       "sub_metric": "memory_consistency",
-      "raw_score": 0.11090413587837826,
+      "raw_score": 11.090413587837826,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gemini-2-0-flash",
       "factor_group": "context",
       "sub_metric": "niah_128k",
-      "raw_score": 0.85,
+      "raw_score": 85,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gemini-2-0-flash",
       "factor_group": "context",
       "sub_metric": "ruler_long_context",
-      "raw_score": 0.55,
+      "raw_score": 55.00000000000001,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gemini-2-0-flash",
       "factor_group": "context",
       "sub_metric": "memory_consistency",
-      "raw_score": 0.21603258253905214,
+      "raw_score": 21.603258253905214,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gemini-2-0-flash-lite",
       "factor_group": "context",
       "sub_metric": "niah_128k",
-      "raw_score": 0.77,
+      "raw_score": 77,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gemini-2-0-flash-lite",
       "factor_group": "context",
       "sub_metric": "ruler_long_context",
-      "raw_score": 0.53,
+      "raw_score": 53,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gemini-2-0-flash-lite",
       "factor_group": "context",
       "sub_metric": "memory_consistency",
-      "raw_score": 0.17910131689706382,
+      "raw_score": 17.910131689706382,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gpt-4-1-2025-04-14",
       "factor_group": "context",
       "sub_metric": "niah_128k",
-      "raw_score": 0.88,
+      "raw_score": 88,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gpt-4-1-2025-04-14",
       "factor_group": "context",
       "sub_metric": "ruler_long_context",
-      "raw_score": 0.7,
+      "raw_score": 70,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gpt-4-1-2025-04-14",
       "factor_group": "context",
       "sub_metric": "memory_consistency",
-      "raw_score": 0.21449563740445135,
+      "raw_score": 21.449563740445136,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gpt-4-1-mini-2025-04-14",
       "factor_group": "context",
       "sub_metric": "niah_128k",
-      "raw_score": 0.82,
+      "raw_score": 82,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gpt-4-1-mini-2025-04-14",
       "factor_group": "context",
       "sub_metric": "ruler_long_context",
-      "raw_score": 0.64,
+      "raw_score": 64,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gpt-4-1-mini-2025-04-14",
       "factor_group": "context",
       "sub_metric": "memory_consistency",
-      "raw_score": 0.20787301118050647,
+      "raw_score": 20.787301118050646,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gpt-4-1-nano-2025-04-14",
       "factor_group": "context",
       "sub_metric": "niah_128k",
-      "raw_score": 0.56,
+      "raw_score": 56.00000000000001,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gpt-4-1-nano-2025-04-14",
       "factor_group": "context",
       "sub_metric": "ruler_long_context",
-      "raw_score": 0.41,
+      "raw_score": 41,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "gpt-4-1-nano-2025-04-14",
       "factor_group": "context",
       "sub_metric": "memory_consistency",
-      "raw_score": 0.17039408439004852,
+      "raw_score": 17.039408439004852,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "palmyra-x5",
       "factor_group": "context",
       "sub_metric": "niah_128k",
-      "raw_score": 0.78,
+      "raw_score": 78,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "palmyra-x5",
       "factor_group": "context",
       "sub_metric": "ruler_long_context",
-      "raw_score": 0.57,
+      "raw_score": 56.99999999999999,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     },
     {
       "model_id": "palmyra-x5",
       "factor_group": "context",
       "sub_metric": "memory_consistency",
-      "raw_score": 0.2561769366131866,
+      "raw_score": 25.617693661318658,
       "benchmark_name": "RULER (HELM Long-Context)",
       "benchmark_url": "https://crfm.stanford.edu/helm/long-context/latest/",
       "connector_id": "ruler",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-03-27T23:13:43.130Z"
+      "fetched_at": "2026-03-27T23:48:49.596Z"
     }
   ]
 }
