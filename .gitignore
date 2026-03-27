@@ -37,3 +37,9 @@ docs/superpowers/
 .idea/
 *.swp
 *.swo
+
+# Claude Code
+.claude/
+
+# Debug screenshots
+*.png
