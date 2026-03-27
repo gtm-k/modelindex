@@ -885,7 +885,7 @@ document.addEventListener('keydown', (e) => {
     }
     App.state.presets          = Presets.PRESETS;
     App.state.licenseCompat    = licenseCompat;
-    App.state.hardwareManifest = hardwareManifest;
+    App.state.hardwareManifest = hardwareManifest.models || hardwareManifest;
 
     // Seed models on first visit
     await DB.seedModels(registryData.models || registryData);
@@ -1241,7 +1241,7 @@ document.addEventListener('keydown', (e) => {
 
       const hwHtml = _showHardware && hwManifest[m.model_id]
         ? `<td style="font-size:11px;color:var(--color-text-3)">
-            ${hwManifest[m.model_id].vram_gb}GB VRAM
+            ${hwManifest[m.model_id].vram_min_gb}GB VRAM
           </td>`
         : (_showHardware ? `<td style="color:var(--color-text-3)">\u2014</td>` : '');
 
@@ -2097,7 +2097,11 @@ document.addEventListener('keydown', (e) => {
   function _getWeightTotal() {
     const cfg = WizardController.indexConfig;
     const weights = cfg.factor_weights || {};
-    return Object.values(weights).reduce((a, b) => a + (Number(b) || 0), 0);
+    const schema = App.state.factorSchema || [];
+    const validIds = new Set(schema.map(f => f.factor_id));
+    return Object.entries(weights)
+      .filter(([k]) => validIds.has(k))
+      .reduce((a, [, v]) => a + (Number(v) || 0), 0);
   }
 
   function _equalizeWeights() {
@@ -2220,7 +2224,7 @@ document.addEventListener('keydown', (e) => {
   // Step 2: Preset + Name
   function _renderStep2() {
     const cfg = WizardController.indexConfig;
-    const presets = App.state.presets || [];
+    const presets = (App.state.presets || []).filter(p => p.domain === App.state.activeDomain);
     return `
       <div class="wizard-step-title">Preset & Name</div>
       <div class="wizard-step-desc">

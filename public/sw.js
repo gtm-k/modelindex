@@ -1,5 +1,5 @@
 // ModelIndex Service Worker — offline caching
-const CACHE_NAME = 'modelindex-v1';
+const CACHE_NAME = 'modelindex-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -8,7 +8,11 @@ const STATIC_ASSETS = [
   './js/presets.js',
   './js/mcs.js',
   './js/sensitivity.js',
+  './js/domain-schemas.js',
   './data/baseline.json',
+  './data/baseline-robotics.json',
+  './data/baseline-weather.json',
+  './data/baseline-materials.json',
   './data/registry.json',
   './data/license-compat.json',
   './data/hardware.json',
@@ -16,7 +20,7 @@ const STATIC_ASSETS = [
   './manifest.json',
 ];
 
-const DATA_CACHE = 'modelindex-data-v1';
+const DATA_CACHE = 'modelindex-data-v2';
 
 // Install — cache static assets
 self.addEventListener('install', (e) => {
