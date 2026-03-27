@@ -2,9 +2,10 @@
 /**
  * generate-seed-scores.js
  *
- * One-time script to generate realistic seed benchmark data for all 19 registry
- * models across all 50 sub-metrics. Scores are distributed by model tier/strength
- * using a deterministic seeded PRNG for reproducibility.
+ * Generates realistic seed benchmark data for all registry models across all
+ * sub-metrics. Supports LLM + domain models (robotics, weather, materials).
+ * Scores are distributed by model tier/strength using a deterministic seeded
+ * PRNG for reproducibility.
  *
  * Run: node scripts/generate-seed-scores.js
  */
@@ -15,6 +16,9 @@ const path = require('path');
 const SCORES_DIR = path.resolve(__dirname, '..', 'public', 'data', 'scores');
 const REGISTRY = require(path.resolve(__dirname, '..', 'public', 'data', 'registry.json'));
 const BASELINE = require(path.resolve(__dirname, '..', 'public', 'data', 'baseline.json'));
+const BASELINE_ROBOTICS = require(path.resolve(__dirname, '..', 'public', 'data', 'baseline-robotics.json'));
+const BASELINE_WEATHER = require(path.resolve(__dirname, '..', 'public', 'data', 'baseline-weather.json'));
+const BASELINE_MATERIALS = require(path.resolve(__dirname, '..', 'public', 'data', 'baseline-materials.json'));
 
 const models = REGISTRY.models;
 
@@ -56,6 +60,40 @@ const MODEL_PROFILES = {
   'phi-4':             { tier: 'open-small',    boosts: { efficiency: 0.18, reasoning: 0.10 } },
   'gemma-3-27b':       { tier: 'open-small',    boosts: { multimodal: 0.12 } },
   'command-r-plus':    { tier: 'frontier',      boosts: { factuality: 0.10, context: 0.08 } },
+};
+
+// ---------------------------------------------------------------------------
+// Domain model tiers and profiles
+// ---------------------------------------------------------------------------
+
+const DOMAIN_TIER_PROFILES = {
+  'domain-top':   [0.70, 0.95],
+  'domain-mid':   [0.45, 0.80],
+  'domain-small': [0.30, 0.70],
+};
+
+const DOMAIN_MODEL_PROFILES = {
+  'openvla-7b':     { tier: 'domain-top',  domain: 'robotics',  boosts: { generalization: 0.10 } },
+  'pi0-3b':         { tier: 'domain-top',  domain: 'robotics',  boosts: { manipulation: 0.12, task_success: 0.10 } },
+  'octo-base':      { tier: 'domain-mid',  domain: 'robotics',  boosts: { robo_efficiency: 0.15 } },
+  'rt-1-x':         { tier: 'domain-mid',  domain: 'robotics',  boosts: { task_success: 0.08 } },
+  'rt-2-x':         { tier: 'domain-top',  domain: 'robotics',  boosts: { planning: 0.10, generalization: 0.08 } },
+  'graphcast':      { tier: 'domain-top',  domain: 'weather',   boosts: { forecast_accuracy: 0.10 } },
+  'gencast':        { tier: 'domain-top',  domain: 'weather',   boosts: { probabilistic_skill: 0.15 } },
+  'aurora-1-3b':    { tier: 'domain-top',  domain: 'weather',   boosts: { resolution: 0.10, weather_efficiency: 0.08 } },
+  'fourcastnet-3':  { tier: 'domain-mid',  domain: 'weather',   boosts: { weather_efficiency: 0.15 } },
+  'pangu-weather':  { tier: 'domain-mid',  domain: 'weather',   boosts: { forecast_accuracy: 0.05 } },
+  'mattersim-5m':   { tier: 'domain-top',  domain: 'materials', boosts: { property_prediction: 0.12 } },
+  'mace-mp-0':      { tier: 'domain-top',  domain: 'materials', boosts: { mat_generalization: 0.10 } },
+  'chgnet':         { tier: 'domain-mid',  domain: 'materials', boosts: { stability_discovery: 0.08 } },
+  'gnome':          { tier: 'domain-top',  domain: 'materials', boosts: { stability_discovery: 0.12, mat_generalization: 0.08 } },
+  'mattergen':      { tier: 'domain-mid',  domain: 'materials', boosts: { structure_quality: 0.15 } },
+};
+
+const DOMAIN_BASELINES = {
+  robotics:  BASELINE_ROBOTICS,
+  weather:   BASELINE_WEATHER,
+  materials: BASELINE_MATERIALS,
 };
 
 // ---------------------------------------------------------------------------
@@ -138,6 +176,55 @@ function generateScores() {
             fetched_at:         new Date().toISOString(),
           });
         }
+      }
+    }
+  }
+
+  // Generate domain model scores
+  for (const model of models) {
+    const profile = DOMAIN_MODEL_PROFILES[model.model_id];
+    if (!profile) continue;
+
+    const domainId = profile.domain;
+    const baseline = DOMAIN_BASELINES[domainId];
+    if (!baseline) continue;
+
+    if (!connectorScores[domainId]) connectorScores[domainId] = [];
+
+    const [minPct, maxPct] = DOMAIN_TIER_PROFILES[profile.tier];
+
+    for (const [factorId, factorBaseline] of Object.entries(baseline)) {
+      if (factorId === '_meta') continue;
+
+      for (const [subMetricId, spec] of Object.entries(factorBaseline)) {
+        const boost = (profile.boosts || {})[factorId] || 0;
+        const effectiveMin = Math.min(minPct + boost, 0.98);
+        const effectiveMax = Math.min(maxPct + boost, 0.99);
+
+        const pct = effectiveMin + rand() * (effectiveMax - effectiveMin);
+        const rawScore = spec.min + pct * (spec.max - spec.min);
+
+        let rounded;
+        if (spec.max > 500) {
+          rounded = Math.round(rawScore);
+        } else if (spec.max < 1) {
+          rounded = Number(rawScore.toFixed(3));
+        } else {
+          rounded = Number(rawScore.toFixed(1));
+        }
+
+        connectorScores[domainId].push({
+          model_id:           model.model_id,
+          factor_group:       factorId,
+          sub_metric:         subMetricId,
+          raw_score:          rounded,
+          benchmark_name:     spec.benchmark,
+          benchmark_url:      spec.benchmark_url || '',
+          connector_id:       domainId,
+          data_tier:          'T1',
+          contamination_flag: false,
+          fetched_at:         new Date().toISOString(),
+        });
       }
     }
   }
