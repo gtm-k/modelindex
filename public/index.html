@@ -731,6 +731,12 @@ function switchDomain(domainId) {
   } else {
     App.state.baseline = App.state.domainBaselines[domainId] || {};
   }
+  // Inject factor color CSS vars for the new domain
+  const schema = App.state.factorSchema;
+  if (schema) {
+    const root = document.documentElement;
+    schema.forEach(f => root.style.setProperty(`--factor-${f.factor_id}`, f.color));
+  }
   if (App.state.currentView === 'registry' && App.views.registry) {
     App.views.registry.refresh();
   }
@@ -1187,10 +1193,11 @@ document.addEventListener('keydown', (e) => {
     const factorHeaders = schema.map(f =>
       `<th class="${_sortCol === f.factor_id ? 'sorted' : ''}"
           data-sort="${f.factor_id}"
+          title="${f.label} — ${f.description || ''}"
           style="color:var(--color-text-3);min-width:70px">
         <span style="display:inline-block;width:8px;height:8px;border-radius:50%;
           background:var(--factor-${f.factor_id});margin-right:4px"></span>
-        ${f.tag}${sortArrow(f.factor_id)}
+        ${f.label.split(/[&,]/)[0].trim()}${sortArrow(f.factor_id)}
       </th>`).join('');
 
     const rows = enriched.map(m => {
@@ -1274,12 +1281,13 @@ document.addEventListener('keydown', (e) => {
                   style="accent-color:var(--color-accent)">
               </th>
               <th class="${_sortCol==='name'?'sorted':''}" data-sort="name">Model${sortArrow('name')}</th>
-              <th class="${_sortCol==='mcs'?'sorted':''}" data-sort="mcs" style="min-width:120px">
+              <th class="${_sortCol==='mcs'?'sorted':''}" data-sort="mcs" style="min-width:120px"
+                title="Model Composite Score — weighted aggregate of all factor scores">
                 MCS Score${sortArrow('mcs')}
               </th>
               ${factorHeaders}
               <th>License</th>
-              <th>Cost/1M tok</th>
+              <th title="Cost per 1M tokens — enter custom pricing in Settings or click a cost cell to add">Cost/1M tok</th>
               ${hwHeader}
             </tr>
           </thead>
@@ -1741,9 +1749,7 @@ document.addEventListener('keydown', (e) => {
       .filter(f => (weights[f.factor_id] || 0) > 0)
       .sort((a, b) => (weights[b.factor_id]||0) - (weights[a.factor_id]||0));
 
-    const modal = document.getElementById('modal');
-    const overlay = document.getElementById('modal-overlay');
-    modal.innerHTML = `
+    const html = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4)">
         <h3 style="margin:0;font-size:16px">Model Comparison</h3>
         <div style="display:flex;gap:var(--space-2)">
@@ -1781,18 +1787,10 @@ document.addEventListener('keydown', (e) => {
         </table>
       </div>`;
 
-    modal.classList.remove('hidden');
-    overlay.classList.remove('hidden');
+    showModal(html, 800);
     lucide.createIcons();
 
-    document.getElementById('compare-modal-close').addEventListener('click', () => {
-      modal.classList.add('hidden');
-      overlay.classList.add('hidden');
-    });
-    overlay.addEventListener('click', () => {
-      modal.classList.add('hidden');
-      overlay.classList.add('hidden');
-    });
+    document.getElementById('compare-modal-close').addEventListener('click', closeModal);
     document.getElementById('compare-download-md')?.addEventListener('click', () => {
       const md = ComparisonReport.generate(models, weights, allScores);
       _downloadFile(`comparison-${new Date().toISOString().slice(0,10)}.md`, md, 'text/markdown');
@@ -2631,13 +2629,23 @@ document.addEventListener('keydown', (e) => {
         if (total === 0) return;
         const scale = 100 / total;
         const schema = App.state.factorSchema || [];
-        schema.forEach(f => {
-          const v = Math.round((WizardController.indexConfig.factor_weights[f.factor_id] || 0) * scale);
-          WizardController.indexConfig.factor_weights[f.factor_id] = v;
-          const slider = document.querySelector(`.factor-slider[data-factor="${f.factor_id}"]`);
-          const valEl  = document.getElementById(`fw-val-${f.factor_id}`);
-          if (slider) slider.value = v;
-          if (valEl)  valEl.textContent = v;
+        // Round each weight, then fix rounding error on the largest weight
+        const rounded = schema.map(f => ({
+          id: f.factor_id,
+          val: Math.round((WizardController.indexConfig.factor_weights[f.factor_id] || 0) * scale)
+        }));
+        const roundedTotal = rounded.reduce((a, r) => a + r.val, 0);
+        if (roundedTotal !== 100 && rounded.length > 0) {
+          // Adjust the largest weight to compensate for rounding error
+          const largest = rounded.reduce((max, r) => r.val > max.val ? r : max, rounded[0]);
+          largest.val += (100 - roundedTotal);
+        }
+        rounded.forEach(r => {
+          WizardController.indexConfig.factor_weights[r.id] = r.val;
+          const slider = document.querySelector(`.factor-slider[data-factor="${r.id}"]`);
+          const valEl  = document.getElementById(`fw-val-${r.id}`);
+          if (slider) slider.value = r.val;
+          if (valEl)  valEl.textContent = r.val;
         });
         const totalEl = document.getElementById('weight-total');
         totalEl.textContent = '100/100';
@@ -2727,6 +2735,9 @@ document.addEventListener('keydown', (e) => {
         } else {
           if (!WizardController.indexConfig.factor_weights) _equalizeWeights();
         }
+      } else {
+        // No preset selected — ensure weights are initialized
+        if (!WizardController.indexConfig.factor_weights) _equalizeWeights();
       }
     }
   }
@@ -2737,7 +2748,8 @@ document.addEventListener('keydown', (e) => {
     const tbody = document.getElementById('mcs-preview-tbody');
     if (!tbody) return;
     const weights = WizardController.indexConfig.factor_weights || {};
-    const ranked = _allModels
+    const domainModels = _allModels.filter(m => (m.domain || 'llm') === App.state.activeDomain);
+    const ranked = domainModels
       .map(m => ({ ...m, mcs: _computeMCSInline(_allScores[m.model_id] || [], weights) }))
       .sort((a, b) => b.mcs - a.mcs)
       .slice(0, 10);
@@ -3349,6 +3361,11 @@ This report is not a substitute for task-specific evaluation.*
           <i data-lucide="dollar-sign" style="width:15px;height:15px"></i>
           Manual Pricing Entries
         </div>
+        <p style="font-size:12px;color:var(--color-text-3);margin:0 0 var(--space-3) 0;line-height:1.5">
+          Add per-model token pricing (input/output cost per 1M tokens) to enable the cost efficiency column
+          in the Registry. Click any "$\u2014" cost cell in the Registry table to add pricing for that model,
+          or manage all entries here.
+        </p>
         <div id="pricing-list">
           <p style="font-size:13px;color:var(--color-text-3)">Loading\u2026</p>
         </div>
