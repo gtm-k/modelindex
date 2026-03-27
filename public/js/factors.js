@@ -157,4 +157,19 @@ const FACTOR_MAP = Object.fromEntries(FACTOR_SCHEMA.map(f => [f.factor_id, f]));
 // All sub-metric IDs flat list
 const ALL_SUB_METRIC_IDS = FACTOR_SCHEMA.flatMap(f => f.sub_metrics.map(s => s.sub_metric_id));
 
-window.Factors = { FACTOR_SCHEMA, FACTOR_MAP, ALL_SUB_METRIC_IDS };
+// Domain-aware schema lookup.
+// Returns the FACTOR_SCHEMA for the given domain, falling back to LLM schema.
+function getSchemaForDomain(domain) {
+  if (!domain || domain === 'llm') return FACTOR_SCHEMA;
+  if (window.DomainSchemas && window.DomainSchemas.DOMAIN_SCHEMAS[domain]) {
+    return window.DomainSchemas.DOMAIN_SCHEMAS[domain];
+  }
+  return FACTOR_SCHEMA;
+}
+
+function getPresetsForDomain(domain) {
+  if (!window.Presets) return [];
+  return window.Presets.PRESETS.filter(p => p.domain === (domain || 'llm'));
+}
+
+window.Factors = { FACTOR_SCHEMA, FACTOR_MAP, ALL_SUB_METRIC_IDS, getSchemaForDomain, getPresetsForDomain };
