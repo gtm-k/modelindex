@@ -1,38 +1,26 @@
 {
   "huggingface": {
-    "fetched_at": "2026-03-27T22:58:13.850Z",
-    "count": 200
+    "fetched_at": "2026-03-27T23:13:42.373Z",
+    "count": 3000
   },
   "helm": {
-    "fetched_at": "2026-03-27T22:58:13.866Z",
-    "count": 200
+    "fetched_at": "2026-03-27T23:13:42.613Z",
+    "count": 818
   },
   "lmarena": {
-    "fetched_at": "2026-03-27T22:58:13.881Z",
-    "count": 200
+    "fetched_at": "2026-03-27T23:13:42.869Z",
+    "count": 50
   },
   "evalplus": {
-    "fetched_at": "2026-03-27T22:58:13.896Z",
-    "count": 100
+    "fetched_at": "2026-03-27T23:13:43.080Z",
+    "count": 428
   },
   "ruler": {
-    "fetched_at": "2026-03-27T22:58:13.907Z",
-    "count": 100
+    "fetched_at": "2026-03-27T23:13:43.130Z",
+    "count": 33
   },
   "bbq": {
-    "fetched_at": "2026-03-27T22:58:13.918Z",
-    "count": 200
-  },
-  "robotics": {
-    "fetched_at": "2026-03-27T22:58:13.931Z",
-    "count": 100
-  },
-  "weather": {
-    "fetched_at": "2026-03-27T22:58:13.938Z",
-    "count": 95
-  },
-  "materials": {
-    "fetched_at": "2026-03-27T22:58:13.954Z",
-    "count": 85
+    "fetched_at": "2026-03-27T23:13:43.184Z",
+    "count": 87
   }
 }
