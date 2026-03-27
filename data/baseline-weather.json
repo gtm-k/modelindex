@@ -1,0 +1,38 @@
+{
+  "_meta": {
+    "version": "0.1.0",
+    "updated": "2026-03-27",
+    "note": "Baselines for weather/climate AI models. Ranges from WeatherBench 2 published results for GraphCast, GenCast, Aurora, FourCastNet, Pangu-Weather, IFS HRES. RMSE values in native units."
+  },
+  "forecast_accuracy": {
+    "rmse_z500": { "min": 100, "max": 800,  "invert": true,  "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" },
+    "rmse_t2m":  { "min": 0.8, "max": 4.0,  "invert": true,  "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" },
+    "rmse_t850": { "min": 0.6, "max": 3.5,  "invert": true,  "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" },
+    "acc_z500":  { "min": 0.60,"max": 0.99, "invert": false, "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" }
+  },
+  "lead_time": {
+    "day1_skill":  { "min": 0.80, "max": 0.99, "invert": false, "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" },
+    "day5_skill":  { "min": 0.50, "max": 0.95, "invert": false, "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" },
+    "day10_skill": { "min": 0.20, "max": 0.80, "invert": false, "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" }
+  },
+  "extreme_events": {
+    "tc_track_error":        { "min": 50,  "max": 500, "invert": true,  "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" },
+    "heatwave_detection":    { "min": 0.3, "max": 0.95,"invert": false, "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" },
+    "precipitation_extremes":{ "min": 0.2, "max": 0.85,"invert": false, "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" }
+  },
+  "probabilistic_skill": {
+    "crps_z500":                 { "min": 50,  "max": 400, "invert": true,  "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" },
+    "spread_skill_ratio":        { "min": 0.5, "max": 1.2, "invert": false, "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" },
+    "rank_histogram_reliability":{ "min": 0.3, "max": 0.95,"invert": false, "benchmark": "WeatherBench 2", "benchmark_url": "https://sites.research.google/gr/weatherbench/" }
+  },
+  "resolution": {
+    "spatial_resolution_deg":{ "min": 0.1, "max": 1.5, "invert": true,  "benchmark": "Model Spec", "benchmark_url": "" },
+    "vertical_levels":       { "min": 6,   "max": 137, "invert": false, "benchmark": "Model Spec", "benchmark_url": "" },
+    "temporal_resolution_hr":{ "min": 1,   "max": 24,  "invert": true,  "benchmark": "Model Spec", "benchmark_url": "" }
+  },
+  "weather_efficiency": {
+    "inference_time_s":        { "min": 1,    "max": 600,   "invert": true,  "benchmark": "Hardware Benchmark", "benchmark_url": "" },
+    "speedup_vs_nwp":          { "min": 1,    "max": 10000, "invert": false, "benchmark": "Published results",  "benchmark_url": "" },
+    "energy_per_forecast_kwh": { "min": 0.01, "max": 50.0,  "invert": true,  "benchmark": "Published results",  "benchmark_url": "" }
+  }
+}

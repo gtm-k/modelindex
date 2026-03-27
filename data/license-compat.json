@@ -1,0 +1,78 @@
+{
+  "_meta": {
+    "version": "0.1.0",
+    "disclaimer": "This matrix provides general guidance only and does not constitute legal advice. Consult a qualified attorney for specific compliance decisions.",
+    "legend": {
+      "ok":          "Compatible — no restrictions beyond attribution",
+      "conditional": "Permitted with conditions — see notes",
+      "incompatible":"Not recommended without legal review"
+    }
+  },
+  "projectLicenses": ["MIT", "Apache-2.0", "GPL-2.0", "GPL-3.0", "AGPL-3.0", "Proprietary"],
+  "modelLicenses": {
+    "Proprietary": {
+      "MIT":        { "status": "ok",          "note": "API usage permitted under provider ToS. No source distribution issues." },
+      "Apache-2.0": { "status": "ok",          "note": "API usage permitted under provider ToS." },
+      "GPL-2.0":    { "status": "ok",          "note": "API usage is not distribution — GPL does not apply to API calls." },
+      "GPL-3.0":    { "status": "ok",          "note": "API usage is not distribution — GPL-3.0 does not apply to API calls." },
+      "AGPL-3.0":   { "status": "conditional", "note": "AGPL's network use clause may apply if you embed model outputs in a networked service. Legal review recommended." },
+      "Proprietary":{ "status": "ok",          "note": "Subject to individual provider ToS agreements." }
+    },
+    "Apache-2.0": {
+      "MIT":        { "status": "ok",          "note": "Apache 2.0 is MIT-compatible. Include NOTICE file if distributing." },
+      "Apache-2.0": { "status": "ok",          "note": "Same license. No restrictions beyond attribution." },
+      "GPL-2.0":    { "status": "conditional", "note": "Apache 2.0 and GPL-2.0 are generally incompatible for combined works. Seek legal advice." },
+      "GPL-3.0":    { "status": "conditional", "note": "Apache 2.0 is compatible with GPL-3.0 when combined. Include NOTICE file." },
+      "AGPL-3.0":   { "status": "conditional", "note": "Apache 2.0 compatible with AGPL-3.0. AGPL network-use clause applies to the combined work." },
+      "Proprietary":{ "status": "ok",          "note": "Apache 2.0 permits proprietary use. Include LICENSE and NOTICE files." }
+    },
+    "MIT": {
+      "MIT":        { "status": "ok",          "note": "Identical license. No restrictions." },
+      "Apache-2.0": { "status": "ok",          "note": "MIT is permissive. Apache 2.0 patent grant applies to contributions." },
+      "GPL-2.0":    { "status": "ok",          "note": "MIT is GPL-compatible." },
+      "GPL-3.0":    { "status": "ok",          "note": "MIT is GPL-3.0-compatible." },
+      "AGPL-3.0":   { "status": "ok",          "note": "MIT is AGPL-compatible. AGPL network-use clause applies to combined work." },
+      "Proprietary":{ "status": "ok",          "note": "MIT permits proprietary use. Retain copyright notice." }
+    },
+    "Llama 3 Community": {
+      "MIT":        { "status": "conditional", "note": "Permitted for commercial use under 700M MAU threshold. Prohibited uses include certain harmful applications. Review Meta's Acceptable Use Policy." },
+      "Apache-2.0": { "status": "conditional", "note": "Same as MIT — MAU threshold and AUP apply." },
+      "GPL-2.0":    { "status": "conditional", "note": "MAU threshold applies. GPL obligations apply to your code, not to Llama weights." },
+      "GPL-3.0":    { "status": "conditional", "note": "MAU threshold applies. GPL-3.0 obligations apply to your code." },
+      "AGPL-3.0":   { "status": "conditional", "note": "MAU threshold applies. AGPL network-use clause applies to combined work." },
+      "Proprietary":{ "status": "conditional", "note": "Commercial use permitted under MAU threshold. Above 700M MAU requires Meta license agreement." }
+    },
+    "MIT (DeepSeek)": {
+      "MIT":        { "status": "ok",          "note": "MIT license. Standard permissive terms apply." },
+      "Apache-2.0": { "status": "ok",          "note": "MIT-licensed weights. Apache 2.0 patent grant applies to your contributions." },
+      "GPL-2.0":    { "status": "ok",          "note": "MIT is GPL-compatible." },
+      "GPL-3.0":    { "status": "ok",          "note": "MIT is GPL-3.0-compatible." },
+      "AGPL-3.0":   { "status": "ok",          "note": "MIT is AGPL-compatible." },
+      "Proprietary":{ "status": "ok",          "note": "MIT permits proprietary use." }
+    },
+    "Gemma Terms": {
+      "MIT":        { "status": "conditional", "note": "Gemma Terms of Use restrict certain applications (harmful content, surveillance, etc.). Review Google's Prohibited Use Policy." },
+      "Apache-2.0": { "status": "conditional", "note": "Gemma Terms apply on top of Apache-like grant. Prohibited uses include certain AI applications." },
+      "GPL-2.0":    { "status": "incompatible","note": "Gemma Terms impose additional restrictions that may conflict with GPL's requirement that no further restrictions be added." },
+      "GPL-3.0":    { "status": "incompatible","note": "Same as GPL-2.0 — additional use restrictions conflict with GPL's 'no further restrictions' clause." },
+      "AGPL-3.0":   { "status": "incompatible","note": "Same concern as GPL-3.0." },
+      "Proprietary":{ "status": "conditional", "note": "Permitted for commercial use subject to Gemma Terms of Use. Review prohibited uses." }
+    },
+    "CC-BY-NC": {
+      "MIT":        { "status": "incompatible","note": "Non-commercial restriction conflicts with MIT's intent to permit all uses." },
+      "Apache-2.0": { "status": "incompatible","note": "Non-commercial restriction incompatible with Apache 2.0 commercial use grant." },
+      "GPL-2.0":    { "status": "incompatible","note": "NC restriction incompatible with GPL's requirement for free redistribution." },
+      "GPL-3.0":    { "status": "incompatible","note": "NC restriction incompatible with GPL-3.0." },
+      "AGPL-3.0":   { "status": "incompatible","note": "NC restriction incompatible with AGPL-3.0." },
+      "Proprietary":{ "status": "conditional", "note": "Non-commercial use only. Internal/research use may qualify. Commercial deployment requires separate license." }
+    },
+    "Mistral Commercial": {
+      "MIT":        { "status": "ok",          "note": "Mistral Commercial License permits commercial use with attribution." },
+      "Apache-2.0": { "status": "ok",          "note": "Commercial use permitted." },
+      "GPL-2.0":    { "status": "conditional", "note": "Check Mistral's terms for GPL compatibility. Additional restrictions may conflict." },
+      "GPL-3.0":    { "status": "conditional", "note": "Same as GPL-2.0." },
+      "AGPL-3.0":   { "status": "conditional", "note": "Commercial license terms may conflict with AGPL network-use requirements." },
+      "Proprietary":{ "status": "ok",          "note": "Commercial use explicitly permitted under Mistral Commercial License." }
+    }
+  }
+}

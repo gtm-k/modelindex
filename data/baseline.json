@@ -1,0 +1,77 @@
+{
+  "_meta": {
+    "version": "0.1.0",
+    "updated": "2026-03-26",
+    "note": "Fixed min/max baselines per sub-metric. Values sourced from published benchmark results across top-50 models as of Q1 2026. Update quarterly. Scores outside range are capped at 0 or 100 and flagged 'Beyond baseline'."
+  },
+  "reasoning": {
+    "math_accuracy":      { "min": 20.0, "max": 97.0, "invert": false, "benchmark": "MATH-500",     "benchmark_url": "https://arxiv.org/abs/2103.03874" },
+    "logical_deduction":  { "min": 40.0, "max": 93.0, "invert": false, "benchmark": "BBH",          "benchmark_url": "https://arxiv.org/abs/2210.09261" },
+    "causal_reasoning":   { "min": 35.0, "max": 88.0, "invert": false, "benchmark": "GPQA",         "benchmark_url": "https://arxiv.org/abs/2311.12022" },
+    "aime_solve_rate":    { "min": 0.0,  "max": 85.0, "invert": false, "benchmark": "AIME 2024",    "benchmark_url": "https://artofproblemsolving.com/wiki/index.php/AIME_Problems_and_Solutions" },
+    "cot_faithfulness":   { "min": 30.0, "max": 82.0, "invert": false, "benchmark": "BBH (CoT)",   "benchmark_url": "https://arxiv.org/abs/2210.09261" }
+  },
+  "factuality": {
+    "hallucination_rate": { "min": 5.0,  "max": 60.0, "invert": true,  "benchmark": "TruthfulQA",  "benchmark_url": "https://arxiv.org/abs/2109.07958" },
+    "calibration_ece":    { "min": 0.02, "max": 0.35, "invert": true,  "benchmark": "MMLU-Pro ECE","benchmark_url": "https://arxiv.org/abs/2406.01574" },
+    "citation_accuracy":  { "min": 20.0, "max": 85.0, "invert": false, "benchmark": "ALCE",        "benchmark_url": "https://arxiv.org/abs/2305.14627" },
+    "knowledge_recency":  { "min": 30.0, "max": 90.0, "invert": false, "benchmark": "MMLU-Pro",    "benchmark_url": "https://arxiv.org/abs/2406.01574" },
+    "factual_consistency":{ "min": 30.0, "max": 88.0, "invert": false, "benchmark": "FactScore",   "benchmark_url": "https://arxiv.org/abs/2305.14251" }
+  },
+  "safety": {
+    "jailbreak_success_rate": { "min": 0.0,  "max": 45.0, "invert": true,  "benchmark": "HarmBench",            "benchmark_url": "https://arxiv.org/abs/2402.04249" },
+    "toxicity_rate":          { "min": 0.5,  "max": 20.0, "invert": true,  "benchmark": "RealToxicityPrompts",  "benchmark_url": "https://arxiv.org/abs/2009.11462" },
+    "refusal_f1":             { "min": 40.0, "max": 95.0, "invert": false, "benchmark": "WildGuard",            "benchmark_url": "https://arxiv.org/abs/2406.18495" },
+    "rlhf_reward":            { "min": 900,  "max": 1380, "invert": false, "benchmark": "LMArena ELO",          "benchmark_url": "https://lmarena.ai" },
+    "multi_turn_safety":      { "min": 40.0, "max": 92.0, "invert": false, "benchmark": "WildGuard (MT)",       "benchmark_url": "https://arxiv.org/abs/2406.18495" }
+  },
+  "coding": {
+    "humaneval_pass1":    { "min": 30.0, "max": 97.0, "invert": false, "benchmark": "HumanEval+",  "benchmark_url": "https://arxiv.org/abs/2107.03374" },
+    "swe_bench_resolve":  { "min": 5.0,  "max": 72.0, "invert": false, "benchmark": "SWE-bench",   "benchmark_url": "https://arxiv.org/abs/2310.06770" },
+    "mbpp_plus":          { "min": 40.0, "max": 90.0, "invert": false, "benchmark": "MBPP+",       "benchmark_url": "https://arxiv.org/abs/2108.07732" },
+    "multipl_e":          { "min": 25.0, "max": 85.0, "invert": false, "benchmark": "MultiPL-E",   "benchmark_url": "https://arxiv.org/abs/2208.08227" },
+    "repo_context":       { "min": 20.0, "max": 75.0, "invert": false, "benchmark": "RepoBench",   "benchmark_url": "https://arxiv.org/abs/2306.03091" }
+  },
+  "agentic": {
+    "function_call_accuracy": { "min": 30.0, "max": 92.0, "invert": false, "benchmark": "BFCL v3",     "benchmark_url": "https://arxiv.org/abs/2407.05956" },
+    "parallel_tool_use":      { "min": 20.0, "max": 88.0, "invert": false, "benchmark": "BFCL v3",     "benchmark_url": "https://arxiv.org/abs/2407.05956" },
+    "task_completion":        { "min": 20.0, "max": 85.0, "invert": false, "benchmark": "AgentBench",  "benchmark_url": "https://arxiv.org/abs/2308.03688" },
+    "tool_refusal_precision": { "min": 30.0, "max": 90.0, "invert": false, "benchmark": "ToolSandbox", "benchmark_url": "https://arxiv.org/abs/2408.04682" },
+    "multi_step_planning":    { "min": 15.0, "max": 80.0, "invert": false, "benchmark": "GAIA",        "benchmark_url": "https://arxiv.org/abs/2311.12983" }
+  },
+  "instruction": {
+    "ifeval_score":            { "min": 40.0, "max": 95.0, "invert": false, "benchmark": "IFEval",      "benchmark_url": "https://arxiv.org/abs/2311.07911" },
+    "format_compliance":       { "min": 45.0, "max": 92.0, "invert": false, "benchmark": "IFEval",      "benchmark_url": "https://arxiv.org/abs/2311.07911" },
+    "long_context_instruction":{ "min": 30.0, "max": 88.0, "invert": false, "benchmark": "RULER",       "benchmark_url": "https://arxiv.org/abs/2404.06654" },
+    "multi_turn_coherence":    { "min": 40.0, "max": 90.0, "invert": false, "benchmark": "MT-Bench",    "benchmark_url": "https://arxiv.org/abs/2306.05685" },
+    "constraint_following":    { "min": 35.0, "max": 90.0, "invert": false, "benchmark": "FollowBench", "benchmark_url": "https://arxiv.org/abs/2310.20410" }
+  },
+  "efficiency": {
+    "ttft_ms":              { "min": 200,  "max": 4000, "invert": true,  "benchmark": "Artificial Analysis", "benchmark_url": "https://artificialanalysis.ai" },
+    "tokens_per_sec":       { "min": 20,   "max": 250,  "invert": false, "benchmark": "Artificial Analysis", "benchmark_url": "https://artificialanalysis.ai" },
+    "cost_per_1m_tokens":   { "min": 0.05, "max": 60.0, "invert": true,  "benchmark": "Provider pricing",    "benchmark_url": "" },
+    "pareto_efficiency":    { "min": 10.0, "max": 90.0, "invert": false, "benchmark": "Artificial Analysis", "benchmark_url": "https://artificialanalysis.ai" },
+    "context_scaling":      { "min": 20.0, "max": 85.0, "invert": false, "benchmark": "RULER (scaling)",     "benchmark_url": "https://arxiv.org/abs/2404.06654" }
+  },
+  "bias": {
+    "bbq_bias_score":         { "min": 40.0, "max": 90.0, "invert": false, "benchmark": "BBQ",            "benchmark_url": "https://arxiv.org/abs/2110.08193" },
+    "winobias":               { "min": 45.0, "max": 88.0, "invert": false, "benchmark": "WinoBias",       "benchmark_url": "https://arxiv.org/abs/1804.06876" },
+    "multilingual_mmlu":      { "min": 35.0, "max": 88.0, "invert": false, "benchmark": "MMMLU",          "benchmark_url": "https://arxiv.org/abs/2306.07899" },
+    "toxic_amplification":    { "min": 1.0,  "max": 30.0, "invert": true,  "benchmark": "HolisticBias",   "benchmark_url": "https://arxiv.org/abs/2205.09209" },
+    "cross_cultural_parity":  { "min": 30.0, "max": 82.0, "invert": false, "benchmark": "CULTURALBENCH",  "benchmark_url": "https://arxiv.org/abs/2404.15238" }
+  },
+  "context": {
+    "niah_128k":              { "min": 20.0, "max": 99.0, "invert": false, "benchmark": "NIAH (128K)",    "benchmark_url": "https://github.com/gkamradt/LLMTest_NeedleInAHaystack" },
+    "ruler_long_context":     { "min": 30.0, "max": 92.0, "invert": false, "benchmark": "RULER",          "benchmark_url": "https://arxiv.org/abs/2404.06654" },
+    "longbench_v2":           { "min": 20.0, "max": 75.0, "invert": false, "benchmark": "LongBench v2",   "benchmark_url": "https://arxiv.org/abs/2308.14508" },
+    "lost_in_middle":         { "min": 25.0, "max": 85.0, "invert": false, "benchmark": "Lost-in-Middle", "benchmark_url": "https://arxiv.org/abs/2307.03172" },
+    "memory_consistency":     { "min": 30.0, "max": 85.0, "invert": false, "benchmark": "MemGPT Evals",   "benchmark_url": "https://arxiv.org/abs/2310.08560" }
+  },
+  "multimodal": {
+    "mmbench_score":      { "min": 40.0, "max": 92.0, "invert": false, "benchmark": "MMBench",     "benchmark_url": "https://arxiv.org/abs/2307.06281" },
+    "mathvista_visual":   { "min": 20.0, "max": 85.0, "invert": false, "benchmark": "MathVista",   "benchmark_url": "https://arxiv.org/abs/2310.02255" },
+    "ocr_accuracy":       { "min": 50.0, "max": 97.0, "invert": false, "benchmark": "OCRBench",    "benchmark_url": "https://arxiv.org/abs/2308.02580" },
+    "creative_writing_elo":{ "min": 900, "max": 1350, "invert": false, "benchmark": "LMArena Creative", "benchmark_url": "https://lmarena.ai" },
+    "mmau_audio":         { "min": 30.0, "max": 82.0, "invert": false, "benchmark": "MMAU",        "benchmark_url": "https://arxiv.org/abs/2406.04321" }
+  }
+}

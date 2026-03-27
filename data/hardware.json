@@ -1,0 +1,328 @@
+{
+  "_meta": { "version": "0.2.0", "updated": "2026-03-27" },
+
+  "models": {
+
+    "_comment_llm_open": "=== Open-Weight LLMs (self-hosted hardware) ===",
+
+    "llama-3-3-70b":   { "vram_min_gb": 40, "vram_recommended_gb": 80,  "cpu_inference": false, "min_gpu_tier": "professional", "disk_gb": 140, "quantization_tiers": ["Q4_K_M","Q5_K_M","Q8_0","FP16"], "notes": "Fits in 2xA100 80GB with FP16. Q4_K_M runs on 48GB." },
+    "llama-3-1-405b":  { "vram_min_gb": 200,"vram_recommended_gb": 320, "cpu_inference": false, "min_gpu_tier": "multi-gpu",   "disk_gb": 810, "quantization_tiers": ["Q4_K_M","Q5_K_M"],             "notes": "Requires 8xA100 or equivalent for FP16." },
+    "qwen3-235b-a22b": { "vram_min_gb": 120,"vram_recommended_gb": 180, "cpu_inference": false, "min_gpu_tier": "multi-gpu",   "disk_gb": 450, "quantization_tiers": ["Q4_K_M","Q5_K_M"],             "notes": "MoE architecture -- active params ~22B per token." },
+    "qwen3-32b":       { "vram_min_gb": 20, "vram_recommended_gb": 40,  "cpu_inference": false, "min_gpu_tier": "consumer",    "disk_gb": 65,  "quantization_tiers": ["Q4_K_M","Q5_K_M","Q8_0","FP16"],"notes": "Runs on RTX 4090 (24GB) with Q4." },
+    "deepseek-r1":     { "vram_min_gb": 160,"vram_recommended_gb": 320, "cpu_inference": false, "min_gpu_tier": "multi-gpu",   "disk_gb": 670, "quantization_tiers": ["Q4_K_M","Q5_K_M"],             "notes": "Full model requires 8xA100." },
+    "deepseek-v3":     { "vram_min_gb": 160,"vram_recommended_gb": 320, "cpu_inference": false, "min_gpu_tier": "multi-gpu",   "disk_gb": 650, "quantization_tiers": ["Q4_K_M","Q5_K_M"],             "notes": "MoE; active params ~37B per token." },
+    "mixtral-8x22b":   { "vram_min_gb": 90, "vram_recommended_gb": 120, "cpu_inference": false, "min_gpu_tier": "multi-gpu",   "disk_gb": 280, "quantization_tiers": ["Q4_K_M","Q5_K_M","Q8_0"],      "notes": "MoE 8x22B. 4xA100 80GB for FP16." },
+    "phi-4":           { "vram_min_gb": 8,  "vram_recommended_gb": 16,  "cpu_inference": true,  "min_gpu_tier": "consumer",    "disk_gb": 28,  "quantization_tiers": ["Q4_K_M","Q5_K_M","Q8_0","FP16"],"notes": "14B params. Runs on most modern GPUs." },
+    "gemma-3-27b":     { "vram_min_gb": 16, "vram_recommended_gb": 32,  "cpu_inference": false, "min_gpu_tier": "consumer",    "disk_gb": 55,  "quantization_tiers": ["Q4_K_M","Q5_K_M","Q8_0","FP16"],"notes": "27B params. RTX 3090/4090 recommended." },
+
+    "_comment_llm_proprietary": "=== Proprietary LLMs (API pricing only) ===",
+
+    "gpt-4o": {
+      "type": "api",
+      "input_cost_per_1m": 2.50,
+      "output_cost_per_1m": 10.00,
+      "context_window": 128000,
+      "max_output_tokens": 16384,
+      "batch_discount": "50% off via Batch API",
+      "cached_input_discount": "50% off cached input tokens",
+      "notes": "Multimodal flagship. Image/audio input supported at additional per-token cost."
+    },
+    "gpt-4o-mini": {
+      "type": "api",
+      "input_cost_per_1m": 0.15,
+      "output_cost_per_1m": 0.60,
+      "context_window": 128000,
+      "max_output_tokens": 16384,
+      "batch_discount": "50% off via Batch API",
+      "cached_input_discount": "50% off cached input tokens",
+      "notes": "16x cheaper than GPT-4o. Best cost-efficiency for high-volume tasks."
+    },
+    "o3": {
+      "type": "api",
+      "input_cost_per_1m": 2.00,
+      "output_cost_per_1m": 8.00,
+      "context_window": 200000,
+      "max_output_tokens": 100000,
+      "batch_discount": "50% off via Batch API",
+      "cached_input_discount": "75% off cached input tokens",
+      "notes": "Reasoning model with extended thinking. Output cost includes reasoning tokens."
+    },
+    "o4-mini": {
+      "type": "api",
+      "input_cost_per_1m": 1.10,
+      "output_cost_per_1m": 4.40,
+      "context_window": 200000,
+      "max_output_tokens": 100000,
+      "batch_discount": "50% off via Batch API",
+      "cached_input_discount": "75% off cached input tokens",
+      "notes": "Efficient reasoning model. ~Half the cost of o3 with competitive performance."
+    },
+    "claude-3-7-sonnet": {
+      "type": "api",
+      "input_cost_per_1m": 3.00,
+      "output_cost_per_1m": 15.00,
+      "context_window": 200000,
+      "max_output_tokens": 64000,
+      "batch_discount": "50% off via Message Batches API",
+      "cached_input_discount": "90% off prompt caching",
+      "notes": "Extended thinking mode available. Thinking tokens billed at output rate."
+    },
+    "claude-3-5-haiku": {
+      "type": "api",
+      "input_cost_per_1m": 0.80,
+      "output_cost_per_1m": 4.00,
+      "context_window": 200000,
+      "max_output_tokens": 8192,
+      "batch_discount": "50% off via Message Batches API",
+      "cached_input_discount": "90% off prompt caching",
+      "notes": "Fast and affordable. Best for high-throughput, latency-sensitive workloads."
+    },
+    "gemini-2-0-flash": {
+      "type": "api",
+      "input_cost_per_1m": 0.10,
+      "output_cost_per_1m": 0.40,
+      "context_window": 1048576,
+      "max_output_tokens": 8192,
+      "batch_discount": "None documented",
+      "cached_input_discount": "Context caching available",
+      "notes": "Extremely low cost. 1M token context. Deprecated June 2026 -- migrate to 2.5 Flash."
+    },
+    "gemini-2-0-pro": {
+      "type": "api",
+      "input_cost_per_1m": 1.25,
+      "output_cost_per_1m": 10.00,
+      "context_window": 1048576,
+      "max_output_tokens": 8192,
+      "batch_discount": "None documented",
+      "cached_input_discount": "Context caching available",
+      "notes": "Estimated pricing based on 2.5 Pro tier. 1M token context window."
+    },
+    "gemini-2-5-pro": {
+      "type": "api",
+      "input_cost_per_1m": 1.25,
+      "output_cost_per_1m": 10.00,
+      "context_window": 1048576,
+      "max_output_tokens": 65536,
+      "batch_discount": "None documented",
+      "cached_input_discount": "Context caching available",
+      "notes": "Reasoning model. $2.50/$15.00 for contexts >200K tokens. Thinking tokens billed at output rate."
+    },
+    "mistral-large-2": {
+      "type": "api",
+      "input_cost_per_1m": 2.00,
+      "output_cost_per_1m": 6.00,
+      "context_window": 128000,
+      "max_output_tokens": 8192,
+      "batch_discount": "Available via Batch API",
+      "cached_input_discount": "None documented",
+      "notes": "123B params. Also available as open-weight under Mistral Research License for self-hosting."
+    },
+    "command-r-plus": {
+      "type": "api",
+      "input_cost_per_1m": 2.50,
+      "output_cost_per_1m": 10.00,
+      "context_window": 128000,
+      "max_output_tokens": 4096,
+      "batch_discount": "None documented",
+      "cached_input_discount": "None documented",
+      "notes": "Optimized for RAG and tool use. 104B params. Pricing for 08-2024 version."
+    },
+
+    "_comment_robotics": "=== Robotics Models ===",
+
+    "openvla-7b": {
+      "type": "self-hosted",
+      "domain": "robotics",
+      "params": "7B",
+      "vram_min_gb": 16,
+      "vram_recommended_gb": 24,
+      "cpu_inference": false,
+      "min_gpu_tier": "consumer",
+      "disk_gb": 30,
+      "quantization_tiers": ["BF16"],
+      "notes": "Vision-Language-Action model. 15.9GB VRAM for single-image inference in BF16. RTX 4090 sufficient. LoRA fine-tuning needs 26GB+."
+    },
+    "pi0-3b": {
+      "type": "self-hosted",
+      "domain": "robotics",
+      "params": "3.3B",
+      "vram_min_gb": 8,
+      "vram_recommended_gb": 16,
+      "cpu_inference": false,
+      "min_gpu_tier": "consumer",
+      "disk_gb": 13,
+      "quantization_tiers": ["BF16"],
+      "notes": "Flow matching VLA built on PaliGemma. Inference >8GB VRAM (RTX 4090 documented). LoRA fine-tune needs 23GB+, full fine-tune 70GB+."
+    },
+    "octo-base": {
+      "type": "self-hosted",
+      "domain": "robotics",
+      "params": "93M",
+      "vram_min_gb": 4,
+      "vram_recommended_gb": 8,
+      "cpu_inference": true,
+      "min_gpu_tier": "consumer",
+      "disk_gb": 0.5,
+      "quantization_tiers": ["FP32"],
+      "notes": "Transformer diffusion policy. 13 iter/s on RTX 4090. JAX-based (CUDA 11 / TPU). Lightweight enough for edge GPUs."
+    },
+    "rt-1-x": {
+      "type": "self-hosted",
+      "domain": "robotics",
+      "params": "35M",
+      "vram_min_gb": 2,
+      "vram_recommended_gb": 4,
+      "cpu_inference": true,
+      "min_gpu_tier": "consumer",
+      "disk_gb": 0.2,
+      "quantization_tiers": ["FP32"],
+      "notes": "35M-param EfficientNet+Transformer. 15ms inference (~67Hz). Real-time on-robot control. Trained on Open X-Embodiment dataset."
+    },
+    "rt-2-x": {
+      "type": "proprietary-research",
+      "domain": "robotics",
+      "params": "55B",
+      "vram_min_gb": 110,
+      "vram_recommended_gb": 160,
+      "cpu_inference": false,
+      "min_gpu_tier": "multi-gpu",
+      "disk_gb": 110,
+      "quantization_tiers": [],
+      "notes": "55B VLM (PaLI-X backbone). Not publicly released -- weights proprietary to Google DeepMind. Would require multi-A100/H100 for inference."
+    },
+
+    "_comment_weather": "=== Weather / Earth System Models ===",
+
+    "graphcast": {
+      "type": "self-hosted",
+      "domain": "weather",
+      "params": "36.7M",
+      "vram_min_gb": 16,
+      "vram_recommended_gb": 24,
+      "cpu_inference": false,
+      "min_gpu_tier": "consumer",
+      "disk_gb": 0.3,
+      "quantization_tiers": [],
+      "notes": "GNN-based. 10-day forecast in <60s on TPUv4. Low-res version runs on RTX 4090; full 0.25deg model can OOM on 24GB. Best on TPU."
+    },
+    "gencast": {
+      "type": "self-hosted",
+      "domain": "weather",
+      "params": "~50M",
+      "vram_min_gb": 16,
+      "vram_recommended_gb": 60,
+      "cpu_inference": false,
+      "min_gpu_tier": "professional",
+      "disk_gb": 0.5,
+      "quantization_tiers": [],
+      "notes": "Probabilistic ensemble forecasting. 0.25deg needs ~60GB VRAM + 300GB system RAM. 1deg version fits in 16GB VRAM. TPU recommended."
+    },
+    "aurora-1-3b": {
+      "type": "self-hosted",
+      "domain": "weather",
+      "params": "1.3B",
+      "vram_min_gb": 40,
+      "vram_recommended_gb": 80,
+      "cpu_inference": false,
+      "min_gpu_tier": "professional",
+      "disk_gb": 5.2,
+      "quantization_tiers": [],
+      "notes": "3D Swin Transformer. ~40GB VRAM for 0.25deg inference. 0.1deg approaches 80GB A100 limit. Pretrained on 1M+ hours of simulation data."
+    },
+    "fourcastnet-3": {
+      "type": "self-hosted",
+      "domain": "weather",
+      "params": "~200M",
+      "vram_min_gb": 40,
+      "vram_recommended_gb": 80,
+      "cpu_inference": false,
+      "min_gpu_tier": "professional",
+      "disk_gb": 1.5,
+      "quantization_tiers": [],
+      "notes": "Spherical neural operator. 15-day forecast in ~1 min on H100. Training exceeds 80GB single GPU. BF16 AMP recommended for inference."
+    },
+    "pangu-weather": {
+      "type": "self-hosted",
+      "domain": "weather",
+      "params": "~256M",
+      "vram_min_gb": 8,
+      "vram_recommended_gb": 16,
+      "cpu_inference": true,
+      "min_gpu_tier": "consumer",
+      "disk_gb": 4,
+      "quantization_tiers": [],
+      "notes": "ONNX format (4 sub-models: 1h/3h/6h/24h). 24-hour forecast in 1.4s on V100. CPU inference supported. Very deployment-friendly."
+    },
+
+    "_comment_materials": "=== Materials Science Models ===",
+
+    "mattersim-5m": {
+      "type": "self-hosted",
+      "domain": "materials",
+      "params": "5M",
+      "vram_min_gb": 4,
+      "vram_recommended_gb": 8,
+      "cpu_inference": true,
+      "min_gpu_tier": "consumer",
+      "disk_gb": 0.1,
+      "quantization_tiers": [],
+      "notes": "Atomistic simulation potential. Also has 1M mini variant. Runs on V100 32GB. Memory scales with atom count per structure."
+    },
+    "mace-mp-0": {
+      "type": "self-hosted",
+      "domain": "materials",
+      "params": "4.7M",
+      "vram_min_gb": 2,
+      "vram_recommended_gb": 8,
+      "cpu_inference": true,
+      "min_gpu_tier": "consumer",
+      "disk_gb": 0.05,
+      "quantization_tiers": [],
+      "notes": "Equivariant message passing potential. 89-element coverage. Up to 5x speedup with cuEquivariance library. pip install mace-torch."
+    },
+    "chgnet": {
+      "type": "self-hosted",
+      "domain": "materials",
+      "params": "0.4M",
+      "vram_min_gb": 2,
+      "vram_recommended_gb": 4,
+      "cpu_inference": true,
+      "min_gpu_tier": "consumer",
+      "disk_gb": 0.01,
+      "quantization_tiers": [],
+      "notes": "Charge-informed GNN potential. ~400K params. Runs on CPU/CUDA/MPS. Very lightweight -- suitable for laptops. pip install chgnet."
+    },
+    "gnome": {
+      "type": "self-hosted",
+      "domain": "materials",
+      "params": "~10M",
+      "vram_min_gb": 8,
+      "vram_recommended_gb": 16,
+      "cpu_inference": true,
+      "min_gpu_tier": "consumer",
+      "disk_gb": 0.1,
+      "quantization_tiers": [],
+      "notes": "GNN for crystal stability prediction. Discovered 2.2M+ stable crystals. MD simulations validated on P100 16GB. JAX-based."
+    },
+    "mattergen": {
+      "type": "self-hosted",
+      "domain": "materials",
+      "params": "~15M",
+      "vram_min_gb": 4,
+      "vram_recommended_gb": 8,
+      "cpu_inference": true,
+      "min_gpu_tier": "consumer",
+      "disk_gb": 0.1,
+      "quantization_tiers": [],
+      "notes": "Diffusion model for crystal generation (GemNet backbone). Generates structures satisfying property constraints. Linux + CUDA required."
+    }
+  },
+
+  "gpu_tiers": {
+    "consumer":     { "label": "Consumer GPU",       "examples": "RTX 3080/4080/4090, RX 7900 XTX" },
+    "professional": { "label": "Professional GPU",   "examples": "A40, RTX 6000 Ada, L40S, V100 32GB" },
+    "multi-gpu":    { "label": "Multi-GPU / Server", "examples": "8xA100, H100 cluster, MI300X" }
+  },
+
+  "pricing_note": "API pricing in USD per 1M tokens as of March 2026. Batch and caching discounts vary by provider. Domain-specific models (robotics/weather/materials) have hardware fields adapted for their inference patterns -- memory scales with input complexity (atoms, resolution, trajectory length) rather than token count."
+}
