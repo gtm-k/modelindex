@@ -493,6 +493,10 @@
     }
     .placeholder-view svg { width: 48px; height: 48px; opacity: 0.3; }
     .placeholder-view p   { font-size: 15px; }
+
+    /* Domain tabs */
+    .domain-tab:hover { background: var(--color-bg-2) !important; }
+    .domain-tab.active { font-weight: 600; }
   </style>
 
   <link rel="manifest" href="manifest.json">
@@ -572,6 +576,7 @@
 <!-- Browser JS modules -->
 <script src="js/db.js"></script>
 <script src="js/factors.js"></script>
+<script src="js/domain-schemas.js"></script>
 <script src="js/presets.js"></script>
 <script src="js/mcs.js"></script>
 <script src="js/sensitivity.js"></script>
@@ -595,6 +600,8 @@ const App = {
     syncStatuses: {},
     activeFilters: {},
     activePills: new Set(),
+    activeDomain: 'llm',
+    domainBaselines: {},
   },
   views: {},
 };
@@ -714,6 +721,22 @@ function showView(viewId) {
   if (App.views[viewId] && App.views[viewId].onEnter) {
     App.views[viewId].onEnter();
   }
+}
+
+function switchDomain(domainId) {
+  App.state.activeDomain = domainId;
+  App.state.factorSchema = Factors.getSchemaForDomain(domainId);
+  if (domainId === 'llm') {
+    App.state.baseline = App.state._llmBaseline;
+  } else {
+    App.state.baseline = App.state.domainBaselines[domainId] || {};
+  }
+  if (App.state.currentView === 'registry' && App.views.registry) {
+    App.views.registry.refresh();
+  }
+  document.querySelectorAll('.domain-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.domain === domainId);
+  });
 }
 
 function showToast(message, type = 'info', duration = 3500) {
@@ -841,8 +864,19 @@ document.addEventListener('keydown', (e) => {
 
     // Flatten nested baseline for inline MCS computation
     App.state.baseline         = _flattenBaseline(baselineRaw);
+    App.state._llmBaseline     = App.state.baseline;
     App.state.baselineRaw      = baselineRaw; // keep nested version for MCS module
     App.state.factorSchema     = Factors.FACTOR_SCHEMA;
+
+    // Load domain baselines
+    for (const domainId of ['robotics', 'weather', 'materials']) {
+      try {
+        const domainBaseline = await fetch(`data/baseline-${domainId}.json`).then(r => r.json());
+        App.state.domainBaselines[domainId] = _flattenBaseline(domainBaseline);
+      } catch (e) {
+        console.warn(`Could not load baseline for ${domainId}:`, e.message);
+      }
+    }
     App.state.presets          = Presets.PRESETS;
     App.state.licenseCompat    = licenseCompat;
     App.state.hardwareManifest = hardwareManifest;
@@ -881,7 +915,8 @@ document.addEventListener('keydown', (e) => {
 (function RegistryView() {
 
   // ── Module state ────────────────────────────────────────────────────────────
-  let _models     = [];       // all models from DB
+  let _allModels  = [];       // all models from DB (all domains)
+  let _models     = [];       // models for current domain
   let _scores     = {};       // { modelId: { sub_metric: scoreRow } }
   let _pricing    = {};       // { modelId: pricingRow }
   let _mcsResults = [];       // [{ model_id, mcs, factorBreakdown }]
@@ -1133,7 +1168,7 @@ document.addEventListener('keydown', (e) => {
   }
 
   function _renderBestForRow() {
-    const presets = App.state.presets || [];
+    const presets = (App.state.presets || []).filter(p => p.domain === App.state.activeDomain);
     const pills = [{ id: null, label: 'All (Equal weights)' }, ...presets.map(p => ({ id: p.id, label: p.label }))];
     return `
       <div id="best-for-row">
@@ -1253,12 +1288,44 @@ document.addEventListener('keydown', (e) => {
       </div>`;
   }
 
+  function _renderDomainTabs() {
+    const meta = (typeof DomainSchemas !== 'undefined' && DomainSchemas.DOMAIN_META) ? DomainSchemas.DOMAIN_META : {};
+    const domains = Object.values(meta);
+    if (domains.length === 0) return '';
+    const activeDomain = App.state.activeDomain || 'llm';
+    // Count models per domain from _allModels (unfiltered)
+    const domainCounts = {};
+    for (const m of _allModels) {
+      const d = m.domain || 'llm';
+      domainCounts[d] = (domainCounts[d] || 0) + 1;
+    }
+    return `
+      <div class="domain-tabs" style="display:flex;gap:var(--space-1);padding:var(--space-2) 0;border-bottom:1px solid var(--color-border);margin-bottom:var(--space-3)">
+        ${domains.map(d => {
+          const isActive = d.id === activeDomain;
+          const count = domainCounts[d.id] || 0;
+          const activeStyle = isActive
+            ? `border-bottom:2px solid ${d.color};background:${d.color}11;font-weight:600`
+            : 'border-bottom:2px solid transparent';
+          return `<button class="domain-tab ${isActive ? 'active' : ''}" data-domain="${d.id}"
+            style="display:flex;align-items:center;gap:6px;padding:var(--space-2) var(--space-3);
+              background:transparent;border:none;border-radius:var(--radius) var(--radius) 0 0;
+              cursor:pointer;font-size:13px;color:var(--color-text);${activeStyle}">
+            <i data-lucide="${d.icon}" style="width:14px;height:14px"></i>
+            ${d.shortLabel}
+            <span style="font-size:11px;color:var(--color-text-3)">${count}</span>
+          </button>`;
+        }).join('')}
+      </div>`;
+  }
+
   function _render() {
     const container = document.getElementById('view-registry');
     const enriched = _enrichWithMCS();
     _filtered = _sortModels(_applyFilters(enriched));
 
     container.innerHTML = `
+      ${_renderDomainTabs()}
       <div class="view-header">
         <div>
           <div class="view-title">Model Registry</div>
@@ -1436,6 +1503,11 @@ document.addEventListener('keydown', (e) => {
         }
       });
     }
+
+    // Domain tabs
+    document.querySelectorAll('.domain-tab').forEach(tab => {
+      tab.addEventListener('click', () => switchDomain(tab.dataset.domain));
+    });
   }
 
   // ── Provenance panel ─────────────────────────────────────────────────────────
@@ -1789,14 +1861,15 @@ document.addEventListener('keydown', (e) => {
           DB.getModels(),
           DB.getAllUserPricing(),
         ]);
-        _models = models;
+        _allModels = models;
+        _models = models.filter(m => (m.domain || 'llm') === App.state.activeDomain);
 
         // Load scores for all models in parallel (batched)
         const scoreResults = await Promise.all(
-          models.map(m => DB.getScores(m.model_id))
+          _models.map(m => DB.getScores(m.model_id))
         );
         _scores = {};
-        models.forEach((m, i) => {
+        _models.forEach((m, i) => {
           _scores[m.model_id] = {};
           for (const s of (scoreResults[i] || [])) {
             _scores[m.model_id][s.sub_metric] = s;
