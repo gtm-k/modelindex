@@ -1,5 +1,3 @@
-'use strict';
-
 const FACTOR_SCHEMA = [
   {
     factor_id: 'reasoning',
@@ -24,8 +22,8 @@ const FACTOR_SCHEMA = [
     icon: 'check-circle',
     description: 'Accuracy, calibration, and grounding in factual knowledge; resistance to hallucination.',
     sub_metrics: [
-      { sub_metric_id: 'hallucination_rate',  label: 'Hallucination Rate (↓)', benchmark_name: 'TruthfulQA',  benchmark_url: 'https://arxiv.org/abs/2109.07958', invert: true,  contamination_risk: 'medium' },
-      { sub_metric_id: 'calibration_ece',     label: 'Calibration (ECE) (↓)',  benchmark_name: 'MMLU-Pro ECE',benchmark_url: 'https://arxiv.org/abs/2406.01574', invert: true,  contamination_risk: 'medium' },
+      { sub_metric_id: 'hallucination_rate',  label: 'Hallucination Rate (\u2193)', benchmark_name: 'TruthfulQA',  benchmark_url: 'https://arxiv.org/abs/2109.07958', invert: true,  contamination_risk: 'medium' },
+      { sub_metric_id: 'calibration_ece',     label: 'Calibration (ECE) (\u2193)',  benchmark_name: 'MMLU-Pro ECE',benchmark_url: 'https://arxiv.org/abs/2406.01574', invert: true,  contamination_risk: 'medium' },
       { sub_metric_id: 'citation_accuracy',   label: 'Citation Accuracy',      benchmark_name: 'ALCE',        benchmark_url: 'https://arxiv.org/abs/2305.14627', invert: false, contamination_risk: 'low' },
       { sub_metric_id: 'knowledge_recency',   label: 'Knowledge Recency',      benchmark_name: 'MMLU-Pro',    benchmark_url: 'https://arxiv.org/abs/2406.01574', invert: false, contamination_risk: 'medium' },
       { sub_metric_id: 'factual_consistency', label: 'Factual Consistency',    benchmark_name: 'FactScore',   benchmark_url: 'https://arxiv.org/abs/2305.14251', invert: false, contamination_risk: 'medium' },
@@ -39,8 +37,8 @@ const FACTOR_SCHEMA = [
     icon: 'shield',
     description: 'Resistance to adversarial prompts, toxic output, and alignment with human values.',
     sub_metrics: [
-      { sub_metric_id: 'jailbreak_success_rate', label: 'Jailbreak Rate (↓)',    benchmark_name: 'HarmBench',           benchmark_url: 'https://arxiv.org/abs/2402.04249', invert: true,  contamination_risk: 'low' },
-      { sub_metric_id: 'toxicity_rate',          label: 'Toxicity Rate (↓)',     benchmark_name: 'RealToxicityPrompts', benchmark_url: 'https://arxiv.org/abs/2009.11462', invert: true,  contamination_risk: 'low' },
+      { sub_metric_id: 'jailbreak_success_rate', label: 'Jailbreak Rate (\u2193)',    benchmark_name: 'HarmBench',           benchmark_url: 'https://arxiv.org/abs/2402.04249', invert: true,  contamination_risk: 'low' },
+      { sub_metric_id: 'toxicity_rate',          label: 'Toxicity Rate (\u2193)',     benchmark_name: 'RealToxicityPrompts', benchmark_url: 'https://arxiv.org/abs/2009.11462', invert: true,  contamination_risk: 'low' },
       { sub_metric_id: 'refusal_f1',             label: 'Refusal F1',            benchmark_name: 'WildGuard',           benchmark_url: 'https://arxiv.org/abs/2406.18495', invert: false, contamination_risk: 'low' },
       { sub_metric_id: 'rlhf_reward',            label: 'RLHF Reward (ELO)',     benchmark_name: 'LMArena ELO',         benchmark_url: 'https://lmarena.ai',               invert: false, contamination_risk: 'low' },
       { sub_metric_id: 'multi_turn_safety',      label: 'Multi-turn Safety',     benchmark_name: 'WildGuard (MT)',      benchmark_url: 'https://arxiv.org/abs/2406.18495', invert: false, contamination_risk: 'low' },
@@ -99,9 +97,9 @@ const FACTOR_SCHEMA = [
     icon: 'gauge',
     description: 'Latency, throughput, cost efficiency, and performance scaling with context length.',
     sub_metrics: [
-      { sub_metric_id: 'ttft_ms',            label: 'TTFT (ms) (↓)',        benchmark_name: 'Artificial Analysis', benchmark_url: 'https://artificialanalysis.ai', invert: true,  contamination_risk: 'na' },
+      { sub_metric_id: 'ttft_ms',            label: 'TTFT (ms) (\u2193)',        benchmark_name: 'Artificial Analysis', benchmark_url: 'https://artificialanalysis.ai', invert: true,  contamination_risk: 'na' },
       { sub_metric_id: 'tokens_per_sec',     label: 'Tokens/sec',           benchmark_name: 'Artificial Analysis', benchmark_url: 'https://artificialanalysis.ai', invert: false, contamination_risk: 'na' },
-      { sub_metric_id: 'cost_per_1m_tokens', label: 'Cost/1M tokens (↓)',   benchmark_name: 'Provider pricing',   benchmark_url: '',                              invert: true,  contamination_risk: 'na' },
+      { sub_metric_id: 'cost_per_1m_tokens', label: 'Cost/1M tokens (\u2193)',   benchmark_name: 'Provider pricing',   benchmark_url: '',                              invert: true,  contamination_risk: 'na' },
       { sub_metric_id: 'pareto_efficiency',  label: 'Pareto Efficiency',    benchmark_name: 'Artificial Analysis', benchmark_url: 'https://artificialanalysis.ai', invert: false, contamination_risk: 'na' },
       { sub_metric_id: 'context_scaling',    label: 'Context Scaling',      benchmark_name: 'RULER (scaling)',    benchmark_url: 'https://arxiv.org/abs/2404.06654',invert: false, contamination_risk: 'low' },
     ],
@@ -117,7 +115,7 @@ const FACTOR_SCHEMA = [
       { sub_metric_id: 'bbq_bias_score',        label: 'BBQ Bias Score',          benchmark_name: 'BBQ',           benchmark_url: 'https://arxiv.org/abs/2110.08193', invert: false, contamination_risk: 'low' },
       { sub_metric_id: 'winobias',              label: 'WinoBias',                benchmark_name: 'WinoBias',      benchmark_url: 'https://arxiv.org/abs/1804.06876', invert: false, contamination_risk: 'low' },
       { sub_metric_id: 'multilingual_mmlu',     label: 'Multilingual MMLU',       benchmark_name: 'MMMLU',         benchmark_url: 'https://arxiv.org/abs/2306.07899', invert: false, contamination_risk: 'medium' },
-      { sub_metric_id: 'toxic_amplification',   label: 'Toxic Amplification (↓)', benchmark_name: 'HolisticBias',  benchmark_url: 'https://arxiv.org/abs/2205.09209', invert: true,  contamination_risk: 'low' },
+      { sub_metric_id: 'toxic_amplification',   label: 'Toxic Amplification (\u2193)', benchmark_name: 'HolisticBias',  benchmark_url: 'https://arxiv.org/abs/2205.09209', invert: true,  contamination_risk: 'low' },
       { sub_metric_id: 'cross_cultural_parity', label: 'Cross-cultural Parity',   benchmark_name: 'CULTURALBENCH', benchmark_url: 'https://arxiv.org/abs/2404.15238', invert: false, contamination_risk: 'low' },
     ],
   },
@@ -159,4 +157,4 @@ const FACTOR_MAP = Object.fromEntries(FACTOR_SCHEMA.map(f => [f.factor_id, f]));
 // All sub-metric IDs flat list
 const ALL_SUB_METRIC_IDS = FACTOR_SCHEMA.flatMap(f => f.sub_metrics.map(s => s.sub_metric_id));
 
-module.exports = { FACTOR_SCHEMA, FACTOR_MAP, ALL_SUB_METRIC_IDS };
+window.Factors = { FACTOR_SCHEMA, FACTOR_MAP, ALL_SUB_METRIC_IDS };

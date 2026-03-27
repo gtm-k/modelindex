@@ -1,10 +1,8 @@
-'use strict';
-
 /**
  * computeMCS — Pure MCS calculator. No DB access. Safe to duplicate in renderer.
  *
  * @param {Object} modelScores   - { sub_metric_id: rawScore, ... }
- * @param {Object} factorWeights - { factor_id: weight (0–50 integer), ... }
+ * @param {Object} factorWeights - { factor_id: weight (0-50 integer), ... }
  * @param {Object} subDimWeights - { factor_id: { sub_metric_id: weight }, ... } | null
  * @param {Object} baseline      - normalization-baseline.json content
  * @returns {{ mcs, factorBreakdown, subMetricBreakdown }}
@@ -88,7 +86,7 @@ function estimateOracleGain(rankedResults) {
   return best > 0 ? ((ensembleEst - best) / best) * 100 : 0;
 }
 
-// ── Private helpers ───────────────────────────────────────────────────────────
+// -- Private helpers ----------------------------------------------------------
 
 function _normalize(raw, min, max, invert) {
   if (max === min) return 50;
@@ -110,4 +108,4 @@ function _equalWeights(ids) {
   return Object.fromEntries(ids.map(id => [id, w]));
 }
 
-module.exports = { computeMCS, computeBatchMCS, estimateOracleGain };
+window.MCS = { computeMCS, computeBatchMCS, estimateOracleGain };

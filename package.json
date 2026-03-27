@@ -1,36 +1,25 @@
 {
   "name": "modelindex",
   "version": "0.1.0-alpha",
-  "description": "Cross-platform desktop application for evaluating, indexing, and orchestrating AI language models.",
-  "main": "src/main.js",
+  "description": "Evaluate, rank and compare AI language models with a configurable weighted scoring system. Static site, no server required.",
+  "private": true,
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
-    "lint": "eslint src renderer"
+    "dev": "npx http-server public -p 8080 -c-1 --cors",
+    "fetch-data": "node scripts/fetch-data.js",
+    "lint": "npx eslint public/js/"
   },
-  "keywords": ["llm", "ai", "benchmark", "evaluation", "electron"],
-  "author": "ModelIndex Contributors",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "better-sqlite3": "^9.4.3",
-    "electron-updater": "^6.3.4",
-    "keytar": "^7.9.0",
-    "node-cron": "^3.0.3",
-    "parquet-wasm": "^0.6.1"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gtm-k/modelindex.git"
   },
-  "devDependencies": {
-    "@electron-forge/cli": "^7.4.0",
-    "@electron-forge/maker-deb": "^7.4.0",
-    "@electron-forge/maker-dmg": "^7.4.0",
-    "@electron-forge/maker-rpm": "^7.4.0",
-    "@electron-forge/maker-squirrel": "^7.4.0",
-    "@electron-forge/maker-zip": "^7.4.0",
-    "@electron-forge/plugin-fuses": "^7.4.0",
-    "@electron-forge/plugin-node-rebuild": "^7.4.0",
-    "@electron-forge/publisher-github": "^7.4.0",
-    "@electron/fuses": "^1.8.0",
-    "electron": "^33.0.0"
-  }
+  "keywords": [
+    "llm",
+    "ai-evaluation",
+    "benchmark",
+    "model-comparison",
+    "static-site",
+    "github-pages"
+  ],
+  "author": "gtm-k",
+  "license": "Apache-2.0"
 }

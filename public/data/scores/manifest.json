@@ -1,0 +1,26 @@
+{
+  "huggingface": {
+    "fetched_at": "2026-03-27T14:02:51.617Z",
+    "count": 200
+  },
+  "helm": {
+    "fetched_at": "2026-03-27T14:02:51.636Z",
+    "count": 200
+  },
+  "lmarena": {
+    "fetched_at": "2026-03-27T14:02:51.654Z",
+    "count": 200
+  },
+  "evalplus": {
+    "fetched_at": "2026-03-27T14:02:51.667Z",
+    "count": 100
+  },
+  "ruler": {
+    "fetched_at": "2026-03-27T14:02:51.677Z",
+    "count": 100
+  },
+  "bbq": {
+    "fetched_at": "2026-03-27T14:02:51.687Z",
+    "count": 200
+  }
+}

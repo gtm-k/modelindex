@@ -1,5 +1,0 @@
-# Place icon files here before packaging:
-#   icon.ico       — Windows installer icon (256×256 ICO)
-#   icon.icns      — macOS app icon (512×512 ICNS)
-#   icon.png       — Linux app icon (512×512 PNG)
-#   dmg-background.png — macOS DMG background (540×380 PNG)

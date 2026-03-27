@@ -9,21 +9,15 @@
     Content-Security-Policy
     script-src: 'self' + CDN (Chart.js via cdn.jsdelivr.net)
     style-src:  'self' + Google Fonts + unsafe-inline (required for inline <style>)
-    connect-src: all 7 T1 connector endpoints
+    connect-src: 'self' only — all data is same-origin static JSON
   -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' https://cdn.jsdelivr.net;
+    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
     style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
     font-src https://fonts.gstatic.com;
     img-src 'self' data: https:;
-    connect-src
-      https://huggingface.co
-      https://datasets-server.huggingface.co
-      https://huggingface.co
-      https://api.github.com
-      https://lmarena.ai
-      https://crfm.stanford.edu;
+    connect-src 'self';
   " />
 
   <!-- Fonts -->
@@ -500,6 +494,9 @@
     .placeholder-view svg { width: 48px; height: 48px; opacity: 0.3; }
     .placeholder-view p   { font-size: 15px; }
   </style>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>MI</text></svg>">
 </head>
 <body>
 <div id="app">
@@ -546,13 +543,8 @@
     <!-- Index Builder view -->
     <div id="view-index-builder" class="view hidden"></div>
 
-    <!-- My Indexes view (placeholder) -->
-    <div id="view-my-indexes" class="view hidden">
-      <div class="placeholder-view">
-        <i data-lucide="bookmark"></i>
-        <p>My Indexes — coming in Phase 8</p>
-      </div>
-    </div>
+    <!-- My Indexes view -->
+    <div id="view-my-indexes" class="view hidden"></div>
 
     <!-- Settings view -->
     <div id="view-settings" class="view hidden"></div>
@@ -577,9 +569,16 @@
   <div id="provenance-content"></div>
 </aside>
 
+<!-- Browser JS modules -->
+<script src="js/db.js"></script>
+<script src="js/factors.js"></script>
+<script src="js/presets.js"></script>
+<script src="js/mcs.js"></script>
+<script src="js/sensitivity.js"></script>
+
 <script>
 // ══════════════════════════════════════════════════════════════════════════════
-// ModelIndex Renderer — Main Application Script
+// ModelIndex Renderer — Main Application Script (Static Site Version)
 // ══════════════════════════════════════════════════════════════════════════════
 
 // ── Global app state ──────────────────────────────────────────────────────────
@@ -599,6 +598,87 @@ const App = {
   },
   views: {},
 };
+
+// ── Browser helper: file download ─────────────────────────────────────────────
+function _downloadFile(filename, content, mimeType) {
+  const blob = new Blob([content], { type: mimeType || 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── Browser helper: file picker ───────────────────────────────────────────────
+function _pickFile(accept) {
+  return new Promise(resolve => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = accept || '.json';
+    input.onchange = () => {
+      const file = input.files[0];
+      if (!file) { resolve(null); return; }
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsText(file);
+    };
+    input.click();
+  });
+}
+
+// ── Static connector statuses from manifest.json ──────────────────────────────
+async function _getConnectorStatuses() {
+  try {
+    const manifest = await fetch('data/scores/manifest.json').then(r => r.json());
+    return Object.entries(manifest).map(([id, info]) => ({
+      connectorId: id, displayName: id, tier: 'T1',
+      schedule: '*/6 * * *', isRunning: false,
+      lastSync: info.fetched_at ? { finished_at: info.fetched_at, status: info.error ? 'error' : 'success', rows_upserted: info.count, error_msg: info.error || null } : null,
+    }));
+  } catch { return []; }
+}
+
+// ── Static data sync: fetch JSON files and upsert into IndexedDB ──────────────
+async function _syncFromStaticJSON() {
+  const dot = document.getElementById('sync-status-dot');
+  const label = document.getElementById('sync-status-label');
+  if (dot) dot.className = 'syncing';
+  if (label) label.textContent = 'Syncing\u2026';
+  try {
+    const manifest = await fetch('data/scores/manifest.json').then(r => r.json());
+    for (const [connectorId, info] of Object.entries(manifest)) {
+      if (info.error || !info.fetched_at) continue;
+      try {
+        const data = await fetch(`data/scores/${connectorId}.json`).then(r => r.json());
+        if (data.scores && data.scores.length > 0) {
+          await DB.upsertScores(data.scores);
+          await DB.logSync(connectorId, 'success', data.scores.length, data.scores.length, null);
+        }
+      } catch (e) {
+        await DB.logSync(connectorId, 'error', 0, 0, e.message);
+      }
+    }
+    if (dot) dot.className = '';
+    if (label) label.textContent = 'Synced';
+    if (App.state.currentView === 'registry' && App.views.registry) App.views.registry.refresh();
+  } catch (e) {
+    if (dot) dot.className = 'error';
+    if (label) label.textContent = 'Error';
+  }
+}
+
+// ── Flatten nested baseline into flat { sub_metric_id: { min, max, invert } }
+function _flattenBaseline(nested) {
+  const flat = {};
+  for (const [factorId, subs] of Object.entries(nested)) {
+    if (factorId === '_meta') continue;
+    for (const [subId, spec] of Object.entries(subs)) {
+      flat[subId] = { ...spec, factor_id: factorId };
+    }
+  }
+  return flat;
+}
 
 // ── Utility functions ──────────────────────────────────────────────────────────
 function showView(viewId) {
@@ -651,7 +731,7 @@ function showLoading(containerId) {
 }
 
 function formatScore(n) {
-  if (n == null || n === undefined || isNaN(n)) return '—';
+  if (n == null || n === undefined || isNaN(n)) return '\u2014';
   return Number(n).toFixed(1);
 }
 
@@ -683,7 +763,7 @@ function stalenessBadge(fetchedAt) {
     stale:   ['badge-yellow',  'Stale'],
     expired: ['badge-red',     'Expired'],
   };
-  const [badgeCls, label] = map[cls] || ['badge-neutral', '—'];
+  const [badgeCls, label] = map[cls] || ['badge-neutral', '\u2014'];
   return `<span class="badge ${badgeCls}">${label}</span>`;
 }
 
@@ -725,69 +805,38 @@ document.addEventListener('keydown', (e) => {
   if (!overlay.classList.contains('hidden')) closeModal();
 });
 
-// ── Sync IPC listeners ────────────────────────────────────────────────────────
-window.modelIndex.sync.onSyncProgress(({ connectorId, status }) => {
-  const dot   = document.getElementById('sync-status-dot');
-  const label = document.getElementById('sync-status-label');
-  dot.className = 'syncing';
-  label.textContent = `Syncing…`;
-});
-
-window.modelIndex.sync.onSyncComplete(({ connectorId, rowsUpserted }) => {
-  const dot   = document.getElementById('sync-status-dot');
-  const label = document.getElementById('sync-status-label');
-  dot.className = '';
-  label.textContent = 'Synced';
-  // Refresh registry if it's visible
-  if (App.state.currentView === 'registry' && App.views.registry) {
-    App.views.registry.refresh();
-  }
-});
-
-window.modelIndex.sync.onSyncError(({ connectorId, error }) => {
-  const dot = document.getElementById('sync-status-dot');
-  dot.className = 'error';
-});
-
-// ── Auto-update notification ───────────────────────────────────────────────────
-window.modelIndex.shell.onUpdateReady(({ version }) => {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = 'toast success';
-  toast.style.cssText = 'cursor:pointer;max-width:340px';
-  toast.innerHTML = `
-    <div>
-      <div style="font-weight:600">Update ready: v${version}</div>
-      <div style="font-size:12px;color:var(--color-text-2);margin-top:2px">
-        Click to restart and install
-      </div>
-    </div>`;
-  toast.addEventListener('click', () => window.modelIndex.shell.installUpdate());
-  container.appendChild(toast);
-});
-
 // ── App initialisation ────────────────────────────────────────────────────────
 (async function init() {
   try {
+    // Initialize IndexedDB
+    await DB.init();
+
     // Load static data needed by multiple views
-    const [baseline, factorSchema, presets, licenseCompat, hardwareManifest] = await Promise.all([
-      window.modelIndex.db.getBaseline(),
-      window.modelIndex.eval.getFactorSchema(),
-      window.modelIndex.eval.getPresets(),
-      window.modelIndex.db.getLicenseCompat(),
-      window.modelIndex.db.getHardwareManifest(),
+    const [baselineRaw, licenseCompat, hardwareManifest, registryData] = await Promise.all([
+      fetch('data/baseline.json').then(r => r.json()),
+      fetch('data/license-compat.json').then(r => r.json()),
+      fetch('data/hardware.json').then(r => r.json()),
+      fetch('data/registry.json').then(r => r.json()),
     ]);
 
-    App.state.baseline         = baseline;
-    App.state.factorSchema     = factorSchema;
-    App.state.presets          = presets;
+    // Flatten nested baseline for inline MCS computation
+    App.state.baseline         = _flattenBaseline(baselineRaw);
+    App.state.baselineRaw      = baselineRaw; // keep nested version for MCS module
+    App.state.factorSchema     = Factors.FACTOR_SCHEMA;
+    App.state.presets          = Presets.PRESETS;
     App.state.licenseCompat    = licenseCompat;
     App.state.hardwareManifest = hardwareManifest;
+
+    // Seed models on first visit
+    await DB.seedModels(registryData.models || registryData);
+
+    // Initial data sync from static JSON
+    _syncFromStaticJSON();
 
     // Initialise Lucide icons
     lucide.createIcons();
 
-    // Mount view modules (defined below; each adds itself to App.views)
+    // Mount view modules
     if (App.views.registry)         App.views.registry.mount();
     if (App.views['index-builder']) App.views['index-builder'].mount();
     if (App.views['my-indexes'])    App.views['my-indexes'].mount();
@@ -796,9 +845,13 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
     // Navigate to default view
     showView('registry');
 
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW registration failed:', e));
+    }
   } catch (err) {
     console.error('Init failed:', err);
-    showToast('Failed to initialise app. Check logs.', 'error');
+    showToast('Failed to initialise app. Check console.', 'error');
   }
 })();
 
@@ -1061,7 +1114,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
 
   function _renderBestForRow() {
     const presets = App.state.presets || [];
-    const pills = [{ id: null, label: 'All (Equal weights)' }, ...presets.map(p => ({ id: p.id, label: p.name }))];
+    const pills = [{ id: null, label: 'All (Equal weights)' }, ...presets.map(p => ({ id: p.id, label: p.label }))];
     return `
       <div id="best-for-row">
         ${pills.map(p => `
@@ -1074,7 +1127,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
   function _renderTable(enriched) {
     const schema = App.state.factorSchema || [];
     const hwManifest = App.state.hardwareManifest || {};
-    const sortArrow = (col) => col === _sortCol ? (_sortDir === 'asc' ? ' ↑' : ' ↓') : '';
+    const sortArrow = (col) => col === _sortCol ? (_sortDir === 'asc' ? ' \u2191' : ' \u2193') : '';
 
     const factorHeaders = schema.map(f =>
       `<th class="${_sortCol === f.factor_id ? 'sorted' : ''}"
@@ -1108,7 +1161,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
       const factorCells = schema.map(f => {
         const vals = factorScores[f.factor_id] || [];
         const avg = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
-        if (avg == null) return `<td><span style="color:var(--color-text-3)">—</span></td>`;
+        if (avg == null) return `<td><span style="color:var(--color-text-3)">\u2014</span></td>`;
         return `<td class="score-cell"
           data-model="${m.model_id}" data-factor="${f.factor_id}"
           title="Click for provenance">
@@ -1121,14 +1174,14 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
             $${m.pricing.input_cost_per_1m}/${m.pricing.output_cost_per_1m}
           </span>`
         : `<span class="cost-cell" data-model="${m.model_id}" style="color:var(--color-text-3)" title="Enter pricing">
-            $—
+            $\u2014
           </span>`;
 
       const hwHtml = _showHardware && hwManifest[m.model_id]
         ? `<td style="font-size:11px;color:var(--color-text-3)">
             ${hwManifest[m.model_id].vram_gb}GB VRAM
           </td>`
-        : (_showHardware ? `<td style="color:var(--color-text-3)">—</td>` : '');
+        : (_showHardware ? `<td style="color:var(--color-text-3)">\u2014</td>` : '');
 
       const licClass = m.license === 'MIT' || m.license === 'Apache-2.0' ? 'lic-ok'
         : m.license === 'Proprietary' ? 'lic-warn' : 'badge-neutral';
@@ -1142,13 +1195,13 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
           </td>
           <td>
             <div class="model-name">${m.name}
-              ${m._hasChangelog ? '<span class="updated-badge">↑ Updated</span>' : ''}
+              ${m._hasChangelog ? '<span class="updated-badge">\u2191 Updated</span>' : ''}
             </div>
             <div class="model-provider">${m.provider || ''}</div>
           </td>
           <td>${scoreBar(m.mcs, 'var(--color-accent)')}</td>
           ${factorCells}
-          <td><span class="badge ${licClass}">${m.license || '—'}</span></td>
+          <td><span class="badge ${licClass}">${m.license || '\u2014'}</span></td>
           <td>${costHtml}</td>
           ${hwHtml}
         </tr>`;
@@ -1194,7 +1247,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
         <div style="display:flex;gap:var(--space-2)">
           <button class="btn-secondary" id="compare-export-btn"
             ${_compareSet.size < 2 || _compareSet.size > 5 ? 'disabled' : ''}
-            title="Select 2–5 models to compare">
+            title="Select 2\u20135 models to compare">
             <i data-lucide="git-compare" style="width:13px;height:13px;vertical-align:-2px"></i>
             Compare${_compareSet.size >= 2 ? ` (${_compareSet.size})` : ''}
           </button>
@@ -1342,9 +1395,9 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
         scoresForCompare[m.model_id] = Object.values(_scores[m.model_id] || {});
       }
       const md = ComparisonReport.generate(selectedModels, weights, scoresForCompare);
-      await window.modelIndex.shell.saveFile(
+      _downloadFile(
         `comparison-${new Date().toISOString().slice(0,10)}.md`, md,
-        [{ name: 'Markdown', extensions: ['md'] }]
+        'text/markdown'
       );
     });
 
@@ -1358,7 +1411,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
       syncBtn.addEventListener('click', async () => {
         syncBtn.disabled = true;
         try {
-          await window.modelIndex.sync.triggerAll();
+          await _syncFromStaticJSON();
           showToast('Sync triggered for all connectors', 'success');
         } catch (e) {
           showToast('Sync failed: ' + e.message, 'error');
@@ -1405,7 +1458,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
                   <div style="font-family:var(--font-mono);font-size:13px">${formatScore(s.raw_score)}</div>
                   ${norm != null ? `<div class="prov-key">Norm: ${formatScore(norm)}</div>` : ''}
                   ${stalenessBadge(s.fetched_at)}
-                  ${s.contamination_flag ? `<span class="badge badge-yellow" title="Contamination risk">⚠ Contam.</span>` : ''}
+                  ${s.contamination_flag ? `<span class="badge badge-yellow" title="Contamination risk">\u26A0 Contam.</span>` : ''}
                 </div>
               </div>`;
           }).join('')}
@@ -1415,18 +1468,18 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
         <div class="prov-row">
           <span class="prov-key">Benchmark</span>
           <span class="prov-val">
-            <a href="#" onclick="window.modelIndex.shell.openExternal('${factorScores[0].benchmark_url}');return false">
+            <a href="${factorScores[0].benchmark_url}" target="_blank" rel="noopener">
               ${factorScores[0].benchmark_name}
             </a>
           </span>
         </div>
         <div class="prov-row">
           <span class="prov-key">Connector</span>
-          <span class="prov-val">${factorScores[0].connector_id || '—'}</span>
+          <span class="prov-val">${factorScores[0].connector_id || '\u2014'}</span>
         </div>
         <div class="prov-row">
           <span class="prov-key">Tier</span>
-          <span class="prov-val"><span class="badge badge-accent">${factorScores[0].data_tier || '—'}</span></span>
+          <span class="prov-val"><span class="badge badge-accent">${factorScores[0].data_tier || '\u2014'}</span></span>
         </div>` : ''}
 
       <button class="btn-secondary" style="width:100%;margin-top:var(--space-5)" id="copy-citation-btn">
@@ -1451,7 +1504,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
     const existing = _pricing[modelId] || {};
     showModal(`
       <div class="modal-header">
-        <span class="modal-title">Pricing — ${model ? model.name : modelId}</span>
+        <span class="modal-title">Pricing \u2014 ${model ? model.name : modelId}</span>
         <button class="btn-ghost" onclick="closeModal()" style="padding:4px">
           <i data-lucide="x" style="width:14px;height:14px"></i>
         </button>
@@ -1494,7 +1547,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
       if (isNaN(inp) || isNaN(out) || inp < 0 || out < 0) {
         showToast('Enter valid positive numbers for both costs', 'warning'); return;
       }
-      await window.modelIndex.db.saveUserPricing({
+      await DB.saveUserPricing({
         model_id: modelId,
         input_cost_per_1m: inp,
         output_cost_per_1m: out,
@@ -1509,7 +1562,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
     const delBtn = document.getElementById('cost-delete-btn');
     if (delBtn) {
       delBtn.addEventListener('click', async () => {
-        await window.modelIndex.db.deleteUserPricing(modelId);
+        await DB.deleteUserPricing(modelId);
         delete _pricing[modelId];
         closeModal();
         _render();
@@ -1559,14 +1612,14 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
           return { model: m, status: cell ? cell.status : 'unknown', note: cell ? cell.note : '' };
         });
 
-        const icon = s => s === 'ok' ? '✅' : s === 'conditional' ? '⚠️' : s === 'incompatible' ? '❌' : '❓';
+        const icon = s => s === 'ok' ? '\u2705' : s === 'conditional' ? '\u26A0\uFE0F' : s === 'incompatible' ? '\u274C' : '\u2753';
         document.getElementById('lic-compat-results').innerHTML = `
           <div style="max-height:300px;overflow-y:auto">
             ${results.map(r => `
               <div style="display:flex;align-items:center;justify-content:space-between;
                 padding:var(--space-2) 0;border-bottom:1px solid var(--color-border);font-size:13px">
                 <span>${r.model.name}</span>
-                <span title="${r.note}">${icon(r.status)} ${r.model.license || '—'}</span>
+                <span title="${r.note}">${icon(r.status)} ${r.model.license || '\u2014'}</span>
               </div>`).join('')}
           </div>`;
       });
@@ -1608,10 +1661,10 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
     });
 
     const csv = [headers, ...rows].join('\n');
-    await window.modelIndex.shell.saveFile(
+    _downloadFile(
       `modelindex-registry-${new Date().toISOString().slice(0,10)}.csv`,
       csv,
-      [{ name: 'CSV', extensions: ['csv'] }]
+      'text/csv'
     );
   }
 
@@ -1632,14 +1685,14 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
       showLoading('view-registry');
       try {
         const [models, allPricing] = await Promise.all([
-          window.modelIndex.db.getModels({}),
-          window.modelIndex.db.getAllUserPricing(),
+          DB.getModels(),
+          DB.getAllUserPricing(),
         ]);
         _models = models;
 
         // Load scores for all models in parallel (batched)
         const scoreResults = await Promise.all(
-          models.map(m => window.modelIndex.db.getScores(m.model_id))
+          models.map(m => DB.getScores(m.model_id))
         );
         _scores = {};
         models.forEach((m, i) => {
@@ -1940,7 +1993,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
             : 'disabled';
           return `
             <div class="wizard-step-item ${cls}" data-goto="${n}">
-              <div class="step-num">${n < WizardController.currentStep ? '✓' : n}</div>
+              <div class="step-num">${n < WizardController.currentStep ? '\u2713' : n}</div>
               ${name}
             </div>`;
         }).join('')}
@@ -2006,7 +2059,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
         <div>
           <div class="filter-label" style="margin-bottom:var(--space-3)">Use-case preset</div>
           <div style="display:grid;gap:var(--space-2)">
-            ${[{ id: null, name: 'Custom (equal weights)', description: 'Start from scratch with equal weights' },
+            ${[{ id: null, label: 'Custom (equal weights)', description: 'Start from scratch with equal weights' },
                ...presets].map(p => `
               <label style="display:flex;align-items:flex-start;gap:var(--space-3);
                 padding:var(--space-3);border:2px solid var(--color-border);border-radius:var(--radius-lg);
@@ -2016,7 +2069,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
                   ${cfg.use_case_preset===(p.id||'custom')?'checked':''}
                   style="accent-color:var(--color-accent);margin-top:2px">
                 <div>
-                  <div style="font-weight:500;font-size:13px">${p.name}</div>
+                  <div style="font-weight:500;font-size:13px">${p.label}</div>
                   <div style="font-size:12px;color:var(--color-text-3)">${p.description||''}</div>
                 </div>
               </label>`).join('')}
@@ -2122,7 +2175,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
               <div class="model-card-name">${m.name}</div>
               <div class="model-card-provider">${m.provider||''}</div>
               <div class="model-card-mcs">MCS ${mcs.toFixed(1)}</div>
-              ${isExcluded?`<span class="badge badge-neutral" style="margin-top:4px">🔒 Excluded</span>`:''}
+              ${isExcluded?`<span class="badge badge-neutral" style="margin-top:4px">\uD83D\uDD12 Excluded</span>`:''}
             </div>`;
         }).join('')}
       </div>`;
@@ -2169,7 +2222,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
 
       <div style="font-size:12px;font-weight:600;text-transform:uppercase;
         letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-3)">
-        Factor Sensitivity (rank change when weight ±10)
+        Factor Sensitivity (rank change when weight \u00B110)
       </div>
       <div id="sensitivity-chart-wrap">
         <canvas id="sensitivity-chart" height="240"></canvas>
@@ -2184,7 +2237,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
           ${result.crossoverPoints.map(cp => `
             <div style="font-size:13px;color:var(--color-text-2);padding:var(--space-2) 0;
               border-bottom:1px solid var(--color-border)">
-              ${cp.modelA} ↔ ${cp.modelB} — swap at ±${cp.delta.toFixed(0)} on <strong>${cp.factorId}</strong>
+              ${cp.modelA} \u2194 ${cp.modelB} \u2014 swap at \u00B1${cp.delta ? cp.delta.toFixed(0) : '?'} on <strong>${cp.factorId}</strong>
             </div>`).join('')}
         </div>` : ''}
 
@@ -2219,7 +2272,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
             letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-3)">Configuration</div>
           <div class="prov-row">
             <span class="prov-key">Name</span>
-            <span class="prov-val">${cfg.name || '—'}</span>
+            <span class="prov-val">${cfg.name || '\u2014'}</span>
           </div>
           <div class="prov-row">
             <span class="prov-key">Preset</span>
@@ -2313,12 +2366,12 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
 
           <div id="wizard-nav">
             <button class="btn-secondary" id="wizard-back-btn" ${step===1?'disabled':''}>
-              ← Back
+              \u2190 Back
             </button>
             <div></div>
             ${step < 6
               ? `<button class="btn-primary" id="wizard-next-btn">
-                  ${step === 5 ? 'Review →' : 'Next →'}
+                  ${step === 5 ? 'Review \u2192' : 'Next \u2192'}
                 </button>`
               : ''}
           </div>
@@ -2450,14 +2503,18 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
         if (rerunBtn) rerunBtn.disabled = true;
         try {
           const selectedIds = WizardController.indexConfig.selected_models || [];
+          const weights = WizardController.indexConfig.factor_weights;
+          // Transform DB score rows into the format Sensitivity.runSensitivity expects
+          // computeBatchMCS expects scores as { sub_metric_id: rawScore }
           const allModelScores = selectedIds.map(id => ({
             modelId: id,
-            scores: _allScores[id] || [],
+            scores: Object.fromEntries((_allScores[id] || []).map(s => [s.sub_metric, s.raw_score])),
           }));
-          const result = await window.modelIndex.eval.runSensitivity(
+          const result = Sensitivity.runSensitivity(
             allModelScores,
-            WizardController.indexConfig.factor_weights,
-            null
+            weights,
+            null,
+            App.state.baselineRaw
           );
           WizardController.indexConfig.sensitivityResult = result;
           _renderStep();
@@ -2532,8 +2589,9 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
       const pf  = result.perFactor[fid];
       if (!pf) continue;
       labels.push(factor.label);
-      const avgRankChange = Object.values(pf).reduce((sum, v) => sum + Math.abs(v.rankDelta || 0), 0)
-        / Math.max(Object.values(pf).length, 1);
+      const modelDeltaValues = pf.modelDeltas ? Object.values(pf.modelDeltas) : Object.values(pf);
+      const avgRankChange = modelDeltaValues.reduce((sum, v) => sum + Math.abs(v.rankDelta || v.maxAbsDelta || 0), 0)
+        / Math.max(modelDeltaValues.length, 1);
       plusData.push(avgRankChange);
       minusData.push(-avgRankChange);
     }
@@ -2544,7 +2602,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
         labels,
         datasets: [
           { label: '+10', data: plusData,  backgroundColor: 'rgba(59,91,219,.65)', borderRadius: 3 },
-          { label: '−10', data: minusData, backgroundColor: 'rgba(201,42,42,.55)',  borderRadius: 3 },
+          { label: '\u221210', data: minusData, backgroundColor: 'rgba(201,42,42,.55)',  borderRadius: 3 },
         ],
       },
       options: {
@@ -2569,7 +2627,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
     const btn = document.getElementById('save-index-btn');
     if (btn) btn.disabled = true;
     try {
-      const { id } = await window.modelIndex.db.saveIndex({
+      const { id } = await DB.saveIndex({
         name:              cfg.name,
         use_case_preset:   cfg.use_case_preset || 'custom',
         factor_weights:    cfg.factor_weights,
@@ -2577,7 +2635,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
         selected_models:   cfg.selected_models || [],
         index_mode:        'weighted',
       });
-      await window.modelIndex.db.saveIndexVersion(id, cfg);
+      await DB.saveIndexVersion(id, cfg);
       showToast(`Index "${cfg.name}" saved`, 'success');
       WizardController.reset();
     } catch (e) {
@@ -2602,7 +2660,7 @@ window.modelIndex.shell.onUpdateReady(({ version }) => {
       .join(' | ');
 
     const table = ranked.map((m, i) =>
-      `| ${i+1} | ${m.name} | ${m.provider||'—'} | ${m.mcs.toFixed(1)} | ${m.license||'—'} |`
+      `| ${i+1} | ${m.name} | ${m.provider||'\u2014'} | ${m.mcs.toFixed(1)} | ${m.license||'\u2014'} |`
     ).join('\n');
 
     const md = `# ModelIndex Report: ${cfg.name || 'Unnamed Index'}
@@ -2621,10 +2679,10 @@ ${table}
 *Generated by ModelIndex. Scores from T1 public benchmarks. Not a substitute for independent evaluation.*
 `;
 
-    await window.modelIndex.shell.saveFile(
+    _downloadFile(
       `${(cfg.name||'index').replace(/\s+/g,'-').toLowerCase()}-report.md`,
       md,
-      [{ name: 'Markdown', extensions: ['md'] }]
+      'text/markdown'
     );
   }
 
@@ -2634,10 +2692,10 @@ ${table}
     async mount() {
       // Pre-load model data so steps are responsive
       try {
-        const models = await window.modelIndex.db.getModels({});
+        const models = await DB.getModels();
         _allModels = models;
         const scoreResults = await Promise.all(
-          models.map(m => window.modelIndex.db.getScores(m.model_id))
+          models.map(m => DB.getScores(m.model_id))
         );
         _allScores = {};
         models.forEach((m, i) => { _allScores[m.model_id] = scoreResults[i] || []; });
@@ -2651,7 +2709,7 @@ ${table}
 })();
 
 // ════════════════════════════════════════════════════════════════════════════════
-// VIEW: My Indexes  (placeholder — populated via Phase 8)
+// VIEW: My Indexes
 // ════════════════════════════════════════════════════════════════════════════════
 (function MyIndexesView() {
   App.views['my-indexes'] = {
@@ -2659,7 +2717,7 @@ ${table}
     async onEnter() {
       const container = document.getElementById('view-my-indexes');
       try {
-        const indexes = await window.modelIndex.db.getIndexes();
+        const indexes = await DB.getIndexes();
         if (!indexes || indexes.length === 0) {
           container.innerHTML = `
             <div class="placeholder-view">
@@ -2677,18 +2735,54 @@ ${table}
                   <div>
                     <div style="font-weight:600">${idx.name}</div>
                     <div style="font-size:12px;color:var(--color-text-3)">
-                      ${idx.use_case_preset || 'Custom'} ·
-                      ${(JSON.parse(idx.selected_models||'[]')).length} models ·
+                      ${idx.use_case_preset || 'Custom'} \u00B7
+                      ${(JSON.parse(idx.selected_models||'[]')).length} models \u00B7
                       v${idx.version}
                     </div>
                   </div>
                   <div style="display:flex;gap:var(--space-2)">
                     <button class="btn-secondary" style="font-size:12px"
-                      onclick="showToast('Open in builder — coming in next update','info')">
-                      Open
+                      onclick="(async()=>{
+                        const idx=await DB.getIndex(${idx.id});
+                        if(!idx)return;
+                        App.state._editingIndex={
+                          id:idx.id,
+                          name:idx.name,
+                          use_case_preset:idx.use_case_preset,
+                          factor_weights:JSON.parse(idx.factor_weights||'{}'),
+                          hard_constraints:JSON.parse(idx.hard_constraints||'{}'),
+                          selected_models:JSON.parse(idx.selected_models||'[]'),
+                        };
+                        showView('index-builder');
+                        showToast('Editing index: '+idx.name,'info');
+                      })()">
+                      Edit
+                    </button>
+                    <button class="btn-secondary" style="font-size:12px"
+                      onclick="(async()=>{
+                        const idx=await DB.getIndex(${idx.id});
+                        if(!idx)return;
+                        const exported={
+                          name:idx.name,
+                          use_case_preset:idx.use_case_preset,
+                          factor_weights:JSON.parse(idx.factor_weights||'{}'),
+                          hard_constraints:JSON.parse(idx.hard_constraints||'{}'),
+                          selected_models:JSON.parse(idx.selected_models||'[]'),
+                          index_mode:idx.index_mode||'weighted',
+                          exported_at:new Date().toISOString(),
+                          app_version:'0.1.0-alpha'
+                        };
+                        _downloadFile(
+                          idx.name.replace(/[^a-z0-9]/gi,'_').toLowerCase()+'.modelindex-indexes',
+                          JSON.stringify(exported,null,2),
+                          'application/json'
+                        );
+                        showToast('Index exported','success');
+                      })()">
+                      Export
                     </button>
                     <button class="btn-danger" style="font-size:12px"
-                      onclick="window.modelIndex.db.deleteIndex('${idx.id}').then(()=>App.views['my-indexes'].onEnter())">
+                      onclick="if(confirm('Delete this index?'))DB.deleteIndex(${idx.id}).then(()=>App.views['my-indexes'].onEnter())">
                       Delete
                     </button>
                   </div>
@@ -2750,7 +2844,7 @@ const ComparisonReport = (function() {
     const tableRows = ranked.map((m, i) => {
       const factorCols = schema.map(f => {
         const subs = m.scores.filter(s => s.factor_group === f.factor_id);
-        if (!subs.length) return '—';
+        if (!subs.length) return '\u2014';
         const vals = subs.map(s => {
           const b = bl[s.sub_metric];
           if (!b) return null;
@@ -2759,9 +2853,9 @@ const ComparisonReport = (function() {
           if (b.invert) n = 100 - n;
           return n;
         }).filter(v => v != null);
-        return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : '—';
+        return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : '\u2014';
       });
-      return `| ${i+1} | ${m.name} | ${m.provider||'—'} | ${m.mcs.toFixed(1)} | ${factorCols.join(' | ')} |`;
+      return `| ${i+1} | ${m.name} | ${m.provider||'\u2014'} | ${m.mcs.toFixed(1)} | ${factorCols.join(' | ')} |`;
     }).join('\n');
 
     const factorHeaders = schema.map(f => f.tag).join(' | ');
@@ -2812,9 +2906,9 @@ ${tableRows}
 
 ${[...sources].map(s => `- ${s}`).join('\n') || '- No benchmark sources recorded'}
 
-${contaminated.length ? `## ⚠️ Contamination Risk\n\nThe following sub-metrics have elevated contamination risk:\n\n${contaminated.map(c=>`- ${c}`).join('\n')}` : ''}
+${contaminated.length ? `## Contamination Risk\n\nThe following sub-metrics have elevated contamination risk:\n\n${contaminated.map(c=>`- ${c}`).join('\n')}` : ''}
 
-${stale.length ? `## ⚠️ Stale Data Warnings\n\nThe following scores are more than 7 days old:\n\n${stale.map(s=>`- ${s}`).join('\n')}` : ''}
+${stale.length ? `## Stale Data Warnings\n\nThe following scores are more than 7 days old:\n\n${stale.map(s=>`- ${s}`).join('\n')}` : ''}
 
 ---
 *Generated by ModelIndex. Scores sourced from public benchmarks (T1 tier).
@@ -2902,11 +2996,11 @@ This report is not a substitute for task-specific evaluation.*
     lucide.createIcons();
 
     try {
-      const [connectorStatuses, syncLog, appVersion] = await Promise.all([
-        window.modelIndex.sync.getConnectorStatuses(),
-        window.modelIndex.db.getSyncLog(null, 50),
-        window.modelIndex.shell.getAppVersion(),
+      const [connectorStatuses, syncLog] = await Promise.all([
+        _getConnectorStatuses(),
+        DB.getSyncLog(null, 50),
       ]);
+      const appVersion = '0.1.0-alpha';
       _renderBody(connectorStatuses, syncLog, appVersion);
     } catch (err) {
       console.error('Settings render error:', err);
@@ -2941,14 +3035,14 @@ This report is not a substitute for task-specific evaluation.*
               const last = c.lastSync;
               const lastSyncStr = last?.finished_at
                 ? new Date(last.finished_at).toLocaleString()
-                : '—';
+                : '\u2014';
               const statusCls = c.isRunning ? 'chip-syncing'
                 : last?.status === 'success' ? 'chip-ok'
                 : last?.status === 'error'   ? 'chip-error'
                 : c.tier === 'T2'            ? 'chip-disabled'
                 : c.tier === 'T3'            ? 'chip-manual'
                 : 'chip-disabled';
-              const statusLabel = c.isRunning ? 'Syncing…'
+              const statusLabel = c.isRunning ? 'Syncing\u2026'
                 : last?.status === 'success' ? 'OK'
                 : last?.status === 'error'   ? 'Error'
                 : c.tier === 'T2'            ? 'Disabled'
@@ -2964,11 +3058,11 @@ This report is not a substitute for task-specific evaluation.*
                   <td style="font-weight:500">${c.displayName}</td>
                   <td><span class="badge badge-accent">${c.tier}</span></td>
                   <td style="color:var(--color-text-3);font-family:var(--font-mono);font-size:11px">
-                    ${c.schedule === 'manual' ? '—' : c.schedule}
+                    ${c.schedule === 'manual' ? '\u2014' : c.schedule}
                   </td>
                   <td style="color:var(--color-text-3)">${lastSyncStr}</td>
                   <td style="font-family:var(--font-mono)">
-                    ${last?.rows_upserted != null ? last.rows_upserted : '—'}
+                    ${last?.rows_upserted != null ? last.rows_upserted : '\u2014'}
                   </td>
                   <td><span class="chip ${statusCls}">${statusLabel}</span></td>
                   <td>${importBtn}</td>
@@ -3016,14 +3110,14 @@ This report is not a substitute for task-specific evaluation.*
           <span class="settings-row-label">Backup database</span>
           <button class="btn-secondary" id="backup-btn">
             <i data-lucide="download" style="width:13px;height:13px;vertical-align:-2px"></i>
-            Backup…
+            Backup\u2026
           </button>
         </div>
         <div class="settings-row">
           <span class="settings-row-label">Restore from backup</span>
           <button class="btn-secondary" id="restore-btn">
             <i data-lucide="upload" style="width:13px;height:13px;vertical-align:-2px"></i>
-            Restore…
+            Restore\u2026
           </button>
         </div>
       </div>
@@ -3040,7 +3134,7 @@ This report is not a substitute for task-specific evaluation.*
         </p>
         <button class="btn-secondary" id="import-index-btn">
           <i data-lucide="upload" style="width:13px;height:13px;vertical-align:-2px"></i>
-          Import Index File…
+          Import Index File\u2026
         </button>
       </div>
 
@@ -3051,7 +3145,7 @@ This report is not a substitute for task-specific evaluation.*
           Manual Pricing Entries
         </div>
         <div id="pricing-list">
-          <p style="font-size:13px;color:var(--color-text-3)">Loading…</p>
+          <p style="font-size:13px;color:var(--color-text-3)">Loading\u2026</p>
         </div>
       </div>
 
@@ -3067,7 +3161,7 @@ This report is not a substitute for task-specific evaluation.*
         </div>
         <div class="settings-row">
           <span class="settings-row-label">License</span>
-          <span class="settings-row-value">MIT</span>
+          <span class="settings-row-value">Apache 2.0</span>
         </div>
       </div>
     `;
@@ -3081,7 +3175,7 @@ This report is not a substitute for task-specific evaluation.*
     const container = document.getElementById('pricing-list');
     if (!container) return;
     try {
-      const rows = await window.modelIndex.db.getAllUserPricing();
+      const rows = await DB.getAllUserPricing();
       if (!rows || rows.length === 0) {
         container.innerHTML = `<p style="font-size:13px;color:var(--color-text-3)">
           No manual pricing entries. Click a cost cell in the Registry to add one.</p>`;
@@ -3097,8 +3191,8 @@ This report is not a substitute for task-specific evaluation.*
                 <td style="font-family:var(--font-mono)">$${r.input_cost_per_1m}</td>
                 <td style="font-family:var(--font-mono)">$${r.output_cost_per_1m}</td>
                 <td style="color:var(--color-text-3)">${r.source_url
-                  ? `<a href="#" onclick="window.modelIndex.shell.openExternal('${r.source_url}');return false">Link</a>`
-                  : '—'}</td>
+                  ? `<a href="${r.source_url}" target="_blank" rel="noopener">Link</a>`
+                  : '\u2014'}</td>
                 <td>
                   <button class="btn-ghost" data-delete-pricing="${r.model_id}"
                     style="font-size:12px;color:var(--color-danger)">Delete</button>
@@ -3109,7 +3203,7 @@ This report is not a substitute for task-specific evaluation.*
 
       container.querySelectorAll('[data-delete-pricing]').forEach(btn => {
         btn.addEventListener('click', async () => {
-          await window.modelIndex.db.deleteUserPricing(btn.dataset.deletePricing);
+          await DB.deleteUserPricing(btn.dataset.deletePricing);
           _loadPricingList();
           showToast('Pricing entry deleted', 'success');
         });
@@ -3122,7 +3216,7 @@ This report is not a substitute for task-specific evaluation.*
   function _bindSettingsEvents() {
     // Sync All
     document.getElementById('sync-all-settings-btn')?.addEventListener('click', async () => {
-      await window.modelIndex.sync.triggerAll();
+      await _syncFromStaticJSON();
       showToast('Sync triggered for all T1 connectors', 'success');
     });
 
@@ -3131,7 +3225,7 @@ This report is not a substitute for task-specific evaluation.*
       btn.addEventListener('click', async () => {
         btn.disabled = true;
         try {
-          await window.modelIndex.sync.triggerManualSync(btn.dataset.sync);
+          await _syncFromStaticJSON();
           showToast(`Sync triggered for ${btn.dataset.sync}`, 'success');
         } catch (e) {
           showToast('Sync failed: ' + e.message, 'error');
@@ -3144,18 +3238,18 @@ This report is not a substitute for task-specific evaluation.*
     // Per-connector import buttons (T3 / HarmBench)
     document.querySelectorAll('[data-import]').forEach(btn => {
       btn.addEventListener('click', async () => {
-        const fileContent = await window.modelIndex.shell.readFile([
-          { name: 'JSON', extensions: ['json'] }
-        ]);
+        const fileContent = await _pickFile('.json');
         if (!fileContent) return;
         try {
-          // write to temp path and call importFile
-          showToast(`Import for ${btn.dataset.import} — parsing…`, 'info');
+          showToast(`Import for ${btn.dataset.import} \u2014 parsing\u2026`, 'info');
           const parsed = JSON.parse(fileContent);
-          // Validate through harmbench adapter locally (adapter is main-process side)
-          // We call sync:importFile IPC (registered by sync-scheduler)
-          // For now, notify user to use the IPC path
-          showToast('Use Sync → Import File (IPC) to import T3 data', 'info');
+          // Attempt to upsert scores directly if they are in the expected format
+          if (parsed.scores && Array.isArray(parsed.scores)) {
+            await DB.upsertScores(parsed.scores);
+            showToast(`Imported ${parsed.scores.length} scores for ${btn.dataset.import}`, 'success');
+          } else {
+            showToast('Import file does not contain a scores array', 'warning');
+          }
         } catch (e) {
           showToast('Import failed: ' + e.message, 'error');
         }
@@ -3164,27 +3258,31 @@ This report is not a substitute for task-specific evaluation.*
 
     // DB Backup
     document.getElementById('backup-btn')?.addEventListener('click', async () => {
-      const result = await window.modelIndex.shell.backupDb();
-      if (result?.saved) showToast('Backup saved: ' + result.filePath, 'success');
+      try {
+        const data = await DB.exportAll();
+        _downloadFile('modelindex-backup-' + new Date().toISOString().slice(0,10) + '.json',
+          JSON.stringify(data, null, 2), 'application/json');
+        showToast('Backup downloaded', 'success');
+      } catch(e) { showToast('Backup failed: ' + e.message, 'error'); }
     });
 
     // DB Restore
     document.getElementById('restore-btn')?.addEventListener('click', async () => {
-      const confirmed = confirm(
-        'Restoring will replace your current database. A backup will be made first. Continue?'
-      );
+      const confirmed = confirm('Restoring will replace your current database. Continue?');
       if (!confirmed) return;
-      const result = await window.modelIndex.shell.restoreDb();
-      if (result?.restored) {
-        showToast('Database restored. Please restart the app.', 'success');
-      }
+      try {
+        const content = await _pickFile('.json');
+        if (!content) return;
+        const data = JSON.parse(content);
+        await DB.importAll(data);
+        showToast('Database restored. Refreshing\u2026', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } catch(e) { showToast('Restore failed: ' + e.message, 'error'); }
     });
 
     // Import Index
     document.getElementById('import-index-btn')?.addEventListener('click', async () => {
-      const content = await window.modelIndex.shell.readFile([
-        { name: 'ModelIndex Config', extensions: ['json', 'modelindex-indexes'] }
-      ]);
+      const content = await _pickFile('.json,.modelindex-indexes');
       if (!content) return;
       try {
         const parsed = JSON.parse(content);
@@ -3214,14 +3312,14 @@ This report is not a substitute for task-specific evaluation.*
         showToast(`Warning: unknown factors: ${unknownFactors.join(', ')}`, 'warning');
       }
       // Check model IDs (non-fatal if missing — just flag them)
-      const models = await window.modelIndex.db.getModels({});
+      const models = await DB.getModels();
       const knownIds = new Set(models.map(m => m.model_id));
       const missing = (item.selected_models || []).filter(id => !knownIds.has(id));
       if (missing.length > 0) {
         showToast(`${missing.length} model(s) not in registry will be skipped`, 'warning');
       }
 
-      await window.modelIndex.db.saveIndex({
+      await DB.saveIndex({
         name:            item.name,
         use_case_preset: item.use_case_preset || 'imported',
         factor_weights:  item.factor_weights,

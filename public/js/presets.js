@@ -1,5 +1,3 @@
-'use strict';
-
 const PRESETS = [
   {
     id: 'general',
@@ -90,4 +88,4 @@ const PRESETS = [
 
 const PRESET_MAP = Object.fromEntries(PRESETS.map(p => [p.id, p]));
 
-module.exports = { PRESETS, PRESET_MAP };
+window.Presets = { PRESETS };
