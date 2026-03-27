@@ -1239,11 +1239,21 @@ document.addEventListener('keydown', (e) => {
             $\u2014
           </span>`;
 
-      const hwHtml = _showHardware && hwManifest[m.model_id]
-        ? `<td style="font-size:11px;color:var(--color-text-3)">
-            ${hwManifest[m.model_id].vram_min_gb}GB VRAM
-          </td>`
-        : (_showHardware ? `<td style="color:var(--color-text-3)">\u2014</td>` : '');
+      const hwEntry = hwManifest[m.model_id];
+      let hwHtml = '';
+      if (_showHardware) {
+        if (hwEntry?.type === 'api') {
+          hwHtml = `<td style="font-size:11px;color:var(--color-text-3)" title="${hwEntry.notes || ''}">
+            <span style="color:var(--color-accent)">API</span> $${hwEntry.input_cost_per_1m}/$${hwEntry.output_cost_per_1m}
+          </td>`;
+        } else if (hwEntry?.vram_min_gb) {
+          hwHtml = `<td style="font-size:11px;color:var(--color-text-3)" title="${hwEntry.notes || ''}">
+            ${hwEntry.vram_min_gb}GB VRAM
+          </td>`;
+        } else {
+          hwHtml = `<td style="color:var(--color-text-3)">\u2014</td>`;
+        }
+      }
 
       const licClass = m.license === 'MIT' || m.license === 'Apache-2.0' ? 'lic-ok'
         : m.license === 'Proprietary' ? 'lic-warn' : 'badge-neutral';
@@ -1269,7 +1279,7 @@ document.addEventListener('keydown', (e) => {
         </tr>`;
     }).join('');
 
-    const hwHeader = _showHardware ? `<th>Hardware</th>` : '';
+    const hwHeader = _showHardware ? `<th title="VRAM for open-weight, API pricing (in/out per 1M tokens) for proprietary">Hardware / Pricing</th>` : '';
 
     return `
       <div class="registry-table-wrap">
@@ -2384,37 +2394,104 @@ document.addEventListener('keydown', (e) => {
     const stabilityColor = result.rankStabilityLabel === 'Robust' ? 'badge-green'
       : result.rankStabilityLabel === 'Moderate' ? 'badge-yellow' : 'badge-red';
 
+    // Build factor impact ranking
+    const schema = App.state.factorSchema || [];
+    const impacts = [];
+    for (const factor of schema) {
+      const pf = result.perFactor?.[factor.factor_id];
+      if (!pf) continue;
+      const vals = pf.modelDeltas ? Object.values(pf.modelDeltas) : Object.values(pf);
+      const avg = vals.reduce((s, v) => s + Math.abs(v.rankDelta || v.maxAbsDelta || 0), 0) / Math.max(vals.length, 1);
+      impacts.push({ label: factor.label, id: factor.factor_id, avg });
+    }
+    impacts.sort((a, b) => b.avg - a.avg);
+    const maxImpact = impacts[0]?.avg || 1;
+
+    // Plain-English interpretation
+    const stabilityDesc = result.rankStabilityLabel === 'Robust'
+      ? 'Your ranking is stable \u2014 small weight changes won\u2019t significantly reshuffle model positions.'
+      : result.rankStabilityLabel === 'Moderate'
+      ? 'Your ranking is moderately sensitive \u2014 some weight tweaks could shift a few models by 1\u20132 positions.'
+      : 'Your ranking is fragile \u2014 small weight changes can cause large rank swings. Consider adjusting weights.';
+
+    const topFactor = impacts[0];
+    const topFactorNote = topFactor
+      ? `<strong>${topFactor.label}</strong> has the most influence \u2014 changing its weight by 10 points shifts models by ${topFactor.avg.toFixed(1)} positions on average.`
+      : '';
+
+    const bottomFactor = impacts[impacts.length - 1];
+    const bottomNote = bottomFactor && impacts.length > 2
+      ? ` <strong>${bottomFactor.label}</strong> has the least impact (${bottomFactor.avg.toFixed(1)} positions).`
+      : '';
+
+    const impactBars = impacts.map(imp => {
+      const pct = Math.min((imp.avg / maxImpact) * 100, 100);
+      const level = pct > 66 ? 'High' : pct > 33 ? 'Medium' : 'Low';
+      const color = pct > 66 ? 'var(--color-danger, #c92a2a)' : pct > 33 ? 'var(--color-warning, #e67700)' : 'var(--color-success, #2b8a3e)';
+      return `
+        <div style="display:flex;align-items:center;gap:var(--space-2);padding:6px 0;
+          border-bottom:1px solid var(--color-border)">
+          <div style="width:160px;font-size:13px;color:var(--color-text-1);flex-shrink:0">${imp.label}</div>
+          <div style="flex:1;height:10px;background:var(--color-surface-2, #f0f0f0);border-radius:5px;overflow:hidden">
+            <div style="width:${pct}%;height:100%;background:${color};border-radius:5px;transition:width .3s"></div>
+          </div>
+          <div style="width:40px;text-align:right;font-size:11px;color:var(--color-text-3);font-family:var(--font-mono)">${imp.avg.toFixed(1)}</div>
+          <span class="badge" style="font-size:10px;padding:1px 6px;background:${color};color:#fff;min-width:48px;text-align:center">${level}</span>
+        </div>`;
+    }).join('');
+
     return `
-      <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-5)">
-        <div style="font-size:24px;font-weight:700;font-family:var(--font-mono)">
+      <div style="display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-4)">
+        <div style="font-size:28px;font-weight:700;font-family:var(--font-mono)">
           ${result.rankStability.toFixed(0)}
         </div>
         <div>
           <span class="badge ${stabilityColor}" style="font-size:13px;padding:3px 10px">
             ${result.rankStabilityLabel}
           </span>
-          <div style="font-size:12px;color:var(--color-text-3);margin-top:2px">Rank Stability Score</div>
+          <div style="font-size:12px;color:var(--color-text-3);margin-top:2px">Rank Stability Score (0\u2013100)</div>
         </div>
         <button class="btn-secondary" id="rerun-sensitivity-btn" style="margin-left:auto;font-size:12px">
           Re-run
         </button>
       </div>
 
-      <div style="font-size:12px;font-weight:600;text-transform:uppercase;
-        letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-3)">
-        Factor Sensitivity (rank change when weight \u00B110)
+      <div style="background:var(--color-surface-2, #f8f9fa);border-radius:8px;padding:var(--space-4);margin-bottom:var(--space-5);
+        border-left:3px solid ${stabilityColor === 'badge-green' ? 'var(--color-success, #2b8a3e)' : stabilityColor === 'badge-yellow' ? 'var(--color-warning, #e67700)' : 'var(--color-danger, #c92a2a)'}">
+        <div style="font-size:13px;color:var(--color-text-1);line-height:1.5">
+          ${stabilityDesc} ${topFactorNote}${bottomNote}
+        </div>
       </div>
-      <div id="sensitivity-chart-wrap">
-        <canvas id="sensitivity-chart" height="240"></canvas>
+
+      <div style="font-size:12px;font-weight:600;text-transform:uppercase;
+        letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-2)">
+        Factor Impact Ranking
+      </div>
+      <div style="font-size:11px;color:var(--color-text-3);margin-bottom:var(--space-3)">
+        Average positions shifted when a factor\u2019s weight changes by \u00B110 points. Higher = more influence on your ranking.
+      </div>
+      <div style="margin-bottom:var(--space-5)">
+        ${impactBars}
+      </div>
+
+      <div id="sensitivity-chart-wrap" style="margin-bottom:var(--space-5)">
+        <div style="font-size:12px;font-weight:600;text-transform:uppercase;
+          letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-3)">
+          Detailed Chart
+        </div>
+        <canvas id="sensitivity-chart" height="220"></canvas>
       </div>
 
       ${result.crossoverPoints && result.crossoverPoints.length > 0 ? `
-        <div style="margin-top:var(--space-5)">
+        <div>
           <div style="font-size:12px;font-weight:600;text-transform:uppercase;
-            letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-3)">
+            letter-spacing:.5px;color:var(--color-text-3);margin-bottom:var(--space-2)">
             Crossover Points
           </div>
-          ${result.crossoverPoints.map(cp => `
+          <div style="font-size:11px;color:var(--color-text-3);margin-bottom:var(--space-3)">
+            Model pairs that would swap ranking positions if you adjust the given factor\u2019s weight.
+          </div>
+          ${result.crossoverPoints.slice(0, 8).map(cp => `
             <div style="font-size:13px;color:var(--color-text-2);padding:var(--space-2) 0;
               border-bottom:1px solid var(--color-border)">
               ${cp.modelA} \u2194 ${cp.modelB} \u2014 swap at \u00B1${cp.delta ? cp.delta.toFixed(0) : '?'} on <strong>${cp.factorId}</strong>
