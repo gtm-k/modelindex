@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "version": "0.1.0",
+    "updated": "2026-03-27",
+    "note": "Baselines for robotics foundation models. Ranges from published benchmark results (LIBERO, Open X-Embodiment, SimplerEnv). Percentage-based metrics use 0-100 range. Update as new models publish results."
+  },
+  "task_success": {
+    "single_task_success":    { "min": 20.0, "max": 98.0, "invert": false, "benchmark": "LIBERO-Object",  "benchmark_url": "https://github.com/Lifelong-Robot-Learning/LIBERO" },
+    "multi_task_success":     { "min": 10.0, "max": 95.0, "invert": false, "benchmark": "LIBERO-Goal",    "benchmark_url": "https://github.com/Lifelong-Robot-Learning/LIBERO" },
+    "long_horizon_completion":{ "min": 5.0,  "max": 85.0, "invert": false, "benchmark": "LIBERO-Long",    "benchmark_url": "https://github.com/Lifelong-Robot-Learning/LIBERO" },
+    "failure_recovery":       { "min": 10.0, "max": 75.0, "invert": false, "benchmark": "RoboSuite",      "benchmark_url": "https://robosuite.ai/" }
+  },
+  "generalization": {
+    "cross_embodiment":         { "min": 5.0,  "max": 80.0, "invert": false, "benchmark": "Open X-Embodiment", "benchmark_url": "https://robotics-transformer-x.github.io/" },
+    "novel_object_manipulation":{ "min": 10.0, "max": 85.0, "invert": false, "benchmark": "SimplerEnv",        "benchmark_url": "https://github.com/simpler-env/SimplerEnv" },
+    "instruction_generalization":{"min": 15.0, "max": 90.0, "invert": false, "benchmark": "VLABench",          "benchmark_url": "https://github.com/OpenMOSS/VLABench" },
+    "sim_to_real_transfer":     { "min": 5.0,  "max": 70.0, "invert": false, "benchmark": "SimplerEnv",        "benchmark_url": "https://github.com/simpler-env/SimplerEnv" }
+  },
+  "manipulation": {
+    "grasp_precision":       { "min": 20.0, "max": 95.0, "invert": false, "benchmark": "DexGraspNet",  "benchmark_url": "https://pku-epic.github.io/DexGraspNet/" },
+    "dexterous_manipulation":{ "min": 10.0, "max": 80.0, "invert": false, "benchmark": "DexArt",       "benchmark_url": "https://www.chenbao.tech/dexart/" },
+    "force_control":         { "min": 15.0, "max": 85.0, "invert": false, "benchmark": "RoboSuite",    "benchmark_url": "https://robosuite.ai/" }
+  },
+  "planning": {
+    "sequential_planning": { "min": 10.0, "max": 85.0, "invert": false, "benchmark": "VLABench",   "benchmark_url": "https://github.com/OpenMOSS/VLABench" },
+    "spatial_reasoning":   { "min": 15.0, "max": 80.0, "invert": false, "benchmark": "RoboVerse",  "benchmark_url": "https://github.com/RoboVerse/roboverse" },
+    "tool_use_success":    { "min": 5.0,  "max": 75.0, "invert": false, "benchmark": "RoboVerse",  "benchmark_url": "https://github.com/RoboVerse/roboverse" }
+  },
+  "robo_efficiency": {
+    "inference_hz":        { "min": 1,    "max": 100,   "invert": false, "benchmark": "Hardware Benchmark", "benchmark_url": "" },
+    "parameter_count":     { "min": 10,   "max": 7000,  "invert": true,  "benchmark": "Model Spec",         "benchmark_url": "" },
+    "training_data_hours": { "min": 100,  "max": 10000, "invert": false, "benchmark": "Model Spec",         "benchmark_url": "" }
+  },
+  "robo_safety": {
+    "collision_rate":            { "min": 0.5,  "max": 25.0, "invert": true,  "benchmark": "RoboSuite Safety", "benchmark_url": "https://robosuite.ai/" },
+    "workspace_boundary":        { "min": 50.0, "max": 99.0, "invert": false, "benchmark": "RoboSuite Safety", "benchmark_url": "https://robosuite.ai/" },
+    "human_proximity_compliance":{ "min": 40.0, "max": 98.0, "invert": false, "benchmark": "SafetyGym",        "benchmark_url": "https://github.com/openai/safety-gym" }
+  }
+}
