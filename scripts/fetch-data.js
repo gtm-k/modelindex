@@ -403,7 +403,15 @@ const CONNECTORS = [
 async function main() {
   fs.mkdirSync(SCORES_DIR, { recursive: true });
 
-  const manifest = {};
+  // Preserve existing manifest entries for files this script doesn't manage
+  // (e.g., robotics.json, weather.json, materials.json from seed generator)
+  let manifest = {};
+  const manifestPath = path.join(SCORES_DIR, 'manifest.json');
+  try {
+    manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+  } catch (_) { /* first run, no manifest yet */ }
+
+  const managedIds = new Set(CONNECTORS.map(c => c.id));
 
   for (const { id, fn } of CONNECTORS) {
     console.log(`Fetching ${id}...`);
@@ -422,8 +430,20 @@ async function main() {
     }
   }
 
+  // Auto-discover score files not managed by this script (domain seeds, etc.)
+  const scoreFiles = fs.readdirSync(SCORES_DIR)
+    .filter(f => f.endsWith('.json') && f !== 'manifest.json');
+  for (const file of scoreFiles) {
+    const id = file.replace('.json', '');
+    if (managedIds.has(id) || manifest[id]) continue;
+    try {
+      const data = JSON.parse(fs.readFileSync(path.join(SCORES_DIR, file), 'utf-8'));
+      manifest[id] = { fetched_at: data.fetched_at || null, count: (data.scores || []).length };
+      console.log(`  -> preserved ${file} (${manifest[id].count} scores)`);
+    } catch (_) { /* skip unreadable files */ }
+  }
+
   // Write manifest.
-  const manifestPath = path.join(SCORES_DIR, 'manifest.json');
   fs.writeFileSync(
     manifestPath,
     JSON.stringify(manifest, null, 2) + '\n',

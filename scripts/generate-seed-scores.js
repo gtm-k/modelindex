@@ -127,9 +127,9 @@ const CONNECTOR_OWNERSHIP = {
 
 function generateScores() {
   const connectorScores = {};
-  for (const cid of Object.keys(CONNECTOR_OWNERSHIP)) {
-    connectorScores[cid] = [];
-  }
+  // LLM seed scores go into a single 'seed-llm' connector so fetch-data.js
+  // (which writes huggingface/helm/etc.) doesn't overwrite them.
+  connectorScores['seed-llm'] = [];
 
   for (const model of models) {
     const profile = MODEL_PROFILES[model.model_id];
@@ -139,7 +139,7 @@ function generateScores() {
     }
     const [minPct, maxPct] = TIER_PROFILES[profile.tier];
 
-    for (const [connectorId, factorGroups] of Object.entries(CONNECTOR_OWNERSHIP)) {
+    for (const factorGroups of Object.values(CONNECTOR_OWNERSHIP)) {
       for (const factorId of factorGroups) {
         const factorBaseline = BASELINE[factorId];
         if (!factorBaseline) continue;
@@ -163,14 +163,14 @@ function generateScores() {
             rounded = Number(rawScore.toFixed(1));   // Standard percentages
           }
 
-          connectorScores[connectorId].push({
+          connectorScores['seed-llm'].push({
             model_id:           model.model_id,
             factor_group:       factorId,
             sub_metric:         subMetricId,
             raw_score:          rounded,
             benchmark_name:     spec.benchmark,
             benchmark_url:      spec.benchmark_url || '',
-            connector_id:       connectorId,
+            connector_id:       'seed-llm',
             data_tier:          'T1',
             contamination_flag: false,
             fetched_at:         new Date().toISOString(),
