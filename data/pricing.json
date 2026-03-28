@@ -1,0 +1,128 @@
+{
+  "gemini-2-5-pro": {
+    "input_cost_per_1m": 1.25,
+    "output_cost_per_1m": 10,
+    "context_length": 1048576,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "qwen3-32b": {
+    "input_cost_per_1m": 0.08,
+    "output_cost_per_1m": 0.24,
+    "context_length": 40960,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "qwen3-235b-a22b": {
+    "input_cost_per_1m": 0.45,
+    "output_cost_per_1m": 1.82,
+    "context_length": 131072,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "o3": {
+    "input_cost_per_1m": 2,
+    "output_cost_per_1m": 8,
+    "context_length": 200000,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "o4-mini": {
+    "input_cost_per_1m": 1.1,
+    "output_cost_per_1m": 4.4,
+    "context_length": 200000,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "gemma-3-27b": {
+    "input_cost_per_1m": 0.08,
+    "output_cost_per_1m": 0.16,
+    "context_length": 131072,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "claude-3-7-sonnet": {
+    "input_cost_per_1m": 3,
+    "output_cost_per_1m": 15,
+    "context_length": 200000,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "gemini-2-0-flash": {
+    "input_cost_per_1m": 0.1,
+    "output_cost_per_1m": 0.4,
+    "context_length": 1048576,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "deepseek-r1": {
+    "input_cost_per_1m": 0.7,
+    "output_cost_per_1m": 2.5,
+    "context_length": 64000,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "phi-4": {
+    "input_cost_per_1m": 0.07,
+    "output_cost_per_1m": 0.14,
+    "context_length": 16384,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "deepseek-v3": {
+    "input_cost_per_1m": 0.32,
+    "output_cost_per_1m": 0.89,
+    "context_length": 163840,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "llama-3-3-70b": {
+    "input_cost_per_1m": 0.1,
+    "output_cost_per_1m": 0.32,
+    "context_length": 131072,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "claude-3-5-haiku": {
+    "input_cost_per_1m": 0.8,
+    "output_cost_per_1m": 4,
+    "context_length": 200000,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "command-r-plus": {
+    "input_cost_per_1m": 2.5,
+    "output_cost_per_1m": 10,
+    "context_length": 128000,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "gpt-4o-mini": {
+    "input_cost_per_1m": 0.15,
+    "output_cost_per_1m": 0.6,
+    "context_length": 128000,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "gpt-4o": {
+    "input_cost_per_1m": 2.5,
+    "output_cost_per_1m": 10,
+    "context_length": 128000,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "mixtral-8x22b": {
+    "input_cost_per_1m": 2,
+    "output_cost_per_1m": 6,
+    "context_length": 65536,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  },
+  "mistral-large-2": {
+    "input_cost_per_1m": 2,
+    "output_cost_per_1m": 6,
+    "context_length": 128000,
+    "source": "openrouter",
+    "fetched_at": "2026-03-28T03:57:35.558Z"
+  }
+}

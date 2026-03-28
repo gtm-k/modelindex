@@ -1,7 +1,35 @@
 {
-  "seed-llm": {
-    "fetched_at": "2026-03-28T02:52:43.285Z",
-    "count": 1000
+  "huggingface": {
+    "fetched_at": "2026-03-28T03:57:14.740Z",
+    "count": 3000
+  },
+  "helm": {
+    "fetched_at": "2026-03-28T03:57:14.988Z",
+    "count": 818
+  },
+  "lmarena": {
+    "fetched_at": "2026-03-28T03:57:15.229Z",
+    "count": 50
+  },
+  "evalplus": {
+    "fetched_at": "2026-03-28T03:57:15.449Z",
+    "count": 428
+  },
+  "ruler": {
+    "fetched_at": "2026-03-28T03:57:15.515Z",
+    "count": 33
+  },
+  "bbq": {
+    "fetched_at": "2026-03-28T03:57:15.572Z",
+    "count": 87
+  },
+  "livebench": {
+    "fetched_at": "2026-03-28T03:57:35.259Z",
+    "count": 17
+  },
+  "materials": {
+    "fetched_at": "2026-03-28T02:52:43.335Z",
+    "count": 85
   },
   "robotics": {
     "fetched_at": "2026-03-28T02:52:43.319Z",
@@ -10,33 +38,5 @@
   "weather": {
     "fetched_at": "2026-03-28T02:52:43.326Z",
     "count": 95
-  },
-  "materials": {
-    "fetched_at": "2026-03-28T02:52:43.335Z",
-    "count": 85
-  },
-  "huggingface": {
-    "fetched_at": "2026-03-28T02:52:56.018Z",
-    "count": 3000
-  },
-  "helm": {
-    "fetched_at": "2026-03-28T02:52:56.380Z",
-    "count": 818
-  },
-  "lmarena": {
-    "fetched_at": "2026-03-28T02:52:56.790Z",
-    "count": 50
-  },
-  "evalplus": {
-    "fetched_at": "2026-03-28T02:52:57.122Z",
-    "count": 428
-  },
-  "ruler": {
-    "fetched_at": "2026-03-28T02:52:57.257Z",
-    "count": 33
-  },
-  "bbq": {
-    "fetched_at": "2026-03-28T02:52:57.318Z",
-    "count": 87
   }
 }
