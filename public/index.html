@@ -1192,11 +1192,12 @@ document.addEventListener('keydown', (e) => {
     await DB.init();
 
     // Load static data needed by multiple views
-    const [baselineRaw, licenseCompat, hardwareManifest, registryData] = await Promise.all([
+    const [baselineRaw, licenseCompat, hardwareManifest, registryData, apiPricing] = await Promise.all([
       fetch('data/baseline.json').then(r => r.json()),
       fetch('data/license-compat.json').then(r => r.json()),
       fetch('data/hardware.json').then(r => r.json()),
       fetch('data/registry.json').then(r => r.json()),
+      fetch('data/pricing.json').then(r => r.json()).catch(() => ({})),
     ]);
 
     // Flatten nested baseline for inline MCS computation
@@ -1217,6 +1218,7 @@ document.addEventListener('keydown', (e) => {
     App.state.presets          = Presets.PRESETS;
     App.state.licenseCompat    = licenseCompat;
     App.state.hardwareManifest = hardwareManifest.models || hardwareManifest;
+    App.state.apiPricing = apiPricing || {};
 
     // Seed models on first visit
     await DB.seedModels(registryData.models || registryData);
@@ -2345,9 +2347,13 @@ document.addEventListener('keydown', (e) => {
           }
         });
 
+        // Start with API pricing, let user overrides take precedence
         _pricing = {};
+        for (const [modelId, p] of Object.entries(App.state.apiPricing || {})) {
+          _pricing[modelId] = { model_id: modelId, ...p };
+        }
         for (const p of (allPricing || [])) {
-          _pricing[p.model_id] = p;
+          _pricing[p.model_id] = p; // user override wins
         }
 
         _render();
