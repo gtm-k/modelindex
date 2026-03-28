@@ -552,13 +552,10 @@ const CONNECTORS = [
 async function main() {
   fs.mkdirSync(SCORES_DIR, { recursive: true });
 
-  // Preserve existing manifest entries for files this script doesn't manage
-  // (e.g., robotics.json, weather.json, materials.json from seed generator)
+  // Build a fresh manifest each run — only includes connectors that succeed
+  // plus score files that actually exist on disk.
   let manifest = {};
   const manifestPath = path.join(SCORES_DIR, 'manifest.json');
-  try {
-    manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
-  } catch (_) { /* first run, no manifest yet */ }
 
   const managedIds = new Set(CONNECTORS.map(c => c.id));
 
@@ -575,7 +572,13 @@ async function main() {
       }
     } catch (err) {
       console.error(`  !! ${id} failed: ${err.message}`);
-      manifest[id] = { fetched_at: null, count: 0, error: err.message };
+      // Preserve count from existing data file if available
+      let prevCount = 0;
+      try {
+        const prev = JSON.parse(fs.readFileSync(path.join(SCORES_DIR, `${id}.json`), 'utf-8'));
+        prevCount = (prev.scores || []).length;
+      } catch (_) { /* no previous file */ }
+      manifest[id] = { fetched_at: null, count: prevCount, error: err.message };
     }
   }
 
