@@ -1618,6 +1618,65 @@ document.addEventListener('keydown', (e) => {
       </div>`;
   }
 
+  function _renderMobileCards(enriched) {
+    const schema = App.state.factorSchema || [];
+    const baseline = App.state.baseline || {};
+
+    const cards = enriched.map(m => {
+      const modelScores = Object.values(_scores[m.model_id] || {});
+      const factorScores = {};
+      for (const s of modelScores) {
+        const b = baseline[s.sub_metric];
+        if (!b) continue;
+        let n = b.max === b.min ? 50 : ((s.raw_score - b.min) / (b.max - b.min)) * 100;
+        n = Math.max(0, Math.min(100, n));
+        if (b.invert) n = 100 - n;
+        if (!factorScores[s.factor_group]) factorScores[s.factor_group] = [];
+        factorScores[s.factor_group].push(n);
+      }
+
+      const factorRows = schema.map(f => {
+        const vals = factorScores[f.factor_id] || [];
+        const avg = vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+        const display = avg != null ? avg.toFixed(1) : '\u2014';
+        return `<div class="mob-card-factor">
+          <span class="mob-card-factor-label">
+            <span class="mob-card-factor-dot" style="background:var(--factor-${f.factor_id})"></span>
+            ${f.label.split(/[&,]/)[0].trim()}
+          </span>
+          <span style="font-weight:600">${display}</span>
+        </div>`;
+      }).join('');
+
+      const licClass = m.license === 'MIT' || m.license === 'Apache-2.0' ? 'lic-ok'
+        : m.license === 'Proprietary' ? 'lic-warn' : 'badge-neutral';
+
+      return `<div class="mob-card" data-model-id="${m.model_id}">
+        <div class="mob-card-top">
+          <div>
+            <div class="mob-card-name">${m.name}</div>
+            <div class="mob-card-provider">${m.provider || ''}</div>
+          </div>
+          <div class="mob-card-mcs">
+            ${m.mcs != null ? m.mcs.toFixed(1) : '\u2014'}
+            <small>MCS</small>
+          </div>
+        </div>
+        <div class="mob-card-tags">
+          <span class="badge ${licClass}">${m.license || '\u2014'}</span>
+        </div>
+        <div class="mob-card-expand-hint">Tap for details</div>
+        <div class="mob-card-factors">
+          <div class="mob-card-factor-grid">
+            ${factorRows}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="model-card-list">${cards}</div>`;
+  }
+
   function _renderDomainTabs() {
     const meta = (typeof DomainSchemas !== 'undefined' && DomainSchemas.DOMAIN_META) ? DomainSchemas.DOMAIN_META : {};
     const domains = Object.values(meta);
@@ -1689,7 +1748,7 @@ document.addEventListener('keydown', (e) => {
                 <i data-lucide="search-x"></i>
                 <p>No models match current filters</p>
               </div>`
-            : _renderTable(_filtered)}
+            : _renderTable(_filtered) + _renderMobileCards(_filtered)}
         </div>
       </div>`;
 
@@ -1837,6 +1896,16 @@ document.addEventListener('keydown', (e) => {
     // Domain tabs
     document.querySelectorAll('.domain-tab').forEach(tab => {
       tab.addEventListener('click', () => switchDomain(tab.dataset.domain));
+    });
+
+    // Mobile card expand/collapse
+    document.querySelectorAll('.mob-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a, button, input')) return;
+        const wasExpanded = card.classList.contains('expanded');
+        document.querySelectorAll('.mob-card.expanded').forEach(c => c.classList.remove('expanded'));
+        if (!wasExpanded) card.classList.add('expanded');
+      });
     });
   }
 
