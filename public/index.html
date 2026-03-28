@@ -864,6 +864,18 @@
 <!-- Modal overlay -->
 <div id="modal-overlay" class="hidden"></div>
 
+<!-- Filter bottom sheet (mobile only) -->
+<div id="filter-sheet-backdrop" class="bottom-sheet-backdrop"></div>
+<div id="filter-sheet" class="bottom-sheet">
+  <div class="bottom-sheet-header">
+    <h3>Filters</h3>
+    <button class="btn-ghost" id="filter-sheet-close" style="padding:4px">
+      <i data-lucide="x" style="width:18px;height:18px"></i>
+    </button>
+  </div>
+  <div id="filter-sheet-content"></div>
+</div>
+
 <!-- Slide-out provenance panel -->
 <aside id="provenance-panel" class="panel hidden" style="width:380px;padding:var(--space-5)">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4)">
@@ -1431,6 +1443,14 @@ document.addEventListener('keydown', (e) => {
     });
   }
 
+  function _getActiveFilterCount() {
+    let count = 0;
+    if (_filters.providers.size > 0) count += _filters.providers.size;
+    if (_filters.licenses.size > 0) count += _filters.licenses.size;
+    if (_filters.mcsMin > 0) count++;
+    return count;
+  }
+
   // ── Render ───────────────────────────────────────────────────────────────────
 
   function _renderFilterPanel(allModels) {
@@ -1740,6 +1760,11 @@ document.addEventListener('keydown', (e) => {
 
       ${_renderBestForRow()}
 
+      <button class="filter-fab" id="filter-fab-btn">
+        <i data-lucide="filter"></i>
+        <span>Filters</span>
+      </button>
+
       <div id="registry-layout">
         ${_renderFilterPanel(_models)}
         <div id="registry-main">
@@ -1907,6 +1932,53 @@ document.addEventListener('keydown', (e) => {
         if (!wasExpanded) card.classList.add('expanded');
       });
     });
+
+    // Filter FAB + bottom sheet
+    const filterFab = document.getElementById('filter-fab-btn');
+    const filterSheet = document.getElementById('filter-sheet');
+    const filterBackdrop = document.getElementById('filter-sheet-backdrop');
+    const filterSheetContent = document.getElementById('filter-sheet-content');
+    const filterSheetClose = document.getElementById('filter-sheet-close');
+
+    function openFilterSheet() {
+      const panel = document.getElementById('registry-filter-panel');
+      if (panel && filterSheetContent) {
+        filterSheetContent.innerHTML = panel.innerHTML;
+        filterSheetContent.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+          cb.addEventListener('change', () => {
+            const original = panel.querySelector(`input[data-filter="${cb.dataset.filter}"][value="${cb.value}"]`);
+            if (original) { original.checked = cb.checked; original.dispatchEvent(new Event('change')); }
+          });
+        });
+        const slider = filterSheetContent.querySelector('input[type="range"]');
+        if (slider) {
+          slider.addEventListener('input', (e) => {
+            const orig = panel.querySelector('input[type="range"]');
+            if (orig) { orig.value = e.target.value; orig.dispatchEvent(new Event('input')); }
+          });
+        }
+      }
+      filterSheet.classList.add('open');
+      filterBackdrop.classList.add('open');
+    }
+    function closeFilterSheet() {
+      filterSheet.classList.remove('open');
+      filterBackdrop.classList.remove('open');
+    }
+
+    if (filterFab) filterFab.addEventListener('click', openFilterSheet);
+    if (filterBackdrop) filterBackdrop.addEventListener('click', closeFilterSheet);
+    if (filterSheetClose) filterSheetClose.addEventListener('click', closeFilterSheet);
+
+    if (filterFab) {
+      const activeCount = _getActiveFilterCount();
+      const existing = filterFab.querySelector('.filter-badge');
+      if (existing) existing.remove();
+      if (activeCount > 0) {
+        filterFab.insertAdjacentHTML('beforeend',
+          `<span class="filter-badge">${activeCount}</span>`);
+      }
+    }
   }
 
   // ── Provenance panel ─────────────────────────────────────────────────────────
