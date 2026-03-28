@@ -110,6 +110,32 @@ const LIVEBENCH_TASK_MAP = {
 };
 
 // ---------------------------------------------------------------------------
+// OpenRouter: model ID → registry model_id aliases
+// ---------------------------------------------------------------------------
+
+const OPENROUTER_MODEL_ALIASES = {
+  'openai/gpt-4o':                      'gpt-4o',
+  'openai/gpt-4o-mini':                 'gpt-4o-mini',
+  'openai/o3':                           'o3',
+  'openai/o4-mini':                      'o4-mini',
+  'anthropic/claude-3.7-sonnet':         'claude-3-7-sonnet',
+  'anthropic/claude-3.5-haiku':          'claude-3-5-haiku',
+  'google/gemini-2.5-pro':               'gemini-2-5-pro',
+  'google/gemini-2.0-flash-001':         'gemini-2-0-flash',
+  'meta-llama/llama-3.1-405b-instruct':  'llama-3-1-405b',
+  'meta-llama/llama-3.3-70b-instruct':   'llama-3-3-70b',
+  'qwen/qwen3-235b-a22b':               'qwen3-235b-a22b',
+  'qwen/qwen3-32b':                      'qwen3-32b',
+  'deepseek/deepseek-r1':                'deepseek-r1',
+  'deepseek/deepseek-chat':              'deepseek-v3',
+  'mistralai/mistral-large':             'mistral-large-2',
+  'mistralai/mixtral-8x22b-instruct':    'mixtral-8x22b',
+  'microsoft/phi-4':                      'phi-4',
+  'google/gemma-3-27b-it':               'gemma-3-27b',
+  'cohere/command-r-plus-08-2024':        'command-r-plus',
+};
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -481,6 +507,34 @@ async function fetchLiveBench() {
   return envelope('livebench', scores);
 }
 
+async function fetchOpenRouterPricing() {
+  const PRICING_PATH = path.resolve(__dirname, '..', 'public', 'data', 'pricing.json');
+  const data = await fetchJSON('https://openrouter.ai/api/v1/models');
+  const models = data.data || data || [];
+  const pricing = {};
+
+  for (const m of models) {
+    const registryId = OPENROUTER_MODEL_ALIASES[m.id];
+    if (!registryId) continue;
+    if (pricing[registryId]) continue;
+
+    const promptCost = parseFloat(m.pricing?.prompt || '0');
+    const completionCost = parseFloat(m.pricing?.completion || '0');
+
+    pricing[registryId] = {
+      input_cost_per_1m:  Math.round(promptCost * 1_000_000 * 100) / 100,
+      output_cost_per_1m: Math.round(completionCost * 1_000_000 * 100) / 100,
+      context_length:     m.context_length || null,
+      source:             'openrouter',
+      fetched_at:         new Date().toISOString(),
+    };
+  }
+
+  fs.writeFileSync(PRICING_PATH, JSON.stringify(pricing, null, 2) + '\n', 'utf-8');
+  console.log(`  -> wrote ${PRICING_PATH} (${Object.keys(pricing).length} models)`);
+  return Object.keys(pricing).length;
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
@@ -523,6 +577,15 @@ async function main() {
       console.error(`  !! ${id} failed: ${err.message}`);
       manifest[id] = { fetched_at: null, count: 0, error: err.message };
     }
+  }
+
+  // Fetch pricing (separate from score connectors)
+  console.log('Fetching openrouter pricing...');
+  try {
+    const pricingCount = await fetchOpenRouterPricing();
+    console.log(`  -> ${pricingCount} models with pricing`);
+  } catch (err) {
+    console.error(`  !! openrouter pricing failed: ${err.message}`);
   }
 
   // Auto-discover score files not managed by this script (domain seeds, etc.)
