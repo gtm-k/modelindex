@@ -70,6 +70,46 @@ const SUB_METRIC_MAP = {
 };
 
 // ---------------------------------------------------------------------------
+// LiveBench: model name → registry model_id aliases
+// ---------------------------------------------------------------------------
+
+const LIVEBENCH_MODEL_ALIASES = {
+  'gpt-4o-2024-11-20':           'gpt-4o',
+  'gpt-4o-2024-08-06':           'gpt-4o',
+  'gpt-4o-mini-2024-07-18':      'gpt-4o-mini',
+  'o3-2025-04-16':               'o3',
+  'o3-mini-2025-01-31-high':     'o3',
+  'claude-3-7-sonnet-20250219':  'claude-3-7-sonnet',
+  'claude-3-7-sonnet-20250219-base': 'claude-3-7-sonnet',
+  'claude-3-5-haiku-20241022':   'claude-3-5-haiku',
+  'gemini-2.5-pro-exp-03-25':    'gemini-2-5-pro',
+  'gemini-2.0-pro-exp-02-05':    'gemini-2-0-pro',
+  'gemini-2.0-flash':            'gemini-2-0-flash',
+  'gemini-2.0-flash-001':        'gemini-2-0-flash',
+  'meta-llama-3.1-405b-instruct-turbo': 'llama-3-1-405b',
+  'llama-3.3-70b-instruct-turbo':       'llama-3-3-70b',
+  'deepseek-r1':                 'deepseek-r1',
+  'deepseek-v3':                 'deepseek-v3',
+  'mistral-large-2411':          'mistral-large-2',
+  'mistral-large':               'mistral-large-2',
+  'open-mixtral-8x22b':          'mixtral-8x22b',
+  'phi-4':                       'phi-4',
+  'gemma-3-27b-it':              'gemma-3-27b',
+  'command-r-plus-08-2024':      'command-r-plus',
+  'command-r-plus':              'command-r-plus',
+};
+
+const LIVEBENCH_TASK_MAP = {
+  'math':                   { factor: 'reasoning',  metric: 'math_accuracy' },
+  'reasoning':              { factor: 'reasoning',  metric: 'logical_deduction' },
+  'coding':                 { factor: 'coding',     metric: 'humaneval_pass1' },
+  'language':               { factor: 'instruction', metric: 'ifeval_score' },
+  'data_analysis':          { factor: 'factuality', metric: 'factual_consistency' },
+  'instruction_following':  { factor: 'instruction', metric: 'format_compliance' },
+  'typos':                  { factor: 'instruction', metric: 'constraint_following' },
+};
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -387,6 +427,60 @@ async function fetchBBQ() {
   return envelope('bbq', scores);
 }
 
+async function fetchLiveBench() {
+  const PAGE = 100;
+  const BASE_URL = 'https://datasets-server.huggingface.co/rows?dataset=livebench/model_judgment&config=default&split=leaderboard';
+  const modelTaskScores = {};
+  let offset = 0;
+  let total = Infinity;
+
+  while (offset < total) {
+    const url = `${BASE_URL}&offset=${offset}&length=${PAGE}`;
+    let data;
+    try {
+      data = await fetchJSON(url);
+    } catch (e) {
+      console.log(`  -- LiveBench pagination stopped at offset ${offset}: ${e.message}`);
+      break;
+    }
+    total = data.num_rows_total || 0;
+    const rows = data.rows || [];
+    if (rows.length === 0) break;
+
+    for (const r of rows) {
+      const row = r.row || r;
+      const apiModel = row.model || '';
+      const registryId = LIVEBENCH_MODEL_ALIASES[apiModel];
+      if (!registryId) continue;
+
+      const task = row.task || '';
+      const score = row.score;
+      if (score == null || typeof score !== 'number') continue;
+
+      if (!modelTaskScores[registryId]) modelTaskScores[registryId] = {};
+      if (!modelTaskScores[registryId][task]) modelTaskScores[registryId][task] = [];
+      modelTaskScores[registryId][task].push(score);
+    }
+    offset += PAGE;
+  }
+
+  const scores = [];
+  for (const [modelId, tasks] of Object.entries(modelTaskScores)) {
+    for (const [task, vals] of Object.entries(tasks)) {
+      const mapping = LIVEBENCH_TASK_MAP[task];
+      if (!mapping) continue;
+      const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+      const scaled = avg * 100;
+      scores.push(scoreRow(
+        'livebench', modelId, mapping.factor, mapping.metric, scaled,
+        'LiveBench', 'https://livebench.ai/'
+      ));
+    }
+  }
+
+  return envelope('livebench', scores);
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
@@ -398,6 +492,7 @@ const CONNECTORS = [
   { id: 'evalplus', fn: fetchEvalPlus },
   { id: 'ruler', fn: fetchRULER },
   { id: 'bbq', fn: fetchBBQ },
+  { id: 'livebench', fn: fetchLiveBench },
 ];
 
 async function main() {

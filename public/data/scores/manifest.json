@@ -16,27 +16,31 @@
     "count": 85
   },
   "huggingface": {
-    "fetched_at": "2026-03-28T02:52:56.018Z",
+    "fetched_at": "2026-03-28T03:46:45.955Z",
     "count": 3000
   },
   "helm": {
-    "fetched_at": "2026-03-28T02:52:56.380Z",
+    "fetched_at": "2026-03-28T03:46:46.187Z",
     "count": 818
   },
   "lmarena": {
-    "fetched_at": "2026-03-28T02:52:56.790Z",
+    "fetched_at": "2026-03-28T03:46:46.567Z",
     "count": 50
   },
   "evalplus": {
-    "fetched_at": "2026-03-28T02:52:57.122Z",
+    "fetched_at": "2026-03-28T03:46:46.846Z",
     "count": 428
   },
   "ruler": {
-    "fetched_at": "2026-03-28T02:52:57.257Z",
+    "fetched_at": "2026-03-28T03:46:46.910Z",
     "count": 33
   },
   "bbq": {
-    "fetched_at": "2026-03-28T02:52:57.318Z",
+    "fetched_at": "2026-03-28T03:46:46.943Z",
     "count": 87
+  },
+  "livebench": {
+    "fetched_at": "2026-03-28T03:47:13.302Z",
+    "count": 17
   }
 }
