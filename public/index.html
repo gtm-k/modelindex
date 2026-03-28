@@ -820,6 +820,26 @@
     </div>
   </nav>
 
+  <!-- ── Mobile Tab Bar (shown only at <= 768px via CSS) ─────────────── -->
+  <nav id="mobile-tab-bar">
+    <button class="mob-tab active" data-view="registry">
+      <i data-lucide="database"></i>
+      <span>Registry</span>
+    </button>
+    <button class="mob-tab" data-view="index-builder">
+      <i data-lucide="sliders-horizontal"></i>
+      <span>Builder</span>
+    </button>
+    <button class="mob-tab" data-view="my-indexes">
+      <i data-lucide="bookmark"></i>
+      <span>Indexes</span>
+    </button>
+    <button class="mob-tab" data-view="settings">
+      <i data-lucide="settings"></i>
+      <span>Settings</span>
+    </button>
+  </nav>
+
   <!-- ── Main Content ───────────────────────────────────────────────────────── -->
   <main id="main-content">
 
@@ -999,6 +1019,11 @@ function showView(viewId) {
   if (view) view.classList.remove('hidden');
   if (nav)  nav.classList.add('active');
 
+  // Sync mobile tab bar
+  document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
+  const mobTab = document.querySelector(`.mob-tab[data-view="${viewId}"]`);
+  if (mobTab) mobTab.classList.add('active');
+
   App.state.currentView = viewId;
   if (App.views[viewId] && App.views[viewId].onEnter) {
     App.views[viewId].onEnter();
@@ -1120,6 +1145,11 @@ function stalenessBadge(fetchedAt) {
 // ── Navigation ─────────────────────────────────────────────────────────────────
 document.querySelectorAll('.nav-item[data-view]').forEach(item => {
   item.addEventListener('click', () => showView(item.dataset.view));
+});
+
+// Mobile tab bar navigation
+document.querySelectorAll('.mob-tab').forEach(tab => {
+  tab.addEventListener('click', () => showView(tab.dataset.view));
 });
 
 // ── Provenance panel close ─────────────────────────────────────────────────────
