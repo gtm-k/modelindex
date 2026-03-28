@@ -886,6 +886,7 @@
   </div>
   <div id="provenance-content"></div>
 </aside>
+<div id="provenance-backdrop" class="bottom-sheet-backdrop"></div>
 
 <!-- Browser JS modules -->
 <script src="js/db.js"></script>
@@ -1167,13 +1168,19 @@ document.querySelectorAll('.mob-tab').forEach(tab => {
 // ── Provenance panel close ─────────────────────────────────────────────────────
 document.getElementById('close-provenance').addEventListener('click', () => {
   document.getElementById('provenance-panel').classList.add('hidden');
+  document.getElementById('provenance-backdrop')?.classList.remove('open');
+});
+
+document.getElementById('provenance-backdrop')?.addEventListener('click', () => {
+  document.getElementById('provenance-panel')?.classList.add('hidden');
+  document.getElementById('provenance-backdrop')?.classList.remove('open');
 });
 
 // ── Keyboard: Escape closes modal / panel ─────────────────────────────────────
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   const panel = document.getElementById('provenance-panel');
-  if (!panel.classList.contains('hidden')) { panel.classList.add('hidden'); return; }
+  if (!panel.classList.contains('hidden')) { panel.classList.add('hidden'); document.getElementById('provenance-backdrop')?.classList.remove('open'); return; }
   const overlay = document.getElementById('modal-overlay');
   if (!overlay.classList.contains('hidden')) closeModal();
 });
@@ -1745,15 +1752,15 @@ document.addEventListener('keydown', (e) => {
             ${_compareSet.size < 2 || _compareSet.size > 5 ? 'disabled' : ''}
             title="Select 2\u20135 models to compare">
             <i data-lucide="git-compare" style="width:13px;height:13px;vertical-align:-2px"></i>
-            Compare${_compareSet.size >= 2 ? ` (${_compareSet.size})` : ''}
+            <span class="btn-label">Compare${_compareSet.size >= 2 ? ` (${_compareSet.size})` : ''}</span>
           </button>
           <button class="btn-secondary" id="export-csv-btn">
             <i data-lucide="download" style="width:13px;height:13px;vertical-align:-2px"></i>
-            Export CSV
+            <span class="btn-label">Export CSV</span>
           </button>
           <button class="btn-secondary" id="registry-sync-btn">
             <i data-lucide="refresh-cw" style="width:13px;height:13px;vertical-align:-2px"></i>
-            Sync All
+            <span class="btn-label">Sync All</span>
           </button>
         </div>
       </div>
@@ -1868,7 +1875,7 @@ document.addEventListener('keydown', (e) => {
         const btn = document.getElementById('compare-export-btn');
         if (btn) {
           btn.disabled = _compareSet.size < 2;
-          btn.innerHTML = `<i data-lucide="git-compare" style="width:13px;height:13px;vertical-align:-2px"></i> Compare${_compareSet.size >= 2 ? ` (${_compareSet.size})` : ''}`;
+          btn.innerHTML = `<i data-lucide="git-compare" style="width:13px;height:13px;vertical-align:-2px"></i> <span class="btn-label">Compare${_compareSet.size >= 2 ? ` (${_compareSet.size})` : ''}</span>`;
           lucide.createIcons({ el: btn });
         }
       });
@@ -1988,6 +1995,7 @@ document.addEventListener('keydown', (e) => {
     const content = document.getElementById('provenance-content');
     content.innerHTML = `<div class="skeleton" style="height:200px;border-radius:6px"></div>`;
     panel.classList.remove('hidden');
+    document.getElementById('provenance-backdrop')?.classList.add('open');
 
     const model = _models.find(m => m.model_id === modelId);
     const allScores = Object.values(_scores[modelId] || {});
