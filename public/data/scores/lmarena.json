@@ -1,6 +1,6 @@
 {
   "connector_id": "lmarena",
-  "fetched_at": "2026-04-12T08:32:12.421Z",
+  "fetched_at": "2026-04-13T07:58:02.454Z",
   "scores": [
     {
       "model_id": "claude-opus-4-6-thinking",
@@ -12,7 +12,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "claude-opus-4-6",
@@ -24,7 +24,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "muse-spark",
@@ -36,7 +36,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "gemini-3-1-pro-preview",
@@ -48,7 +48,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "gemini-3-pro",
@@ -60,7 +60,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "grok-4-20-beta1",
@@ -72,7 +72,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "gpt-5-4-high",
@@ -84,7 +84,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "grok-4-20-beta-0309-reasoning",
@@ -96,7 +96,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "gpt-5-2-chat-latest-20260210",
@@ -108,7 +108,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "grok-4-20-multi-agent-beta-0309",
@@ -120,7 +120,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "gemini-3-flash",
@@ -132,7 +132,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "claude-opus-4-5-20251101-thinking-32k",
@@ -144,7 +144,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "glm-5-1",
@@ -156,7 +156,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "grok-4-1-thinking",
@@ -168,7 +168,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "claude-opus-4-5-20251101",
@@ -180,7 +180,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "qwen3-5-max-preview",
@@ -192,7 +192,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "gpt-5-4",
@@ -204,7 +204,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "gemini-3-flash-thinking-minimal",
@@ -216,7 +216,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "claude-sonnet-4-6",
@@ -228,7 +228,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "dola-seed-2-0-pro",
@@ -240,7 +240,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "grok-4-1",
@@ -252,7 +252,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "gpt-5-4-mini-high",
@@ -264,7 +264,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "gpt-5-3-chat-latest",
@@ -276,7 +276,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "glm-5",
@@ -288,7 +288,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "gpt-5-1-high",
@@ -300,7 +300,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "claude-sonnet-4-5-20250929-thinking-32k",
@@ -312,7 +312,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "kimi-k2-5-thinking",
@@ -324,7 +324,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "claude-sonnet-4-5-20250929",
@@ -336,7 +336,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "gemma-4-31b",
@@ -348,7 +348,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     },
     {
       "model_id": "ernie-5-0-0110",
@@ -360,7 +360,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-12T08:32:12.421Z"
+      "fetched_at": "2026-04-13T07:58:02.454Z"
     }
   ]
 }
