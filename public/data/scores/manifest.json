@@ -1,31 +1,30 @@
 {
   "huggingface": {
-    "fetched_at": null,
-    "count": 3000,
-    "error": "HTTP 502 Bad Gateway"
+    "fetched_at": "2026-04-16T07:26:35.165Z",
+    "count": 3000
   },
   "helm": {
-    "fetched_at": "2026-04-15T07:26:30.354Z",
+    "fetched_at": "2026-04-16T07:26:35.548Z",
     "count": 818
   },
   "lmarena": {
-    "fetched_at": "2026-04-15T07:26:30.572Z",
+    "fetched_at": "2026-04-16T07:26:35.913Z",
     "count": 20
   },
   "evalplus": {
-    "fetched_at": "2026-04-15T07:26:30.673Z",
+    "fetched_at": "2026-04-16T07:26:36.067Z",
     "count": 428
   },
   "ruler": {
-    "fetched_at": "2026-04-15T07:26:30.851Z",
+    "fetched_at": "2026-04-16T07:26:36.219Z",
     "count": 33
   },
   "bbq": {
-    "fetched_at": "2026-04-15T07:26:30.918Z",
+    "fetched_at": "2026-04-16T07:26:36.336Z",
     "count": 87
   },
   "livebench": {
-    "fetched_at": "2026-04-15T07:26:50.085Z",
+    "fetched_at": "2026-04-16T07:26:55.048Z",
     "count": 17
   },
   "materials": {
