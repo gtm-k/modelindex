@@ -1,6 +1,6 @@
 {
   "connector_id": "livebench",
-  "fetched_at": "2026-04-16T07:26:55.048Z",
+  "fetched_at": "2026-04-17T07:27:45.091Z",
   "scores": [
     {
       "model_id": "claude-3-5-haiku",
@@ -12,7 +12,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "claude-3-7-sonnet",
@@ -24,7 +24,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "command-r-plus",
@@ -36,7 +36,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "deepseek-r1",
@@ -48,7 +48,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "deepseek-v3",
@@ -60,7 +60,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "gemini-2-0-flash",
@@ -72,7 +72,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "gemini-2-0-pro",
@@ -84,7 +84,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "gemini-2-5-pro",
@@ -96,7 +96,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "gemma-3-27b",
@@ -108,7 +108,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "gpt-4o",
@@ -120,7 +120,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "gpt-4o-mini",
@@ -132,7 +132,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "llama-3-3-70b",
@@ -144,7 +144,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "llama-3-1-405b",
@@ -156,7 +156,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "mistral-large-2",
@@ -168,7 +168,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "o3",
@@ -180,7 +180,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "mixtral-8x22b",
@@ -192,7 +192,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     },
     {
       "model_id": "phi-4",
@@ -204,7 +204,7 @@
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-04-16T07:26:55.048Z"
+      "fetched_at": "2026-04-17T07:27:45.091Z"
     }
   ]
 }
