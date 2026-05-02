@@ -1,210 +1,210 @@
 {
   "connector_id": "livebench",
-  "fetched_at": "2026-05-01T08:08:03.659Z",
+  "fetched_at": "2026-05-02T07:28:05.573Z",
   "scores": [
     {
       "model_id": "claude-3-5-haiku",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 68,
+      "raw_score": 66.66666666666666,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "claude-3-7-sonnet",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 80,
+      "raw_score": 100,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "command-r-plus",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 50,
+      "raw_score": 33.33333333333333,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "deepseek-r1",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 57.99999999999999,
+      "raw_score": 66.66666666666666,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "deepseek-v3",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 52,
+      "raw_score": 66.66666666666666,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "gemini-2-0-flash",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 66,
+      "raw_score": 100,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "gemini-2-0-pro",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 74,
+      "raw_score": 66.66666666666666,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "gemini-2-5-pro",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 66,
+      "raw_score": 100,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "gemma-3-27b",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 68,
+      "raw_score": 66.66666666666666,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "gpt-4o",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 62,
+      "raw_score": 66.66666666666666,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "gpt-4o-mini",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 54,
+      "raw_score": 33.33333333333333,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "llama-3-3-70b",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 60,
+      "raw_score": 66.66666666666666,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "llama-3-1-405b",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 57.99999999999999,
+      "raw_score": 66.66666666666666,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "mistral-large-2",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 28.000000000000004,
+      "raw_score": 33.33333333333333,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "o3",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 68,
+      "raw_score": 100,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "mixtral-8x22b",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 42,
+      "raw_score": 33.33333333333333,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     },
     {
       "model_id": "phi-4",
       "factor_group": "instruction",
       "sub_metric": "constraint_following",
-      "raw_score": 48,
+      "raw_score": 0,
       "benchmark_name": "LiveBench",
       "benchmark_url": "https://livebench.ai/",
       "connector_id": "livebench",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-01T08:08:03.659Z"
+      "fetched_at": "2026-05-02T07:28:05.573Z"
     }
   ]
 }
