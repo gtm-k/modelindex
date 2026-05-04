@@ -1,6 +1,6 @@
 {
   "connector_id": "lmarena",
-  "fetched_at": "2026-05-03T07:57:52.309Z",
+  "fetched_at": "2026-05-04T08:24:59.880Z",
   "scores": [
     {
       "model_id": "claude-opus-4-7-thinking",
@@ -12,7 +12,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-03T07:57:52.309Z"
+      "fetched_at": "2026-05-04T08:24:59.880Z"
     },
     {
       "model_id": "claude-opus-4-6-thinking",
@@ -24,7 +24,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-03T07:57:52.309Z"
+      "fetched_at": "2026-05-04T08:24:59.880Z"
     },
     {
       "model_id": "claude-opus-4-6",
@@ -36,7 +36,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-03T07:57:52.309Z"
+      "fetched_at": "2026-05-04T08:24:59.880Z"
     },
     {
       "model_id": "gemini-3-1-pro-preview",
@@ -48,7 +48,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-03T07:57:52.309Z"
+      "fetched_at": "2026-05-04T08:24:59.880Z"
     },
     {
       "model_id": "claude-opus-4-7",
@@ -60,7 +60,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-03T07:57:52.309Z"
+      "fetched_at": "2026-05-04T08:24:59.880Z"
     },
     {
       "model_id": "muse-spark",
@@ -72,7 +72,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-03T07:57:52.309Z"
+      "fetched_at": "2026-05-04T08:24:59.880Z"
     },
     {
       "model_id": "gpt-5-5-high",
@@ -84,7 +84,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-03T07:57:52.309Z"
+      "fetched_at": "2026-05-04T08:24:59.880Z"
     },
     {
       "model_id": "gemini-3-pro",
@@ -96,7 +96,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-03T07:57:52.309Z"
+      "fetched_at": "2026-05-04T08:24:59.880Z"
     },
     {
       "model_id": "grok-4-20-beta1",
@@ -108,7 +108,7 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-03T07:57:52.309Z"
+      "fetched_at": "2026-05-04T08:24:59.880Z"
     },
     {
       "model_id": "grok-4-20-beta-0309-reasoning",
@@ -120,7 +120,127 @@
       "connector_id": "lmarena",
       "data_tier": "T1",
       "contamination_flag": false,
-      "fetched_at": "2026-05-03T07:57:52.309Z"
+      "fetched_at": "2026-05-04T08:24:59.880Z"
+    },
+    {
+      "model_id": "gpt-5-4-high",
+      "factor_group": "safety",
+      "sub_metric": "rlhf_reward",
+      "raw_score": 1477,
+      "benchmark_name": "LMArena (Chatbot Arena)",
+      "benchmark_url": "https://lmarena.ai/",
+      "connector_id": "lmarena",
+      "data_tier": "T1",
+      "contamination_flag": false,
+      "fetched_at": "2026-05-04T08:24:59.880Z"
+    },
+    {
+      "model_id": "gpt-5-2-chat-latest-20260210",
+      "factor_group": "safety",
+      "sub_metric": "rlhf_reward",
+      "raw_score": 1476,
+      "benchmark_name": "LMArena (Chatbot Arena)",
+      "benchmark_url": "https://lmarena.ai/",
+      "connector_id": "lmarena",
+      "data_tier": "T1",
+      "contamination_flag": false,
+      "fetched_at": "2026-05-04T08:24:59.880Z"
+    },
+    {
+      "model_id": "gpt-5-5",
+      "factor_group": "safety",
+      "sub_metric": "rlhf_reward",
+      "raw_score": 1475,
+      "benchmark_name": "LMArena (Chatbot Arena)",
+      "benchmark_url": "https://lmarena.ai/",
+      "connector_id": "lmarena",
+      "data_tier": "T1",
+      "contamination_flag": false,
+      "fetched_at": "2026-05-04T08:24:59.880Z"
+    },
+    {
+      "model_id": "grok-4-20-multi-agent-beta-0309",
+      "factor_group": "safety",
+      "sub_metric": "rlhf_reward",
+      "raw_score": 1475,
+      "benchmark_name": "LMArena (Chatbot Arena)",
+      "benchmark_url": "https://lmarena.ai/",
+      "connector_id": "lmarena",
+      "data_tier": "T1",
+      "contamination_flag": false,
+      "fetched_at": "2026-05-04T08:24:59.880Z"
+    },
+    {
+      "model_id": "ernie-5-1-preview",
+      "factor_group": "safety",
+      "sub_metric": "rlhf_reward",
+      "raw_score": 1475,
+      "benchmark_name": "LMArena (Chatbot Arena)",
+      "benchmark_url": "https://lmarena.ai/",
+      "connector_id": "lmarena",
+      "data_tier": "T1",
+      "contamination_flag": false,
+      "fetched_at": "2026-05-04T08:24:59.880Z"
+    },
+    {
+      "model_id": "gemini-3-flash",
+      "factor_group": "safety",
+      "sub_metric": "rlhf_reward",
+      "raw_score": 1474,
+      "benchmark_name": "LMArena (Chatbot Arena)",
+      "benchmark_url": "https://lmarena.ai/",
+      "connector_id": "lmarena",
+      "data_tier": "T1",
+      "contamination_flag": false,
+      "fetched_at": "2026-05-04T08:24:59.880Z"
+    },
+    {
+      "model_id": "claude-opus-4-5-20251101-thinking-32k",
+      "factor_group": "safety",
+      "sub_metric": "rlhf_reward",
+      "raw_score": 1473,
+      "benchmark_name": "LMArena (Chatbot Arena)",
+      "benchmark_url": "https://lmarena.ai/",
+      "connector_id": "lmarena",
+      "data_tier": "T1",
+      "contamination_flag": false,
+      "fetched_at": "2026-05-04T08:24:59.880Z"
+    },
+    {
+      "model_id": "glm-5-1",
+      "factor_group": "safety",
+      "sub_metric": "rlhf_reward",
+      "raw_score": 1471,
+      "benchmark_name": "LMArena (Chatbot Arena)",
+      "benchmark_url": "https://lmarena.ai/",
+      "connector_id": "lmarena",
+      "data_tier": "T1",
+      "contamination_flag": false,
+      "fetched_at": "2026-05-04T08:24:59.880Z"
+    },
+    {
+      "model_id": "grok-4-1-thinking",
+      "factor_group": "safety",
+      "sub_metric": "rlhf_reward",
+      "raw_score": 1468,
+      "benchmark_name": "LMArena (Chatbot Arena)",
+      "benchmark_url": "https://lmarena.ai/",
+      "connector_id": "lmarena",
+      "data_tier": "T1",
+      "contamination_flag": false,
+      "fetched_at": "2026-05-04T08:24:59.880Z"
+    },
+    {
+      "model_id": "claude-opus-4-5-20251101",
+      "factor_group": "safety",
+      "sub_metric": "rlhf_reward",
+      "raw_score": 1468,
+      "benchmark_name": "LMArena (Chatbot Arena)",
+      "benchmark_url": "https://lmarena.ai/",
+      "connector_id": "lmarena",
+      "data_tier": "T1",
+      "contamination_flag": false,
+      "fetched_at": "2026-05-04T08:24:59.880Z"
     }
   ]
 }
